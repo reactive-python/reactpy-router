@@ -1,0 +1,3 @@
+include README.md
+include idom_router/bundle.js
+include LICENSE
