@@ -1,22 +1,22 @@
 import pytest
-
 from idom import Ref, component, html
-from idom.testing import poll, BackendFixture, DisplayFixture
+from idom.testing import BackendFixture, DisplayFixture
 
-from idom_router.router import bind, Route, Router, Link
+from idom_router import Link, Route, configure
 
 
 @pytest.fixture
-def Router(server):
-    return bind(server.implementation)
+def Routes(backend: BackendFixture):
+    return configure(backend.implementation)
 
 
-async def test_simple_router(display: DisplayFixture, Router: Router):
+async def test_simple_router(display: DisplayFixture, Routes: Routes):
     @component
     def Sample():
-        return Router(
+        return Routes(
             Route("/a", html.h1({"id": "a"}, "A")),
             Route("/b", html.h1({"id": "b"}, "B")),
+            Route("/c", html.h1({"id": "c"}, "C")),
             Route("/c", html.h1({"id": "c"}, "C")),
             Route("/*", html.h1({"id": "default"}, "Default")),
         )
@@ -34,13 +34,13 @@ async def test_simple_router(display: DisplayFixture, Router: Router):
         await display.page.wait_for_selector(selector)
 
 
-async def test_navigate_with_link(display: DisplayFixture, Router: Router):
+async def test_navigate_with_link(display: DisplayFixture, Routes: Routes):
     render_count = Ref(0)
 
     @component
     def Sample():
         render_count.current += 1
-        return Router(
+        return Routes(
             Route("/", Link({"id": "root"}, "Root", to="/a")),
             Route("/a", Link({"id": "a"}, "A", to="/b")),
             Route("/b", Link({"id": "b"}, "B", to="/c")),

@@ -1,64 +1,85 @@
 from __future__ import annotations
-from dataclasses import dataclass
 
+import re
+from dataclasses import dataclass
 from fnmatch import translate as fnmatch_translate
 from pathlib import Path
-import re
-from typing import Any, Iterator, Protocol, Callable, Sequence
+from typing import Any, Callable, Iterator, Sequence
 
-from idom import create_context, component, use_context, use_state
-from idom.web.module import export, module_from_file
-from idom.core.vdom import coalesce_attributes_and_children, VdomAttributesAndChildren
+from idom import component, create_context, use_context, use_state
+from idom.core.types import VdomAttributesAndChildren, VdomDict
+from idom.core.vdom import coalesce_attributes_and_children
 from idom.types import BackendImplementation, ComponentType, Context, Location
+from idom.web.module import export, module_from_file
+
+try:
+    from typing import Protocol
+except ImportError:
+    from typing_extensions import Protocol
 
 
-class Router(Protocol):
+class Routes(Protocol):
     def __call__(self, *routes: Route) -> ComponentType:
         ...
 
 
-def bind(backend: BackendImplementation) -> Router:
+def configure(
+    implementation: BackendImplementation[Any] | Callable[[], Location]
+) -> Routes:
+    if isinstance(implementation, BackendImplementation):
+        use_location = implementation.use_location
+    elif callable(implementation):
+        use_location = implementation
+    else:
+        raise TypeError(
+            "Expected a BackendImplementation or "
+            f"`use_location` hook, not {implementation}"
+        )
+
     @component
-    def Router(*routes: Route):
-        initial_location = backend.use_location()
+    def Router(*routes: Route) -> ComponentType | None:
+        initial_location = use_location()
         location, set_location = use_state(initial_location)
         for p, r in _compile_routes(routes):
-            if p.match(location.pathname):
+            match = p.match(location.pathname)
+            if match:
                 return _LocationStateContext(
                     r.element,
-                    value=(location, set_location),
-                    key=r.path,
+                    value=_LocationState(location, set_location, match),
+                    key=p.pattern,
                 )
         return None
 
     return Router
 
 
-def use_location() -> str:
-    return _use_location_state()[0]
+def use_location() -> Location:
+    return _use_location_state().location
+
+
+def use_match() -> re.Match[str]:
+    return _use_location_state().match
 
 
 @dataclass
 class Route:
-    path: str | re.Pattern
+    path: str | re.Pattern[str]
     element: Any
 
 
 @component
-def Link(*attributes_or_children: VdomAttributesAndChildren, to: str) -> None:
+def Link(*attributes_or_children: VdomAttributesAndChildren, to: str) -> VdomDict:
     attributes, children = coalesce_attributes_and_children(attributes_or_children)
-    set_location = _use_location_state()[1]
-    return _Link(
-        {
-            **attributes,
-            "to": to,
-            "onClick": lambda event: set_location(Location(**event)),
-        },
-        *children,
-    )
+    set_location = _use_location_state().set_location
+    attrs = {
+        **attributes,
+        "to": to,
+        "onClick": lambda event: set_location(Location(**event)),
+    }
+    return _Link(attrs, *children)
 
 
-def _compile_routes(routes: Sequence[Route]) -> Iterator[tuple[re.Pattern, Route]]:
+def _compile_routes(routes: Sequence[Route]) -> Iterator[tuple[re.Pattern[str], Route]]:
     for r in routes:
         if isinstance(r.path, re.Pattern):
             yield r.path, r
@@ -75,9 +96,14 @@ def _use_location_state() -> _LocationState:
     return location_state
 
 
-_LocationSetter = Callable[[str], None]
-_LocationState = tuple[Location, _LocationSetter]
-_LocationStateContext: type[Context[_LocationState | None]] = create_context(None)
+@dataclass
+class _LocationState:
+    location: Location
+    set_location: Callable[[Location], None]
+    match: re.Match[str]
+
+
+_LocationStateContext: Context[_LocationState | None] = create_context(None)
 
 _Link = export(
     module_from_file(

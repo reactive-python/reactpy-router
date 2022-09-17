@@ -1,0 +1,2 @@
+idom >=0.40.2,<0.41
+typing_extensions

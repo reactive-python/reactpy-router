@@ -1,14 +1,13 @@
 from __future__ import print_function
 
 import os
+import shutil
 import subprocess
 import sys
-import shutil
 
-from setuptools import setup, find_packages
-from distutils.command.build import build  # type: ignore
-from distutils.command.sdist import sdist  # type: ignore
+from setuptools import find_packages, setup
 from setuptools.command.develop import develop
+from setuptools.command.sdist import sdist
 
 # the name of the project
 name = "idom_router"
@@ -26,7 +25,6 @@ package_dir = os.path.join(here, name)
 package = {
     "name": name,
     "python_requires": ">=3.7",
-    "install_requires": ["idom>=0.39.0"],
     "packages": find_packages(exclude=["tests*"]),
     "description": "A URL router for IDOM",
     "author": "Ryan Morshead",
@@ -48,6 +46,19 @@ package = {
         "Typing :: Typed",
     ],
 }
+
+
+# -----------------------------------------------------------------------------
+# Requirements
+# -----------------------------------------------------------------------------
+
+
+requirements = []
+with open(os.path.join(here, "requirements", "pkg-deps.txt"), "r") as f:
+    for line in map(str.strip, f):
+        if not line.startswith("#"):
+            requirements.append(line)
+package["install_requires"] = requirements
 
 
 # -----------------------------------------------------------------------------
@@ -96,9 +107,17 @@ def build_javascript_first(cls):
 
 package["cmdclass"] = {
     "sdist": build_javascript_first(sdist),
-    "build": build_javascript_first(build),
     "develop": build_javascript_first(develop),
 }
+
+if sys.version_info < (3, 10, 6):
+    from distutils.command.build import build
+
+    package["cmdclass"]["build"] = build_javascript_first(build)
+else:
+    from setuptools.command.build_py import build_py
+
+    package["cmdclass"]["build_py"] = build_javascript_first(build_py)
 
 
 # -----------------------------------------------------------------------------

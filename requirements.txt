@@ -1,4 +1,5 @@
-twine
-pytest
-pytest-asyncio
-idom[testing,starlette]
+-r requirements/check-style.txt
+-r requirements/check-types.txt
+-r requirements/nox-deps.txt
+-r requirements/pkg-deps.txt
+-r requirements/test-env.txt

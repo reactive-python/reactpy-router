@@ -1,6 +1,6 @@
 import pytest
+from idom.testing import BackendFixture, DisplayFixture
 from playwright.async_api import async_playwright
-from idom.testing import DisplayFixture, BackendFixture
 
 
 def pytest_addoption(parser) -> None:
@@ -13,16 +13,16 @@ def pytest_addoption(parser) -> None:
 
 
 @pytest.fixture
-async def display(server, browser):
-    async with DisplayFixture(server, browser) as display:
+async def display(backend, browser):
+    async with DisplayFixture(backend, browser) as display:
         display.page.set_default_timeout(10000)
         yield display
 
 
 @pytest.fixture
-async def server():
-    async with BackendFixture() as server:
-        yield server
+async def backend():
+    async with BackendFixture() as backend:
+        yield backend
 
 
 @pytest.fixture
