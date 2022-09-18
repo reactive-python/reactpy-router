@@ -2,73 +2,79 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from fnmatch import translate as fnmatch_translate
 from pathlib import Path
 from typing import Any, Callable, Iterator, Sequence
+from urllib.parse import parse_qs
 
-from idom import component, create_context, use_context, use_state
+from idom import component, create_context, use_context, use_memo, use_state
 from idom.core.types import VdomAttributesAndChildren, VdomDict
 from idom.core.vdom import coalesce_attributes_and_children
 from idom.types import BackendImplementation, ComponentType, Context, Location
 from idom.web.module import export, module_from_file
+from starlette.routing import compile_path
 
 try:
     from typing import Protocol
-except ImportError:
-    from typing_extensions import Protocol
+except ImportError:  # pragma: no cover
+    from typing_extensions import Protocol  # type: ignore
 
 
-class Routes(Protocol):
+class RoutesConstructor(Protocol):
     def __call__(self, *routes: Route) -> ComponentType:
         ...
 
 
 def configure(
     implementation: BackendImplementation[Any] | Callable[[], Location]
-) -> Routes:
+) -> RoutesConstructor:
     if isinstance(implementation, BackendImplementation):
         use_location = implementation.use_location
     elif callable(implementation):
         use_location = implementation
     else:
         raise TypeError(
-            "Expected a BackendImplementation or "
-            f"`use_location` hook, not {implementation}"
+            "Expected a 'BackendImplementation' or "
+            f"'use_location' hook, not {implementation}"
         )
 
     @component
-    def Router(*routes: Route) -> ComponentType | None:
+    def routes(*routes: Route) -> ComponentType | None:
         initial_location = use_location()
         location, set_location = use_state(initial_location)
-        for p, r in _compile_routes(routes):
-            match = p.match(location.pathname)
+        compiled_routes = use_memo(
+            lambda: _iter_compile_routes(routes), dependencies=routes
+        )
+        for r in compiled_routes:
+            match = r.pattern.match(location.pathname)
             if match:
                 return _LocationStateContext(
                     r.element,
-                    value=_LocationState(location, set_location, match),
-                    key=p.pattern,
+                    value=_LocationState(
+                        location,
+                        set_location,
+                        {k: r.converters[k](v) for k, v in match.groupdict().items()},
+                    ),
+                    key=r.pattern.pattern,
                 )
         return None
 
-    return Router
-
-
-def use_location() -> Location:
-    return _use_location_state().location
-
-
-def use_match() -> re.Match[str]:
-    return _use_location_state().match
+    return routes
 
 
 @dataclass
 class Route:
-    path: str | re.Pattern[str]
+    path: str
     element: Any
+    routes: Sequence[Route]
+
+    def __init__(self, path: str, element: Any | None, *routes: Route) -> None:
+        self.path = path
+        self.element = element
+        self.routes = routes
 
 
 @component
-def Link(*attributes_or_children: VdomAttributesAndChildren, to: str) -> VdomDict:
+def link(*attributes_or_children: VdomAttributesAndChildren, to: str) -> VdomDict:
     attributes, children = coalesce_attributes_and_children(attributes_or_children)
     set_location = _use_location_state().set_location
     attrs = {
@@ -79,15 +85,54 @@ def Link(*attributes_or_children: VdomAttributesAndChildren, to: str) -> VdomDic
     return _Link(attrs, *children)
 
 
-def _compile_routes(routes: Sequence[Route]) -> Iterator[tuple[re.Pattern[str], Route]]:
+def use_location() -> Location:
+    """Get the current route location"""
+    return _use_location_state().location
+
+
+def use_params() -> dict[str, Any]:
+    """Get parameters from the currently matching route pattern"""
+    return _use_location_state().params
+
+
+def use_query(
+    keep_blank_values: bool = False,
+    strict_parsing: bool = False,
+    errors: str = "replace",
+    max_num_fields: int | None = None,
+    separator: str = "&",
+) -> dict[str, list[str]]:
+    """See :func:`urllib.parse.parse_qs` for parameter info."""
+    return parse_qs(
+        use_location().search[1:],
+        keep_blank_values=keep_blank_values,
+        strict_parsing=strict_parsing,
+        errors=errors,
+        max_num_fields=max_num_fields,
+        separator=separator,
+    )
+
+
+def _iter_compile_routes(routes: Sequence[Route]) -> Iterator[_CompiledRoute]:
+    for path, element in _iter_routes(routes):
+        pattern, _, converters = compile_path(path)
+        yield _CompiledRoute(
+            pattern, {k: v.convert for k, v in converters.items()}, element
+        )
+
+
+def _iter_routes(routes: Sequence[Route]) -> Iterator[tuple[str, Any]]:
     for r in routes:
-        if isinstance(r.path, re.Pattern):
-            yield r.path, r
-            continue
-        if not r.path.startswith("/"):
-            raise ValueError("Path pattern must begin with '/'")
-        pattern = re.compile(fnmatch_translate(r.path))
-        yield pattern, r
+        for path, element in _iter_routes(r.routes):
+            yield r.path + path, element
+        yield r.path, r.element
+
+
+@dataclass
+class _CompiledRoute:
+    pattern: re.Pattern[str]
+    converters: dict[str, Callable[[Any], Any]]
+    element: Any
 
 
 def _use_location_state() -> _LocationState:
@@ -100,7 +145,7 @@ def _use_location_state() -> _LocationState:
 class _LocationState:
     location: Location
     set_location: Callable[[Location], None]
-    match: re.Match[str]
+    params: dict[str, Any]
 
 
 _LocationStateContext: Context[_LocationState | None] = create_context(None)

@@ -1,12 +1,22 @@
 # the version is statically loaded by setup.py
 __version__ = "0.0.1"
 
-from .router import Link, Route, Routes, configure, use_location
+from .router import (
+    Route,
+    RoutesConstructor,
+    configure,
+    link,
+    use_location,
+    use_params,
+    use_query,
+)
 
 __all__ = [
     "configure",
-    "Link",
+    "link",
     "Route",
-    "Routes",
+    "RoutesConstructor",
     "use_location",
+    "use_params",
+    "use_query",
 ]
