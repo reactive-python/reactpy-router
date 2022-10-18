@@ -19,14 +19,14 @@ except ImportError:  # pragma: no cover
     from typing_extensions import Protocol  # type: ignore
 
 
-class RoutesConstructor(Protocol):
+class RouterConstructor(Protocol):
     def __call__(self, *routes: Route) -> ComponentType:
         ...
 
 
-def configure(
+def create_router(
     implementation: BackendImplementation[Any] | Callable[[], Location]
-) -> RoutesConstructor:
+) -> RouterConstructor:
     if isinstance(implementation, BackendImplementation):
         use_location = implementation.use_location
     elif callable(implementation):
@@ -38,7 +38,7 @@ def configure(
         )
 
     @component
-    def routes(*routes: Route) -> ComponentType | None:
+    def router(*routes: Route) -> ComponentType | None:
         initial_location = use_location()
         location, set_location = use_state(initial_location)
         compiled_routes = use_memo(
@@ -58,7 +58,7 @@ def configure(
                 )
         return None
 
-    return routes
+    return router
 
 
 @dataclass
