@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Iterator, Sequence
@@ -9,9 +8,11 @@ from urllib.parse import parse_qs
 from idom import component, create_context, use_context, use_memo, use_state
 from idom.core.types import VdomAttributesAndChildren, VdomDict
 from idom.core.vdom import coalesce_attributes_and_children
-from idom.types import BackendImplementation, ComponentType, Context, Location
+from idom.types import ComponentType, Context, Location
 from idom.web.module import export, module_from_file
-from starlette.routing import compile_path
+from starlette.routing import compile_path as _compile_starlette_path
+
+from idom_router.types import RoutePattern, RouteCompiler, Route
 
 try:
     from typing import Protocol
@@ -19,58 +20,38 @@ except ImportError:  # pragma: no cover
     from typing_extensions import Protocol  # type: ignore
 
 
-class RouterConstructor(Protocol):
-    def __call__(self, *routes: Route) -> ComponentType:
-        ...
+def compile_starlette_route(route: str) -> RoutePattern:
+    pattern, _, converters = _compile_starlette_path(route)
+    return RoutePattern(pattern, {k: v.convert for k, v in converters.items()})
 
 
-def create_router(
-    implementation: BackendImplementation[Any] | Callable[[], Location]
-) -> RouterConstructor:
-    if isinstance(implementation, BackendImplementation):
-        use_location = implementation.use_location
-    elif callable(implementation):
-        use_location = implementation
-    else:
-        raise TypeError(
-            "Expected a 'BackendImplementation' or "
-            f"'use_location' hook, not {implementation}"
-        )
-
-    @component
-    def router(*routes: Route) -> ComponentType | None:
-        initial_location = use_location()
-        location, set_location = use_state(initial_location)
-        compiled_routes = use_memo(
-            lambda: _iter_compile_routes(routes), dependencies=routes
-        )
-        for r in compiled_routes:
-            match = r.pattern.match(location.pathname)
-            if match:
-                return _LocationStateContext(
-                    r.element,
-                    value=_LocationState(
-                        location,
-                        set_location,
-                        {k: r.converters[k](v) for k, v in match.groupdict().items()},
-                    ),
-                    key=r.pattern.pattern,
-                )
-        return None
-
-    return router
-
-
-@dataclass
-class Route:
-    path: str
-    element: Any
-    routes: Sequence[Route]
-
-    def __init__(self, path: str, element: Any | None, *routes: Route) -> None:
-        self.path = path
-        self.element = element
-        self.routes = routes
+@component
+def router(
+    *routes: Route,
+    compiler: RouteCompiler = compile_starlette_route,
+) -> ComponentType | None:
+    initial_location = use_location()
+    location, set_location = use_state(initial_location)
+    compiled_routes = use_memo(
+        lambda: [(compiler(r), e) for r, e in _iter_routes(routes)],
+        dependencies=routes,
+    )
+    for compiled_route, element in compiled_routes:
+        match = compiled_route.pattern.match(location.pathname)
+        if match:
+            return _LocationStateContext(
+                element,
+                value=_LocationState(
+                    location,
+                    set_location,
+                    {
+                        k: compiled_route.converters[k](v)
+                        for k, v in match.groupdict().items()
+                    },
+                ),
+                key=compiled_route.pattern.pattern,
+            )
+    return None
 
 
 @component
@@ -113,26 +94,11 @@ def use_query(
     )
 
 
-def _iter_compile_routes(routes: Sequence[Route]) -> Iterator[_CompiledRoute]:
-    for path, element in _iter_routes(routes):
-        pattern, _, converters = compile_path(path)
-        yield _CompiledRoute(
-            pattern, {k: v.convert for k, v in converters.items()}, element
-        )
-
-
 def _iter_routes(routes: Sequence[Route]) -> Iterator[tuple[str, Any]]:
     for r in routes:
         for path, element in _iter_routes(r.routes):
             yield r.path + path, element
         yield r.path, r.element
-
-
-@dataclass
-class _CompiledRoute:
-    pattern: re.Pattern[str]
-    converters: dict[str, Callable[[Any], Any]]
-    element: Any
 
 
 def _use_location_state() -> _LocationState:
@@ -151,10 +117,6 @@ class _LocationState:
 _LocationStateContext: Context[_LocationState | None] = create_context(None)
 
 _Link = export(
-    module_from_file(
-        "idom-router",
-        file=Path(__file__).parent / "bundle.js",
-        fallback="⏳",
-    ),
+    module_from_file("idom-router", file=Path(__file__).parent / "bundle.js"),
     "Link",
 )

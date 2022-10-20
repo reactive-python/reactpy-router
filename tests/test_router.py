@@ -1,33 +1,19 @@
 import pytest
 from idom import Ref, component, html
-from idom.testing import BackendFixture, DisplayFixture
+from idom.testing import DisplayFixture
 
 from idom_router import (
     Route,
-    RouterConstructor,
-    create_router,
+    router,
     link,
     use_location,
     use_params,
     use_query,
 )
+from idom_router.types import RoutePattern
 
 
-@pytest.fixture
-def router(backend: BackendFixture):
-    return create_router(backend.implementation)
-
-
-def test_create_router(backend):
-    create_router(backend.implementation)
-    create_router(backend.implementation.use_location)
-    with pytest.raises(
-        TypeError, match="Expected a 'BackendImplementation' or 'use_location' hook"
-    ):
-        create_router(None)
-
-
-async def test_simple_router(display: DisplayFixture, router: RouterConstructor):
+async def test_simple_router(display: DisplayFixture):
     def make_location_check(path, *routes):
         name = path.lstrip("/").replace("/", "-")
 
@@ -68,7 +54,7 @@ async def test_simple_router(display: DisplayFixture, router: RouterConstructor)
     assert not await root_element.inner_html()
 
 
-async def test_nested_routes(display: DisplayFixture, router: RouterConstructor):
+async def test_nested_routes(display: DisplayFixture):
     @component
     def sample():
         return router(
@@ -94,7 +80,7 @@ async def test_nested_routes(display: DisplayFixture, router: RouterConstructor)
         await display.page.wait_for_selector(selector)
 
 
-async def test_navigate_with_link(display: DisplayFixture, router: RouterConstructor):
+async def test_navigate_with_link(display: DisplayFixture):
     render_count = Ref(0)
 
     @component
@@ -121,7 +107,7 @@ async def test_navigate_with_link(display: DisplayFixture, router: RouterConstru
     assert render_count.current == 1
 
 
-async def test_use_params(display: DisplayFixture, router: RouterConstructor):
+async def test_use_params(display: DisplayFixture):
     expected_params = {}
 
     @component
@@ -157,7 +143,7 @@ async def test_use_params(display: DisplayFixture, router: RouterConstructor):
         await display.page.wait_for_selector("#success")
 
 
-async def test_use_query(display: DisplayFixture, router: RouterConstructor):
+async def test_use_query(display: DisplayFixture):
     expected_query = {}
 
     @component
@@ -174,3 +160,44 @@ async def test_use_query(display: DisplayFixture, router: RouterConstructor):
     expected_query = {"hello": ["world"], "thing": ["1", "2"]}
     await display.goto("?hello=world&thing=1&thing=2")
     await display.page.wait_for_selector("#success")
+
+
+def custom_path_compiler(path):
+    pattern = re.compile(path)
+
+
+async def test_custom_path_compiler(display: DisplayFixture):
+    expected_params = {}
+
+    @component
+    def check_params():
+        assert use_params() == expected_params
+        return html.h1({"id": "success"}, "success")
+
+    @component
+    def sample():
+        return router(
+            Route(
+                "/first/{first:str}",
+                check_params(),
+                Route(
+                    "/second/{second:str}",
+                    check_params(),
+                    Route(
+                        "/third/{third:str}",
+                        check_params(),
+                    ),
+                ),
+            ),
+            compiler=lambda path: RoutePattern(re.compile()),
+        )
+
+    await display.show(sample)
+
+    for path, expected_params in [
+        ("/first/1", {"first": "1"}),
+        ("/first/1/second/2", {"first": "1", "second": "2"}),
+        ("/first/1/second/2/third/3", {"first": "1", "second": "2", "third": "3"}),
+    ]:
+        await display.goto(path)
+        await display.page.wait_for_selector("#success")

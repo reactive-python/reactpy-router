@@ -3,19 +3,17 @@ __version__ = "0.0.1"
 
 from .router import (
     Route,
-    RouterConstructor,
-    create_router,
     link,
+    router,
     use_location,
     use_params,
     use_query,
 )
 
 __all__ = [
-    "create_router",
-    "link",
     "Route",
-    "RouterConstructor",
+    "link",
+    "router",
     "use_location",
     "use_params",
     "use_query",
