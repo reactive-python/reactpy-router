@@ -1,12 +1,12 @@
-import pytest
-from idom import Ref, component, html
+import re
+
+from idom import Ref, component, html, use_location
 from idom.testing import DisplayFixture
 
 from idom_router import (
     Route,
     router,
     link,
-    use_location,
     use_params,
     use_query,
 )
@@ -45,7 +45,7 @@ async def test_simple_router(display: DisplayFixture):
     await display.goto("/missing")
 
     try:
-        root_element = display.root_element()
+        root_element = await display.root_element()
     except AttributeError:
         root_element = await display.page.wait_for_selector(
             f"#display-{display._next_view_id}", state="attached"
@@ -162,10 +162,6 @@ async def test_use_query(display: DisplayFixture):
     await display.page.wait_for_selector("#success")
 
 
-def custom_path_compiler(path):
-    pattern = re.compile(path)
-
-
 async def test_custom_path_compiler(display: DisplayFixture):
     expected_params = {}
 
@@ -178,26 +174,33 @@ async def test_custom_path_compiler(display: DisplayFixture):
     def sample():
         return router(
             Route(
-                "/first/{first:str}",
+                r"/first/(?P<first>\d+)",
                 check_params(),
                 Route(
-                    "/second/{second:str}",
+                    r"/second/(?P<second>[\d\.]+)",
                     check_params(),
                     Route(
-                        "/third/{third:str}",
+                        r"/third/(?P<third>[\d,]+)",
                         check_params(),
                     ),
                 ),
             ),
-            compiler=lambda path: RoutePattern(re.compile()),
+            compiler=lambda path: RoutePattern(
+                re.compile(rf"^{path}$"),
+                {
+                    "first": int,
+                    "second": float,
+                    "third": lambda s: list(map(int, s.split(","))),
+                },
+            ),
         )
 
     await display.show(sample)
 
     for path, expected_params in [
-        ("/first/1", {"first": "1"}),
-        ("/first/1/second/2", {"first": "1", "second": "2"}),
-        ("/first/1/second/2/third/3", {"first": "1", "second": "2", "third": "3"}),
+        ("/first/1", {"first": 1}),
+        ("/first/1/second/2.1", {"first": 1, "second": 2.1}),
+        ("/first/1/second/2.1/third/3,3", {"first": 1, "second": 2.1, "third": [3, 3]}),
     ]:
         await display.goto(path)
         await display.page.wait_for_selector("#success")
