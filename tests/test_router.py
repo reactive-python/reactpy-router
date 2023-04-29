@@ -1,16 +1,8 @@
-import re
-
 from idom import Ref, component, html, use_location
 from idom.testing import DisplayFixture
 
-from idom_router import (
-    Route,
-    router,
-    link,
-    use_params,
-    use_query,
-)
-from idom_router.types import RoutePattern
+from idom_router import Route, link, router, use_params, use_query
+from tests.utils import compile_simple_regex_route
 
 
 async def test_simple_router(display: DisplayFixture):
@@ -87,10 +79,10 @@ async def test_navigate_with_link(display: DisplayFixture):
     def sample():
         render_count.current += 1
         return router(
-            Route("/", link({"id": "root"}, "Root", to="/a")),
-            Route("/a", link({"id": "a"}, "A", to="/b")),
-            Route("/b", link({"id": "b"}, "B", to="/c")),
-            Route("/c", link({"id": "c"}, "C", to="/default")),
+            Route("/", link("Root", to="/a", id="root")),
+            Route("/a", link("A", to="/b", id="a")),
+            Route("/b", link("B", to="/c", id="b")),
+            Route("/c", link("C", to="/default", id="c")),
             Route("/{path:path}", html.h1({"id": "default"}, "Default")),
         )
 
@@ -174,25 +166,18 @@ async def test_custom_path_compiler(display: DisplayFixture):
     def sample():
         return router(
             Route(
-                r"/first/(?P<first>\d+)",
+                r"/first/(?P<first__int>\d+)",
                 check_params(),
                 Route(
-                    r"/second/(?P<second>[\d\.]+)",
+                    r"/second/(?P<second__float>[\d\.]+)",
                     check_params(),
                     Route(
-                        r"/third/(?P<third>[\d,]+)",
+                        r"/third/(?P<third__list>[\d,]+)",
                         check_params(),
                     ),
                 ),
             ),
-            compiler=lambda path: RoutePattern(
-                re.compile(rf"^{path}$"),
-                {
-                    "first": int,
-                    "second": float,
-                    "third": lambda s: list(map(int, s.split(","))),
-                },
-            ),
+            compiler=compile_simple_regex_route,
         )
 
     await display.show(sample)
@@ -200,7 +185,10 @@ async def test_custom_path_compiler(display: DisplayFixture):
     for path, expected_params in [
         ("/first/1", {"first": 1}),
         ("/first/1/second/2.1", {"first": 1, "second": 2.1}),
-        ("/first/1/second/2.1/third/3,3", {"first": 1, "second": 2.1, "third": [3, 3]}),
+        (
+            "/first/1/second/2.1/third/3,3",
+            {"first": 1, "second": 2.1, "third": ["3", "3"]},
+        ),
     ]:
         await display.goto(path)
         await display.page.wait_for_selector("#success")
