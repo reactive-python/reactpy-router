@@ -4,17 +4,18 @@ import re
 from typing import Any
 
 from starlette.convertors import Convertor
-from starlette.routing import compile_path as _compile_starlette_path
+from starlette.routing import compile_path
 
 from idom_router.types import Route
+from idom_router.core import create_router
 
 
-def compile_starlette_route(route: Route) -> StarletteRoutePattern:
-    pattern, _, converters = _compile_starlette_path(route.path)
-    return StarletteRoutePattern(pattern, converters)
+def compile_starlette_route(route: Route) -> StarletteRouteResolver:
+    pattern, _, converters = compile_path(route.path)
+    return StarletteRouteResolver(pattern, converters)
 
 
-class StarletteRoutePattern:
+class StarletteRouteResolver:
     def __init__(
         self,
         pattern: re.Pattern[str],
@@ -32,3 +33,6 @@ class StarletteRoutePattern:
                 for k, v in match.groupdict().items()
             }
         return None
+
+
+starlette_router = create_router(compile_starlette_route)

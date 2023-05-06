@@ -19,19 +19,32 @@ from idom.core.types import VdomChild, VdomDict
 from idom.types import ComponentType, Context, Location
 from idom.web.module import export, module_from_file
 
-from idom_router.compilers import compile_starlette_route
-from idom_router.types import Route, RouteCompiler, RoutePattern
+from idom_router.types import Route, RouteCompiler, RouteResolver, Router
 
 R = TypeVar("R", bound=Route)
 
 
+def create_router(compiler: RouteCompiler[R]) -> Router[R]:
+    """A decorator that turns a route compiler into a router"""
+
+    def wrapper(*routes: R) -> ComponentType:
+        return router_component(*routes, compiler=compiler)
+
+    return wrapper
+
+
 @component
-def router(
+def router_component(
     *routes: R,
-    compiler: RouteCompiler[R] = compile_starlette_route,
+    compiler: RouteCompiler[R],
 ) -> ComponentType | None:
     old_conn = use_connection()
     location, set_location = use_state(old_conn.location)
+    router_state = use_context(_route_state_context)
+
+
+    if router_state is not None:
+        raise RuntimeError("Another router is already active in this context")
 
     # Memoize the compiled routes and the match separately so that we don't
     # recompile the routes on renders where only the location has changed
@@ -87,7 +100,7 @@ def use_query(
 
 def _compile_routes(
     routes: Sequence[R], compiler: RouteCompiler[R]
-) -> list[tuple[Any, RoutePattern]]:
+) -> list[tuple[Any, RouteResolver]]:
     return [(r, compiler(r)) for r in _iter_routes(routes)]
 
 
@@ -99,7 +112,7 @@ def _iter_routes(routes: Sequence[R]) -> Iterator[R]:
 
 
 def _match_route(
-    compiled_routes: list[tuple[R, RoutePattern]], location: Location
+    compiled_routes: list[tuple[R, RouteResolver]], location: Location
 ) -> tuple[R, dict[str, Any]] | None:
     for route, pattern in compiled_routes:
         params = pattern.match(location.pathname)

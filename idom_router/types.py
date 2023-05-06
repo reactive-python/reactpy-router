@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Sequence, TypeVar
 
-from idom.types import Key
+from idom.types import Key, ComponentType
 from typing_extensions import Protocol, Self
 
 
@@ -26,18 +26,25 @@ class Route:
         self.routes = (*routes_, *routes)
 
 
+class Router(Protocol):
+    def __call__(self, *routes: Route) -> ComponentType:
+        """Return a component that renders the first matching route"""
+
+
 R = TypeVar("R", bound=Route, contravariant=True)
 
 
 class RouteCompiler(Protocol[R]):
-    def __call__(self, route: R) -> RoutePattern:
-        """Compile a route into a pattern that can be matched against a path"""
+    def __call__(self, route: R) -> RouteResolver:
+        """Compile a route into a resolver that can be matched against a path"""
 
 
-class RoutePattern(Protocol):
+class RouteResolver(Protocol):
+    """A compiled route that can be matched against a path"""
+
     @property
     def key(self) -> Key:
-        """Uniquely identified this pattern"""
+        """Uniquely identified this resolver"""
 
-    def match(self, path: str) -> dict[str, Any] | None:
-        """Returns otherwise a dict of path parameters if the path matches, else None"""
+    def resolve(self, path: str) -> tuple[Any, dict[str, Any]] | None:
+        """Return the path's associated element and path params or None"""
