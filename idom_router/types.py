@@ -1,37 +1,31 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Sequence, TypeVar
 
-from idom.types import Key, ComponentType
+from idom.core.vdom import is_vdom
+from idom.types import ComponentType, Key
 from typing_extensions import Protocol, Self
 
 
-@dataclass
+@dataclass(frozen=True)
 class Route:
     path: str
-    element: Any
+    element: Any = field(hash=False)
     routes: Sequence[Self]
 
-    def __init__(
-        self,
-        path: str,
-        element: Any | None,
-        *routes_: Self,
-        # we need kwarg in order to play nice with the expected dataclass interface
-        routes: Sequence[Self] = (),
-    ) -> None:
-        self.path = path
-        self.element = element
-        self.routes = (*routes_, *routes)
-
-
-class Router(Protocol):
-    def __call__(self, *routes: Route) -> ComponentType:
-        """Return a component that renders the first matching route"""
+    def __hash__(self) -> int:
+        el = self.element
+        key = el["key"] if is_vdom(el) and "key" in el else getattr(el, "key", id(el))
+        return hash((self.path, key, self.routes))
 
 
 R = TypeVar("R", bound=Route, contravariant=True)
+
+
+class Router(Protocol[R]):
+    def __call__(self, *routes: R) -> ComponentType:
+        """Return a component that renders the first matching route"""
 
 
 class RouteCompiler(Protocol[R]):

@@ -19,9 +19,13 @@ from idom.core.types import VdomChild, VdomDict
 from idom.types import ComponentType, Context, Location
 from idom.web.module import export, module_from_file
 
-from idom_router.types import Route, RouteCompiler, RouteResolver, Router
+from idom_router.types import Route, RouteCompiler, Router, RouteResolver
 
 R = TypeVar("R", bound=Route)
+
+
+def route(path: str, element: Any | None, *routes: Route) -> Route:
+    return Route(path, element, routes)
 
 
 def create_router(compiler: RouteCompiler[R]) -> Router[R]:
@@ -40,25 +44,19 @@ def router_component(
 ) -> ComponentType | None:
     old_conn = use_connection()
     location, set_location = use_state(old_conn.location)
-    router_state = use_context(_route_state_context)
 
+    resolvers = use_memo(
+        lambda: tuple(map(compiler, _iter_routes(routes))),
+        dependencies=(compiler, hash(routes)),
+    )
 
-    if router_state is not None:
-        raise RuntimeError("Another router is already active in this context")
-
-    # Memoize the compiled routes and the match separately so that we don't
-    # recompile the routes on renders where only the location has changed
-    compiled_routes = use_memo(lambda: _compile_routes(routes, compiler))
-    match = use_memo(lambda: _match_route(compiled_routes, location))
+    match = use_memo(lambda: _match_route(resolvers, location))
 
     if match is not None:
-        route, params = match
+        element, params = match
         return ConnectionContext(
-            _route_state_context(
-                route.element, value=_RouteState(set_location, params)
-            ),
+            _route_state_context(element, value=_RouteState(set_location, params)),
             value=Connection(old_conn.scope, location, old_conn.carrier),
-            key=route.path,
         )
 
     return None
@@ -98,26 +96,20 @@ def use_query(
     )
 
 
-def _compile_routes(
-    routes: Sequence[R], compiler: RouteCompiler[R]
-) -> list[tuple[Any, RouteResolver]]:
-    return [(r, compiler(r)) for r in _iter_routes(routes)]
-
-
 def _iter_routes(routes: Sequence[R]) -> Iterator[R]:
     for parent in routes:
         for child in _iter_routes(parent.routes):
-            yield replace(child, path=parent.path + child.path)
+            yield replace(child, path=parent.path + child.path)  # type: ignore[misc]
         yield parent
 
 
 def _match_route(
-    compiled_routes: list[tuple[R, RouteResolver]], location: Location
-) -> tuple[R, dict[str, Any]] | None:
-    for route, pattern in compiled_routes:
-        params = pattern.match(location.pathname)
-        if params is not None:  # explicitely None check (could be empty dict)
-            return route, params
+    compiled_routes: Sequence[RouteResolver], location: Location
+) -> tuple[Any, dict[str, Any]] | None:
+    for resolver in compiled_routes:
+        match = resolver.resolve(location.pathname)
+        if match is not None:
+            return match
     return None
 
 

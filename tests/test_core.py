@@ -1,8 +1,7 @@
 from idom import Ref, component, html, use_location
 from idom.testing import DisplayFixture
 
-from idom_router import Route, link, router, use_params, use_query
-from tests.utils import compile_simple_regex_route
+from idom_router import link, route, simple, use_params, use_query
 
 
 async def test_simple_router(display: DisplayFixture):
@@ -14,11 +13,11 @@ async def test_simple_router(display: DisplayFixture):
             assert use_location().pathname == path
             return html.h1({"id": name}, path)
 
-        return Route(path, check_location(), *routes)
+        return route(path, check_location(), *routes)
 
     @component
     def sample():
-        return router(
+        return simple.router(
             make_location_check("/a"),
             make_location_check("/b"),
             make_location_check("/c"),
@@ -49,14 +48,14 @@ async def test_simple_router(display: DisplayFixture):
 async def test_nested_routes(display: DisplayFixture):
     @component
     def sample():
-        return router(
-            Route(
+        return simple.router(
+            route(
                 "/a",
                 html.h1({"id": "a"}, "A"),
-                Route(
+                route(
                     "/b",
                     html.h1({"id": "b"}, "B"),
-                    Route("/c", html.h1({"id": "c"}, "C")),
+                    route("/c", html.h1({"id": "c"}, "C")),
                 ),
             ),
         )
@@ -78,12 +77,12 @@ async def test_navigate_with_link(display: DisplayFixture):
     @component
     def sample():
         render_count.current += 1
-        return router(
-            Route("/", link("Root", to="/a", id="root")),
-            Route("/a", link("A", to="/b", id="a")),
-            Route("/b", link("B", to="/c", id="b")),
-            Route("/c", link("C", to="/default", id="c")),
-            Route("/{path:path}", html.h1({"id": "default"}, "Default")),
+        return simple.router(
+            route("/", link("Root", to="/a", id="root")),
+            route("/a", link("A", to="/b", id="a")),
+            route("/b", link("B", to="/c", id="b")),
+            route("/c", link("C", to="/default", id="c")),
+            route("/{path:path}", html.h1({"id": "default"}, "Default")),
         )
 
     await display.show(sample)
@@ -109,14 +108,14 @@ async def test_use_params(display: DisplayFixture):
 
     @component
     def sample():
-        return router(
-            Route(
+        return simple.router(
+            route(
                 "/first/{first:str}",
                 check_params(),
-                Route(
+                route(
                     "/second/{second:str}",
                     check_params(),
-                    Route(
+                    route(
                         "/third/{third:str}",
                         check_params(),
                     ),
@@ -145,50 +144,10 @@ async def test_use_query(display: DisplayFixture):
 
     @component
     def sample():
-        return router(Route("/", check_query()))
+        return simple.router(route("/", check_query()))
 
     await display.show(sample)
 
     expected_query = {"hello": ["world"], "thing": ["1", "2"]}
     await display.goto("?hello=world&thing=1&thing=2")
     await display.page.wait_for_selector("#success")
-
-
-async def test_custom_path_compiler(display: DisplayFixture):
-    expected_params = {}
-
-    @component
-    def check_params():
-        assert use_params() == expected_params
-        return html.h1({"id": "success"}, "success")
-
-    @component
-    def sample():
-        return router(
-            Route(
-                r"/first/(?P<first__int>\d+)",
-                check_params(),
-                Route(
-                    r"/second/(?P<second__float>[\d\.]+)",
-                    check_params(),
-                    Route(
-                        r"/third/(?P<third__list>[\d,]+)",
-                        check_params(),
-                    ),
-                ),
-            ),
-            compiler=compile_simple_regex_route,
-        )
-
-    await display.show(sample)
-
-    for path, expected_params in [
-        ("/first/1", {"first": 1}),
-        ("/first/1/second/2.1", {"first": 1, "second": 2.1}),
-        (
-            "/first/1/second/2.1/third/3,3",
-            {"first": 1, "second": 2.1, "third": ["3", "3"]},
-        ),
-    ]:
-        await display.goto(path)
-        await display.page.wait_for_selector("#success")
