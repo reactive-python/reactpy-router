@@ -34,6 +34,9 @@ class SimpleResolver:
 
 
 def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
+    if path == "*":
+        return re.compile(".*"), {}
+
     pattern = "^"
     last_match_end = 0
     converters: ConverterMapping = {}
