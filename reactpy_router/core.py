@@ -20,6 +20,7 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.types import VdomChild, VdomDict
 from reactpy.types import ComponentType, Context, Location
 from reactpy.web.module import export, module_from_file
+from reactpy import html
 
 from reactpy_router.types import Route, RouteCompiler, Router, RouteResolver
 
@@ -59,9 +60,12 @@ def router_component(
 
     if match is not None:
         element, params = match
-        return ConnectionContext(
-            _route_state_context(element, value=_RouteState(set_location, params)),
-            value=Connection(old_conn.scope, location, old_conn.carrier),
+        return html._(
+            ConnectionContext(
+                _route_state_context(element, value=_RouteState(set_location, params)),
+                value=Connection(old_conn.scope, location, old_conn.carrier),
+            ),
+            _history({"on_change": lambda event: set_location(Location(**event))}),
         )
 
     return None
@@ -119,9 +123,9 @@ def _match_route(
     return None
 
 
-_link = export(
+_link, _history = export(
     module_from_file("reactpy-router", file=Path(__file__).parent / "bundle.js"),
-    "Link",
+    ("Link", "History"),
 )
 
 
