@@ -71,7 +71,7 @@ with open(os.path.join(package_dir, "__init__.py")) as init_file:
             package["version"] = eval(line.split("=", 1)[1])
             break
     else:
-        print("No version found in %s/__init__.py" % package_dir)
+        print("No version found in %s/__init__.py" % package_dir)  # noqa: T201
         sys.exit(1)
 
 

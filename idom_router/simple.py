@@ -24,8 +24,6 @@ class SimpleResolver:
         self.key = self.pattern.pattern
 
     def resolve(self, path: str) -> tuple[Any, dict[str, Any]] | None:
-        print(path)
-        print(self.key)
         match = self.pattern.match(path)
         if match:
             return (
