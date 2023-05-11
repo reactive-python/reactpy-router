@@ -1,6 +1,6 @@
 # --- JAVASCRIPT BUNDLES ---
 
-idom_router/bundle.js
+reactpy_router/bundle.js
 
 # --- PYTHON IGNORE FILES ----
 

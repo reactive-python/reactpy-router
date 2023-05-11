@@ -1,5 +1,5 @@
 black
 flake8
 flake8-print
-flake8_idom_hooks
+reactpy-flake8
 isort

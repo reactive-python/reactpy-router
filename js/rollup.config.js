@@ -5,7 +5,7 @@ import replace from "rollup-plugin-replace";
 export default {
   input: "src/index.js",
   output: {
-    file: "../idom_router/bundle.js",
+    file: "../reactpy_router/bundle.js",
     format: "esm",
   },
   plugins: [

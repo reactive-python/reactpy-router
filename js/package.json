@@ -1,10 +1,10 @@
 {
-  "name": "idom-router",
-  "description": "A URL router for IDOM",
+  "name": "reactpy-router",
+  "description": "A URL router for ReactPy",
   "author": "Ryan Morshead",
   "repository": {
     "type": "git",
-    "url": "https://github.com/idom-team/idom-router"
+    "url": "https://github.com/reactive-python/reactpy-router"
   },
   "main": "src/index.js",
   "files": [

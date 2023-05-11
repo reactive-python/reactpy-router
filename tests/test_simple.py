@@ -3,7 +3,7 @@ import uuid
 
 import pytest
 
-from idom_router.simple import parse_path
+from reactpy_router.simple import parse_path
 
 
 def test_parse_path():

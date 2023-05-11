@@ -1,13 +1,13 @@
-# idom-router
+# reactpy-router
 
-A URL router for IDOM
+A URL router for ReactPy
 
 # Package Installation
 
 Requires [Node](https://nodejs.org/en/) to be installed:
 
 ```bash
-npm install --save idom-router
+npm install --save reactpy-router
 ```
 
 For a developer installation, `cd` into this directory and run:
@@ -18,5 +18,5 @@ npm run build
 ```
 
 This will install required dependencies and generate a Javascript bundle that is saved
-to `idom-router/bundle.js`` and is distributed with the
+to `reactpy-router/bundle.js`` and is distributed with the
 associated Python package.

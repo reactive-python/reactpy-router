@@ -31,7 +31,7 @@ def test_style(session: Session) -> None:
 @session
 def test_types(session: Session) -> None:
     install_requirements(session, "check-types")
-    session.run("mypy", "--strict", "idom_router")
+    session.run("mypy", "--strict", "reactpy_router")
 
 
 @session
@@ -46,7 +46,7 @@ def test_suite(session: Session) -> None:
         session.log("Coverage won't be checked")
         session.install(".")
     else:
-        posargs += ["--cov=idom_router", "--cov-report=term"]
+        posargs += ["--cov=reactpy_router", "--cov-report=term"]
         session.install("-e", ".")
 
     session.run("pytest", "tests", *posargs)
