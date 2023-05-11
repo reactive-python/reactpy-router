@@ -1,7 +1,7 @@
-from idom import Ref, component, html, use_location
-from idom.testing import DisplayFixture
+from reactpy import Ref, component, html, use_location
+from reactpy.testing import DisplayFixture
 
-from idom_router import link, route, simple, use_params, use_query
+from reactpy_router import link, route, simple, use_params, use_query
 
 
 async def test_simple_router(display: DisplayFixture):

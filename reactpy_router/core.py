@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Callable, Iterator, Sequence, TypeVar
 from urllib.parse import parse_qs
 
-from idom import (
+from reactpy import (
     component,
     create_context,
     use_context,
@@ -13,13 +13,13 @@ from idom import (
     use_memo,
     use_state,
 )
-from idom.backend.hooks import ConnectionContext, use_connection
-from idom.backend.types import Connection, Location
-from idom.core.types import VdomChild, VdomDict
-from idom.types import ComponentType, Context, Location
-from idom.web.module import export, module_from_file
+from reactpy.backend.hooks import ConnectionContext, use_connection
+from reactpy.backend.types import Connection, Location
+from reactpy.core.types import VdomChild, VdomDict
+from reactpy.types import ComponentType, Context, Location
+from reactpy.web.module import export, module_from_file
 
-from idom_router.types import Route, RouteCompiler, Router, RouteResolver
+from reactpy_router.types import Route, RouteCompiler, Router, RouteResolver
 
 R = TypeVar("R", bound=Route)
 
@@ -114,7 +114,7 @@ def _match_route(
 
 
 _link = export(
-    module_from_file("idom-router", file=Path(__file__).parent / "bundle.js"),
+    module_from_file("reactpy-router", file=Path(__file__).parent / "bundle.js"),
     "Link",
 )
 

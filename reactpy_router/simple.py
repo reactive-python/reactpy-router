@@ -6,8 +6,8 @@ from typing import Any, Callable
 
 from typing_extensions import TypeAlias, TypedDict
 
-from idom_router.core import create_router
-from idom_router.types import Route
+from reactpy_router.core import create_router
+from reactpy_router.types import Route
 
 __all__ = ["router"]
 

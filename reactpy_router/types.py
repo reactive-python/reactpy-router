@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Sequence, TypeVar
 
-from idom.core.vdom import is_vdom
-from idom.types import ComponentType, Key
+from reactpy.core.vdom import is_vdom
+from reactpy.types import ComponentType, Key
 from typing_extensions import Protocol, Self
 
 

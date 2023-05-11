@@ -10,7 +10,7 @@ from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
 
 # the name of the project
-name = "idom_router"
+name = "reactpy_router"
 
 # basic paths used to gather files
 here = os.path.abspath(os.path.dirname(__file__))
@@ -26,12 +26,12 @@ package = {
     "name": name,
     "python_requires": ">=3.7",
     "packages": find_packages(exclude=["tests*"]),
-    "description": "A URL router for IDOM",
+    "description": "A URL router for ReactPy",
     "author": "Ryan Morshead",
     "author_email": "ryan.morshead@gmail.com",
-    "url": "https://github.com/idom-team/idom-router",
+    "url": "https://github.com/reactive-python/reactpy-router",
     "platforms": "Linux, Mac OS X, Windows",
-    "keywords": ["idom", "components"],
+    "keywords": ["reactpy", "components"],
     "include_package_data": True,
     "zip_safe": False,
     "classifiers": [

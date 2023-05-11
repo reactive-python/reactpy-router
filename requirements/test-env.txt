@@ -2,4 +2,4 @@ twine
 pytest
 pytest-asyncio
 pytest-cov
-idom[testing,starlette]
+reactpy[testing,starlette]
