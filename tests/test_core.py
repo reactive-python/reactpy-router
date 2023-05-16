@@ -82,7 +82,7 @@ async def test_navigate_with_link(display: DisplayFixture):
             route("/a", link("A", to="/b", id="a")),
             route("/b", link("B", to="/c", id="b")),
             route("/c", link("C", to="/default", id="c")),
-            route("/{path:path}", html.h1({"id": "default"}, "Default")),
+            route("*", html.h1({"id": "default"}, "Default")),
         )
 
     await display.show(sample)
@@ -161,7 +161,7 @@ async def test_browser_popstate(display: DisplayFixture):
             route("/a", link("A", to="/b", id="a")),
             route("/b", link("B", to="/c", id="b")),
             route("/c", link("C", to="/default", id="c")),
-            route("/{path:path}", html.h1({"id": "default"}, "Default")),
+            route("*", html.h1({"id": "default"}, "Default")),
         )
 
     await display.show(sample)
