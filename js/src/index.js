@@ -1,23 +1,23 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import htm from "htm";
 
-import { createPath } from "history";
-
 const html = htm.bind(React.createElement);
 
-export function bind(node, config) {
+export function bind(node) {
   return {
     create: (type, props, children) =>
       React.createElement(type, props, ...children),
-    render: (element) => ReactDOM.render(element, node),
+    render: (element) => {
+      ReactDOM.render(element, node);
+    },
     unmount: () => ReactDOM.unmountComponentAtNode(node),
   };
 }
 
 export function History({ onChange }) {
   // capture changes to the browser's history
-  useEffect(() => {
+  React.useEffect(() => {
     const listener = () => {
       onChange({
         pathname: window.location.pathname,

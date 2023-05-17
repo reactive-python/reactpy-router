@@ -30,6 +30,7 @@ def test(session: Session) -> None:
     session.notify("test_style")
     session.notify("test_types")
     session.notify("test_suite")
+    session.notify("test_javascript")
 
 
 @session
@@ -62,6 +63,13 @@ def test_suite(session: Session) -> None:
         session.install("-e", ".")
 
     session.run("pytest", "tests", *posargs)
+
+
+@session
+def test_javascript(session: Session) -> None:
+    session.chdir(ROOT / "js")
+    session.run("npm", "install", external=True)
+    session.run("npm", "run", "check")
 
 
 def setup_docs(session: Session) -> None:
