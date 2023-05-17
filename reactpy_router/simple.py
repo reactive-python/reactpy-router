@@ -16,8 +16,8 @@ __all__ = ["router"]
 ConversionFunc: TypeAlias = "Callable[[str], Any]"
 ConverterMapping: TypeAlias = "dict[str, ConversionFunc]"
 
-PARAM_REGEX = re.compile(r"{(?P<name>\w+)(?P<type>:\w+)?}")
-"""Regex for matching path params"""
+STAR_PATTERN = re.compile("^.*$")
+PARAM_PATTERN = re.compile(r"{(?P<name>\w+)(?P<type>:\w+)?}")
 
 
 class SimpleResolver:
@@ -39,14 +39,13 @@ class SimpleResolver:
 
 
 def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
-    """Parse a path into a regex pattern and a mapping of converters"""
     if path == "*":
-        return re.compile(".*"), {}
+        return STAR_PATTERN, {}
 
     pattern = "^"
     last_match_end = 0
     converters: ConverterMapping = {}
-    for match in PARAM_REGEX.finditer(path):
+    for match in PARAM_PATTERN.finditer(path):
         param_name = match.group("name")
         param_type = (match.group("type") or "str").lstrip(":")
         try:

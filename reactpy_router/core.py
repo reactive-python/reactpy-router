@@ -10,6 +10,7 @@ from urllib.parse import parse_qs
 from reactpy import (
     component,
     create_context,
+    html,
     use_context,
     use_location,
     use_memo,
@@ -20,7 +21,6 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.types import VdomChild, VdomDict
 from reactpy.types import ComponentType, Context, Location
 from reactpy.web.module import export, module_from_file
-from reactpy import html
 
 from reactpy_router.types import Route, RouteCompiler, Router, RouteResolver
 
@@ -45,7 +45,7 @@ def create_router(compiler: RouteCompiler[R]) -> Router[R]:
 def router_component(
     *routes: R,
     compiler: RouteCompiler[R],
-) -> ComponentType | None:
+) -> VdomDict | None:
     """A component that renders the first matching route using the given compiler"""
 
     old_conn = use_connection()

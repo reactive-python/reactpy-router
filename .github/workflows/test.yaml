@@ -20,7 +20,7 @@ jobs:
       - name: Install Python Dependencies
         run: pip install -r requirements/nox-deps.txt
       - name: Run Tests
-        run: nox -s test
+        run: nox -t test
 
   environments:
     runs-on: ubuntu-latest
@@ -36,4 +36,4 @@ jobs:
       - name: Install Python Dependencies
         run: pip install -r requirements/nox-deps.txt
       - name: Run Tests
-        run: nox -s test -- --no-cov
+        run: nox -t test -- --no-cov
