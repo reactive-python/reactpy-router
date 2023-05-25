@@ -1,0 +1,55 @@
+site_name: ReactPy Router
+docs_dir: src
+repo_url: https://github.com/reactive-python/reactpy-router
+
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Tutorials:
+    - Simple Application: tutorials/simple-app.md
+    - Custom Router: tutorials/custom-router.md
+  - Reference: reference.md
+  - Contributing: contributing.md
+  - Source Code: https://github.com/reactive-python/reactpy-router
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+      primary: black
+      accent: light-blue
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+      primary: black
+      accent: light-blue
+
+
+plugins:
+- search
+- mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        paths: ["../"]
+        import:
+        - https://reactpy.dev/docs/objects.inv
+        - https://installer.readthedocs.io/en/stable/objects.inv
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+watch:
+  - "../reactpy_router"
+

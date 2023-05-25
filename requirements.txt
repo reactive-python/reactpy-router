@@ -1,3 +1,4 @@
+-r requirements/build-docs.txt
 -r requirements/check-style.txt
 -r requirements/check-types.txt
 -r requirements/nox-deps.txt

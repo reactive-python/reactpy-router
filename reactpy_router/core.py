@@ -1,3 +1,5 @@
+"""Core functionality for the reactpy-router package."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
@@ -25,6 +27,7 @@ R = TypeVar("R", bound=Route)
 
 
 def route(path: str, element: Any | None, *routes: Route) -> Route:
+    """Create a route with the given path, element, and child routes"""
     return Route(path, element, routes)
 
 
@@ -42,6 +45,8 @@ def router_component(
     *routes: R,
     compiler: RouteCompiler[R],
 ) -> ComponentType | None:
+    """A component that renders the first matching route using the given compiler"""
+
     old_conn = use_connection()
     location, set_location = use_state(old_conn.location)
 
@@ -64,6 +69,7 @@ def router_component(
 
 @component
 def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
+    """A component that renders a link to the given path"""
     set_location = _use_route_state().set_location
     attrs = {
         **attributes,
