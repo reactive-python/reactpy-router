@@ -1,3 +1,7 @@
+# --- DOCS ---
+
+docs/site
+
 # --- JAVASCRIPT BUNDLES ---
 
 reactpy_router/bundle.js

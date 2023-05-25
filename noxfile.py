@@ -14,6 +14,18 @@ def format(session: Session) -> None:
 
 
 @session
+def docs(session: Session) -> None:
+    setup_docs(session)
+    session.run("mkdocs", "serve")
+
+
+@session
+def docs_build(session: Session) -> None:
+    setup_docs(session)
+    session.run("mkdocs", "build")
+
+
+@session
 def test(session: Session) -> None:
     session.notify("test_style")
     session.notify("test_types")
@@ -50,6 +62,12 @@ def test_suite(session: Session) -> None:
         session.install("-e", ".")
 
     session.run("pytest", "tests", *posargs)
+
+
+def setup_docs(session: Session) -> None:
+    install_requirements(session, "build-docs")
+    session.install("-e", ".")
+    session.chdir("docs")
 
 
 def install_requirements(session: Session, name: str) -> None:

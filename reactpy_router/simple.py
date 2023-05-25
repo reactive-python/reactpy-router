@@ -1,3 +1,5 @@
+"""A simple router implementation for ReactPy"""
+
 from __future__ import annotations
 
 import re
@@ -15,9 +17,12 @@ ConversionFunc: TypeAlias = "Callable[[str], Any]"
 ConverterMapping: TypeAlias = "dict[str, ConversionFunc]"
 
 PARAM_REGEX = re.compile(r"{(?P<name>\w+)(?P<type>:\w+)?}")
+"""Regex for matching path params"""
 
 
 class SimpleResolver:
+    """A simple route resolver that uses regex to match paths"""
+
     def __init__(self, route: Route) -> None:
         self.element = route.element
         self.pattern, self.converters = parse_path(route.path)
@@ -34,6 +39,10 @@ class SimpleResolver:
 
 
 def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
+    """Parse a path into a regex pattern and a mapping of converters"""
+    if path == "*":
+        return re.compile(".*"), {}
+
     pattern = "^"
     last_match_end = 0
     converters: ConverterMapping = {}
@@ -53,8 +62,12 @@ def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
 
 
 class ConversionInfo(TypedDict):
+    """Information about a conversion type"""
+
     regex: str
+    """The regex to match the conversion type"""
     func: ConversionFunc
+    """The function to convert the matched string to the expected type"""
 
 
 CONVERSION_TYPES: dict[str, ConversionInfo] = {
@@ -79,6 +92,8 @@ CONVERSION_TYPES: dict[str, ConversionInfo] = {
         "func": str,
     },
 }
+"""The supported conversion types"""
 
 
 router = create_router(SimpleResolver)
+"""The simple router"""

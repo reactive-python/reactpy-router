@@ -1,3 +1,5 @@
+"""Types for reactpy_router"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -10,9 +12,16 @@ from typing_extensions import Protocol, Self
 
 @dataclass(frozen=True)
 class Route:
+    """A route that can be matched against a path"""
+
     path: str
+    """The path to match against"""
+
     element: Any = field(hash=False)
+    """The element to render if the path matches"""
+
     routes: Sequence[Self]
+    """Child routes"""
 
     def __hash__(self) -> int:
         el = self.element
@@ -24,13 +33,17 @@ R = TypeVar("R", bound=Route, contravariant=True)
 
 
 class Router(Protocol[R]):
+    """Return a component that renders the first matching route"""
+
     def __call__(self, *routes: R) -> ComponentType:
-        """Return a component that renders the first matching route"""
+        ...
 
 
 class RouteCompiler(Protocol[R]):
+    """Compile a route into a resolver that can be matched against a path"""
+
     def __call__(self, route: R) -> RouteResolver:
-        """Compile a route into a resolver that can be matched against a path"""
+        ...
 
 
 class RouteResolver(Protocol):

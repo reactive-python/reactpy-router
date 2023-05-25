@@ -48,3 +48,7 @@ def test_parse_path_re_escape():
         re.compile(r"^/a/(?P<b>\d+)/c\.d$"),
         {"b": int},
     )
+
+
+def test_match_any_path():
+    assert parse_path("*") == (re.compile(".*"), {})
