@@ -10,6 +10,7 @@ from urllib.parse import parse_qs
 from reactpy import (
     component,
     create_context,
+    html,
     use_context,
     use_location,
     use_memo,
@@ -44,7 +45,7 @@ def create_router(compiler: RouteCompiler[R]) -> Router[R]:
 def router_component(
     *routes: R,
     compiler: RouteCompiler[R],
-) -> ComponentType | None:
+) -> VdomDict | None:
     """A component that renders the first matching route using the given compiler"""
 
     old_conn = use_connection()
@@ -59,9 +60,12 @@ def router_component(
 
     if match is not None:
         element, params = match
-        return ConnectionContext(
-            _route_state_context(element, value=_RouteState(set_location, params)),
-            value=Connection(old_conn.scope, location, old_conn.carrier),
+        return html._(
+            ConnectionContext(
+                _route_state_context(element, value=_RouteState(set_location, params)),
+                value=Connection(old_conn.scope, location, old_conn.carrier),
+            ),
+            _history({"on_change": lambda event: set_location(Location(**event))}),
         )
 
     return None
@@ -119,9 +123,9 @@ def _match_route(
     return None
 
 
-_link = export(
+_link, _history = export(
     module_from_file("reactpy-router", file=Path(__file__).parent / "bundle.js"),
-    "Link",
+    ("Link", "History"),
 )
 
 

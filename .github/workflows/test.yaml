@@ -1,4 +1,4 @@
-name: Test
+name: test
 
 on:
   push:
@@ -20,13 +20,13 @@ jobs:
       - name: Install Python Dependencies
         run: pip install -r requirements/nox-deps.txt
       - name: Run Tests
-        run: nox -s test
+        run: nox -t test
 
   environments:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10", "3.11"]
     steps:
       - uses: actions/checkout@v2
       - name: Use Python ${{ matrix.python-version }}
@@ -36,4 +36,4 @@ jobs:
       - name: Install Python Dependencies
         run: pip install -r requirements/nox-deps.txt
       - name: Run Tests
-        run: nox -s test -- --no-cov
+        run: nox -t test -- --no-cov

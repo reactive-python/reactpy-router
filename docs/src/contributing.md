@@ -43,13 +43,13 @@ automate testing and other development tasks.
 ## Running the Tests
 
 ```bash
-nox -s test
+nox -t test
 ```
 
 You can run the tests with a headed browser.
 
 ```bash
-nox -s test -- --headed
+nox -t test -- --headed
 ```
 
 ## Releasing This Package

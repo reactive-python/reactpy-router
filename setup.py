@@ -24,7 +24,7 @@ package_dir = os.path.join(here, name)
 
 package = {
     "name": name,
-    "python_requires": ">=3.7",
+    "python_requires": ">=3.9",
     "packages": find_packages(exclude=["tests*"]),
     "description": "A URL router for ReactPy",
     "author": "Ryan Morshead",

@@ -8,7 +8,7 @@ REQUIREMENTS_DIR = ROOT / "requirements"
 
 @session
 def format(session: Session) -> None:
-    install_requirements(session, "style")
+    install_requirements(session, "check-style")
     session.run("black", ".")
     session.run("isort", ".")
 
@@ -25,14 +25,7 @@ def docs_build(session: Session) -> None:
     session.run("mkdocs", "build")
 
 
-@session
-def test(session: Session) -> None:
-    session.notify("test_style")
-    session.notify("test_types")
-    session.notify("test_suite")
-
-
-@session
+@session(tags=["test"])
 def test_style(session: Session) -> None:
     install_requirements(session, "check-style")
     session.run("black", "--check", ".")
@@ -40,13 +33,13 @@ def test_style(session: Session) -> None:
     session.run("flake8", ".")
 
 
-@session
+@session(tags=["test"])
 def test_types(session: Session) -> None:
     install_requirements(session, "check-types")
     session.run("mypy", "--strict", "reactpy_router")
 
 
-@session
+@session(tags=["test"])
 def test_suite(session: Session) -> None:
     install_requirements(session, "test-env")
     session.run("playwright", "install", "chromium")
@@ -62,6 +55,13 @@ def test_suite(session: Session) -> None:
         session.install("-e", ".")
 
     session.run("pytest", "tests", *posargs)
+
+
+@session(tags=["test"])
+def test_javascript(session: Session) -> None:
+    session.chdir(ROOT / "js")
+    session.run("npm", "install", external=True)
+    session.run("npm", "run", "check")
 
 
 def setup_docs(session: Session) -> None:

@@ -82,7 +82,7 @@ async def test_navigate_with_link(display: DisplayFixture):
             route("/a", link("A", to="/b", id="a")),
             route("/b", link("B", to="/c", id="b")),
             route("/c", link("C", to="/default", id="c")),
-            route("/{path:path}", html.h1({"id": "default"}, "Default")),
+            route("*", html.h1({"id": "default"}, "Default")),
         )
 
     await display.show(sample)
@@ -151,3 +151,35 @@ async def test_use_query(display: DisplayFixture):
     expected_query = {"hello": ["world"], "thing": ["1", "2"]}
     await display.goto("?hello=world&thing=1&thing=2")
     await display.page.wait_for_selector("#success")
+
+
+async def test_browser_popstate(display: DisplayFixture):
+    @component
+    def sample():
+        return simple.router(
+            route("/", link("Root", to="/a", id="root")),
+            route("/a", link("A", to="/b", id="a")),
+            route("/b", link("B", to="/c", id="b")),
+            route("/c", link("C", to="/default", id="c")),
+            route("*", html.h1({"id": "default"}, "Default")),
+        )
+
+    await display.show(sample)
+
+    for link_selector in ["#root", "#a", "#b", "#c"]:
+        lnk = await display.page.wait_for_selector(link_selector)
+        await lnk.click()
+
+    await display.page.wait_for_selector("#default")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#c")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#b")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#a")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#root")
