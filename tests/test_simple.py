@@ -51,4 +51,4 @@ def test_parse_path_re_escape():
 
 
 def test_match_star_path():
-    assert parse_path("*") == (re.compile(".*"), {})
+    assert parse_path("*") == (re.compile("^.*$"), {})
