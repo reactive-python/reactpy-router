@@ -108,8 +108,6 @@ def root():
         ),
         route("/about", html.h1("About Page 📖")),
     )
-
-run(root)
 ```
 
 ## Hooks
