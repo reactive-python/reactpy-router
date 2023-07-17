@@ -92,17 +92,24 @@ This will allow ReactPy to handle the transition between routes more quickly by 
 the cost of a full page load.
 
 ```python
-from reactpy import component, html, run
-from reactpy_router import link, route, simple, use_location
+from reactpy import component, html, run, use_location
+from reactpy_router import link, route, simple
 
 @component
 def root():
-    location = use_location()
+    use_location()
     return simple.router(
-        route("/", html.h1("Home Page 🏠")),
+        route(
+            "/",
+            html.div(
+                html.h1("Home Page 🏠"),
+                link(html.button("About"), to="/about"),
+            ),
+        ),
         route("/about", html.h1("About Page 📖")),
-        link("/about", html.button("About")),
     )
+
+run(root)
 ```
 
 ## Hooks
@@ -127,10 +134,16 @@ from reactpy_router import link, route, simple, use_query
 
 @component
 def root():
+    use_location()
     return simple.router(
-        route("/", html.h1("Home Page 🏠")),
-        route("/search", search()),
-        link("Search", to="/search?q=reactpy"),
+        route(
+            "/",
+            html.div(
+                html.h1("Home Page 🏠"),
+                link("Search", to="/search?q=reactpy"),
+            ),
+        ),
+        route("/about", html.h1("About Page 📖")),
     )
 
 @component
@@ -152,9 +165,14 @@ from reactpy_router import link, route, simple, use_params
 @component
 def root():
     return simple.router(
-        route("/", html.h1("Home Page 🏠")),
+        route(
+            "/",
+            html.div(
+                html.h1("Home Page 🏠"),
+                link("User 123", to="/user/123"),
+            ),
+        ),
         route("/user/{id:int}", user()),
-        link("User 123", to="/user/123"),
     )
 
 @component
