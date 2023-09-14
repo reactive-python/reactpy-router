@@ -183,3 +183,43 @@ async def test_browser_popstate(display: DisplayFixture):
 
     await display.page.go_back()
     await display.page.wait_for_selector("#root")
+
+
+async def test_relative_links(display: DisplayFixture):
+    @component
+    def sample():
+        return simple.router(
+            route("/", link("Root", to="/a", id="root")),
+            route("/a", link("A", to="/a/b", id="a")),
+            route("/a/b", link("B", to="../a/b/c", id="b")),
+            route("/a/b/c", link("C", to="../d", id="c")),
+            route("/a/d", link("D", to="e", id="d")),
+            route("/a/e", link("E", to="../default", id="e")),
+            route("*", html.h1({"id": "default"}, "Default")),
+        )
+
+    await display.show(sample)
+
+    for link_selector in ["#root", "#a", "#b", "#c", "#d", "#e"]:
+        lnk = await display.page.wait_for_selector(link_selector)
+        await lnk.click()
+
+    await display.page.wait_for_selector("#default")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#e")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#d")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#c")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#b")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#a")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#root")

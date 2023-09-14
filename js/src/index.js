@@ -33,7 +33,7 @@ export function History({ onChange }) {
 export function Link({ to, onClick, children, ...props }) {
   const handleClick = (event) => {
     event.preventDefault();
-    window.history.pushState({}, to, window.location.origin + to);
+    window.history.pushState({}, to, new URL(to, window.location));
     onClick({
       pathname: window.location.pathname,
       search: window.location.search,
