@@ -18,16 +18,14 @@ If you plan to make code changes to this repository, you will need to install th
 Once done, you should clone this repository:
 
 ```bash linenums="0"
-git clone https://github.com/reactive-python/reactpy-django.git
+git clone https://github.com/reactive-python/reactpy-router.git
 cd reactpy-router
 ```
 
-Then, by running the command below you can install the dependencies needed to run the ReactPy-Django development environment.
-
-<!-- TODO: Remove `-e .` -->
+Then, by running the command below you can install the dependencies needed to run the ReactPy-Router development environment.
 
 ```bash linenums="0"
-pip install -e . -r requirements.txt --upgrade --verbose
+pip install -r requirements.txt --upgrade --verbose
 ```
 
 ## Running the full test suite
