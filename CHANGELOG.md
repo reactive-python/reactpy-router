@@ -40,25 +40,27 @@ Using the following categories, list your changes in this order:
 
 ### Fixed
 
--   Fixed relative navigation
+-   Fixed relative navigation.
 
 ## [0.1.0] - 2023-06-16
 
 ### Added
 
--   Automatically handle client-side history changes
+-   Automatically handle client-side history changes.
 
 ## [0.0.1] - 2023-05-10
 
 ### Added
 
--   Add robust lint/testing + upgrade `reactpy` + more robust routing with Starlette
--   Initial draft of router compiler
+-   Add robust lint/testing.
+-   Upgrade `reactpy`.
+-   More robust routing with `starlette`.
+-   Initial draft of router compiler.
 
 ### Changed
 
--   Rename `configure` to `create_router`
--   Rename from `idom-router` to `reactpy-router`
+-   Rename `configure` to `create_router`.
+-   Rename from `idom-router` to `reactpy-router`.
 
 [Unreleased]: https://github.com/reactive-python/reactpy-router/compare/0.1.1...HEAD
 [0.1.1]: https://github.com/reactive-python/reactpy-router/compare/0.1.0...0.1.1
