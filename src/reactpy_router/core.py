@@ -19,7 +19,7 @@ from reactpy import (
 from reactpy.backend.hooks import ConnectionContext, use_connection
 from reactpy.backend.types import Connection, Location
 from reactpy.core.types import VdomChild, VdomDict
-from reactpy.types import ComponentType, Context, Location
+from reactpy.types import ComponentType, Context
 from reactpy.web.module import export, module_from_file
 
 from reactpy_router.types import Route, RouteCompiler, Router, RouteResolver

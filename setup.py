@@ -25,7 +25,7 @@ package_dir = src_dir / name
 package = {
     "name": name,
     "python_requires": ">=3.9",
-    "packages": find_namespace_packages(str(src_dir)),
+    "packages": find_namespace_packages(package_dir),
     "description": "A URL router for ReactPy.",
     "author": "Ryan Morshead",
     "author_email": "ryan.morshead@gmail.com",

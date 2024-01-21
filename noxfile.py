@@ -27,7 +27,7 @@ def test_suite(session: Session) -> None:
 def test_types(session: Session) -> None:
     install_requirements_file(session, "check-types")
     install_requirements_file(session, "pkg-deps")
-    session.run("mypy", "--show-error-codes", "src/reactpy_router", "tests/test_app")
+    session.run("mypy", "--show-error-codes", "src/reactpy_router", "tests")
 
 
 @session(tags=["test"])
@@ -45,6 +45,7 @@ def test_javascript(session: Session) -> None:
 
 
 def install_requirements_file(session: Session, name: str) -> None:
+    session.install("--upgrade", "pip", "setuptools", "wheel")
     file_path = ROOT_DIR / "requirements" / f"{name}.txt"
     assert file_path.exists(), f"requirements file {file_path} does not exist"
     session.install("-r", str(file_path))
