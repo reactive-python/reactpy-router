@@ -87,6 +87,10 @@ plugins:
           known_words: dictionary.txt
           allow_unicode: no
           ignore_code: yes
+          skip_files:
+            - "index.md"
+            - "reference\\core.md"
+            - "reference\\types.md"
     - mkdocstrings:
           default_handler: python
           handlers:
