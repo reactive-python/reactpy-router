@@ -121,8 +121,10 @@ extra_css:
 
 watch:
     - "../docs"
-    - "../reactpy_router"
-    - "../CHANGELOG.md"
+    - ../README.md
+    - ../CHANGELOG.md
+    - ../LICENSE.md
+    - "../src"
 
 site_name: ReactPy Router
 site_author: Archmonger
