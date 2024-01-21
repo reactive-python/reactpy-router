@@ -90,7 +90,9 @@ plugins:
           skip_files:
             - "index.md"
             - "reference\\core.md"
+            - "reference/core.md"
             - "reference\\types.md"
+            - "reference/types.md"
     - mkdocstrings:
           default_handler: python
           handlers:
