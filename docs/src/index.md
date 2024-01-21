@@ -1,4 +1,11 @@
-<script>
-// We don't have a homepage, so redirect to the first page in the docs.
-window.location.href = document.querySelector(".md-tabs__item a").href;
-</script>
+## Install from PyPI
+
+Run the following command to install [`reactpy-router`](https://pypi.org/project/reactpy-router/) in your Python environment.
+
+```bash linenums="0"
+pip install reactpy-router
+```
+
+## Done!
+
+You're now ready to start building your own ReactPy applications with URL routing.
