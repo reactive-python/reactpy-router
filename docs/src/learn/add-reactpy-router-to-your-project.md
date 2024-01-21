@@ -8,4 +8,4 @@ pip install reactpy-router
 
 ## Done!
 
-You're now ready to start building your own ReactPy applications with routing.
+You're now ready to start building your own ReactPy applications with URL routing.
