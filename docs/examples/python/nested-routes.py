@@ -66,7 +66,6 @@ def all_messages():
 
 @component
 def messages_with(*names):
-    names = set(names)
     messages = [msg for msg in message_data if set(msg["with"]) == names]
     return html.div(
         html.h1(f"Messages with {', '.join(names)} 💬"),
