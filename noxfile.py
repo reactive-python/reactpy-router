@@ -31,6 +31,7 @@ def test_style(session: Session) -> None:
 
 @session(tags=["test"])
 def test_javascript(session: Session) -> None:
+    install_requirements_file(session, "test-env")
     session.chdir(ROOT_DIR / "src" / "js")
     session.run("python", "-m", "nodejs.npm", "install", external=True)
     session.run("python", "-m", "nodejs.npm", "run", "check")
