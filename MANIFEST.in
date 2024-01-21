@@ -1,2 +1,2 @@
-include reactpy_router/bundle.js
-include reactpy_router/py.typed
+include src/reactpy_router/bundle.js
+include src/reactpy_router/py.typed

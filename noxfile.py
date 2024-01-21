@@ -6,20 +6,12 @@ ROOT_DIR = Path(__file__).parent
 
 
 @session(tags=["test"])
-def test_suite(session: Session) -> None:
+def test_python(session: Session) -> None:
     install_requirements_file(session, "test-env")
+    session.install(".[all]")
     session.run("playwright", "install", "chromium")
 
     posargs = session.posargs[:]
-
-    if "--no-cov" in session.posargs:
-        posargs.remove("--no-cov")
-        session.log("Coverage won't be checked")
-        session.install(".")
-    else:
-        posargs += ["--cov=reactpy_router", "--cov-report=term"]
-        session.install("-e", ".")
-
     session.run("pytest", "tests", *posargs)
 
 
