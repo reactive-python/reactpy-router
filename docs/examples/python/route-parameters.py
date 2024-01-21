@@ -1,9 +1,10 @@
-from reactpy import component, html, run
+from typing import TypedDict
 
+from reactpy import component, html, run
 from reactpy_router import link, route, simple
 from reactpy_router.core import use_params
 
-message_data = [
+message_data: list["MessageDataType"] = [
     {"id": 1, "with": ["Alice"], "from": None, "message": "Hello!"},
     {"id": 2, "with": ["Alice"], "from": "Alice", "message": "How's it going?"},
     {"id": 3, "with": ["Alice"], "from": None, "message": "Good, you?"},
@@ -81,3 +82,8 @@ def messages_with():
 
 
 run(root)
+
+MessageDataType = TypedDict(
+    "MessageDataType",
+    {"id": int, "with": list[str], "from": str | None, "message": str},
+)
