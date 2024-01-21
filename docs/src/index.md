@@ -1,18 +1,4 @@
-# ReactPy Router
-
-A URL router for [ReactPy](https://reactpy.dev).
-
-!!! note
-
-    If you don't already know the basics of working with ReactPy, you should
-    [start there](https://reactpy.dev/docs/guides/getting-started/index.html).
-
-## Installation
-
-Use `pip` to install this package:
-
-```bash
-pip install reactpy-router
-```
-
-[installer.records][]
+<script>
+// We don't have a homepage, so redirect to the first page in the docs.
+window.location.href = document.querySelector(".md-tabs__item a").href;
+</script>

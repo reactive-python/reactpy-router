@@ -1,32 +1,32 @@
 from __future__ import print_function
 
-import os
-import shutil
-import subprocess
 import sys
+import traceback
+from distutils import log
+from pathlib import Path
 
-from setuptools import find_packages, setup
+from nodejs import npm
+from setuptools import find_namespace_packages, setup
 from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
 
-# the name of the project
+# -----------------------------------------------------------------------------
+# Basic Constants
+# -----------------------------------------------------------------------------
 name = "reactpy_router"
-
-# basic paths used to gather files
-here = os.path.abspath(os.path.dirname(__file__))
-package_dir = os.path.join(here, name)
+root_dir = Path(__file__).parent
+src_dir = root_dir / "src"
+package_dir = src_dir / name
 
 
 # -----------------------------------------------------------------------------
 # General Package Info
 # -----------------------------------------------------------------------------
-
-
 package = {
     "name": name,
     "python_requires": ">=3.9",
-    "packages": find_packages(exclude=["tests*"]),
-    "description": "A URL router for ReactPy",
+    "packages": find_namespace_packages(str(src_dir)),
+    "description": "A URL router for ReactPy.",
     "author": "Ryan Morshead",
     "author_email": "ryan.morshead@gmail.com",
     "url": "https://github.com/reactive-python/reactpy-router",
@@ -38,9 +38,9 @@ package = {
         "Environment :: Web Environment",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Software Development :: User Interfaces",
         "Topic :: Software Development :: Widget Sets",
         "Typing :: Typed",
@@ -49,38 +49,30 @@ package = {
 
 
 # -----------------------------------------------------------------------------
-# Requirements
-# -----------------------------------------------------------------------------
-
-
-requirements = []
-with open(os.path.join(here, "requirements", "pkg-deps.txt"), "r") as f:
-    for line in map(str.strip, f):
-        if not line.startswith("#"):
-            requirements.append(line)
-package["install_requires"] = requirements
-
-
-# -----------------------------------------------------------------------------
 # Library Version
 # -----------------------------------------------------------------------------
+for line in (package_dir / "__init__.py").read_text().split("\n"):
+    if line.startswith("__version__ = "):
+        package["version"] = eval(line.split("=", 1)[1])
+        break
+else:
+    print(f"No version found in {package_dir}/__init__.py")
+    sys.exit(1)
 
-with open(os.path.join(package_dir, "__init__.py")) as init_file:
-    for line in init_file:
-        if line.split("=", 1)[0].strip() == "__version__":
-            package["version"] = eval(line.split("=", 1)[1])
-            break
-    else:
-        print("No version found in %s/__init__.py" % package_dir)  # noqa: T201
-        sys.exit(1)
+
+# -----------------------------------------------------------------------------
+# Requirements
+# -----------------------------------------------------------------------------
+requirements: list[str] = []
+with (root_dir / "requirements" / "pkg-deps.txt").open() as f:
+    requirements.extend(line for line in map(str.strip, f) if not line.startswith("#"))
+package["install_requires"] = requirements
 
 
 # -----------------------------------------------------------------------------
 # Library Description
 # -----------------------------------------------------------------------------
-
-
-with open(os.path.join(here, "README.md")) as f:
+with (root_dir / "README.md").open() as f:
     long_description = f.read()
 
 package["long_description"] = long_description
@@ -90,16 +82,26 @@ package["long_description_content_type"] = "text/markdown"
 # ----------------------------------------------------------------------------
 # Build Javascript
 # ----------------------------------------------------------------------------
-
-
-def build_javascript_first(cls):
-    class Command(cls):
+def build_javascript_first(build_cls: type):
+    class Command(build_cls):
         def run(self):
-            npm = shutil.which("npm")  # this is required on windows
-            if npm is None:
-                raise RuntimeError("NPM is not installed.")
-            for cmd_str in [f"{npm} install", f"{npm} run build"]:
-                subprocess.check_call(cmd_str.split(), cwd=os.path.join(here, "js"))
+            js_dir = str(src_dir / "js")
+
+            log.info("Installing Javascript...")
+            result = npm.call(["install"], cwd=js_dir)
+            if result != 0:
+                log.error(traceback.format_exc())
+                log.error("Failed to install Javascript")
+                raise RuntimeError("Failed to install Javascript")
+
+            log.info("Building Javascript...")
+            result = npm.call(["run", "build"], cwd=js_dir)
+            if result != 0:
+                log.error(traceback.format_exc())
+                log.error("Failed to build Javascript")
+                raise RuntimeError("Failed to build Javascript")
+
+            log.info("Successfully built Javascript")
             super().run()
 
     return Command
@@ -121,9 +123,7 @@ else:
 
 
 # -----------------------------------------------------------------------------
-# Install It
+# Installation
 # -----------------------------------------------------------------------------
-
-
 if __name__ == "__main__":
     setup(**package)

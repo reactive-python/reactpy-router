@@ -1,4 +1,2 @@
-include README.md
 include reactpy_router/bundle.js
 include reactpy_router/py.typed
-include LICENSE
