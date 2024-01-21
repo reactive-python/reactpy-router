@@ -39,7 +39,7 @@ pip install -e . -r requirements.txt --upgrade --verbose
 By running the command below you can run the full test suite:
 
 ```bash linenums="0"
-nox -s test
+nox -t test
 ```
 
 Or, if you want to run the tests in the foreground with a visible browser window, run:
@@ -47,7 +47,7 @@ Or, if you want to run the tests in the foreground with a visible browser window
 <!-- TODO: Change `headed` to `headless` -->
 
 ```bash linenums="0"
-nox -s test -- --headed
+nox -t test -- --headed
 ```
 
 ## Creating a pull request
