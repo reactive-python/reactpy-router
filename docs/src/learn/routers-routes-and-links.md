@@ -4,7 +4,7 @@ We include built-in components that automatically handle routing, which enable S
 
 ## Routers and Routes
 
-The [`simple.router`][reactpy_router.simple.router] component is one possible implementation of a [Router][reactpy_router.types.Router]. Routers takes a series of [route][reactpy_router.route] objects as positional arguments and render whatever element matches the current location.
+The [`simple.router`][src.reactpy_router.simple.router] component is one possible implementation of a [Router][src.reactpy_router.types.Router]. Routers takes a series of [route][src.reactpy_router.route] objects as positional arguments and render whatever element matches the current location.
 
 !!! abstract "Note"
 
@@ -23,7 +23,7 @@ Here we'll note some special syntax in the route path for the second route. The 
 
 ### Simple Router
 
-The syntax for declaring routes with the [simple.router][reactpy_router.simple.router] is very similar to the syntax used by [`starlette`](https://www.starlette.io/routing/) (a popular Python web framework). As such route parameters are declared using the following syntax:
+The syntax for declaring routes with the [simple.router][src.reactpy_router.simple.router] is very similar to the syntax used by [`starlette`](https://www.starlette.io/routing/) (a popular Python web framework). As such route parameters are declared using the following syntax:
 
 ```python linenums="0"
 /my/route/{param}
@@ -54,11 +54,11 @@ Any route parameters collected from the current location then be accessed using 
 
 !!! warning "Pitfall"
 
-    While it is possible to use route parameters to capture values from query strings (such as `#!python /my/route/?foo={bar}`), this is not recommended. Instead, you should use the [`use_query`][reactpy_router.use_query] hook to access query string values.
+    While it is possible to use route parameters to capture values from query strings (such as `#!python /my/route/?foo={bar}`), this is not recommended. Instead, you should use the [`use_query`][src.reactpy_router.use_query] hook to access query string values.
 
 ## Route Links
 
-Links between routes should be created using the [link][reactpy_router.link] component. This will allow ReactPy to handle the transition between routes and avoid a page reload.
+Links between routes should be created using the [link][src.reactpy_router.link] component. This will allow ReactPy to handle the transition between routes and avoid a page reload.
 
 === "components.py"
 

@@ -8,7 +8,7 @@ Several pre-fabricated hooks are provided to help integrate with routing feature
 
 ## Use Query
 
-The [`use_query`][reactpy_router.use_query] hook can be used to access query parameters from the current location. It returns a dictionary of query parameters, where each value is a list of strings.
+The [`use_query`][src.reactpy_router.use_query] hook can be used to access query parameters from the current location. It returns a dictionary of query parameters, where each value is a list of strings.
 
 === "components.py"
 
@@ -18,7 +18,7 @@ The [`use_query`][reactpy_router.use_query] hook can be used to access query par
 
 ## Use Params
 
-The [`use_params`][reactpy_router.use_params] hook can be used to access route parameters from the current location. It returns a dictionary of route parameters, where each value is mapped to a value that matches the type specified in the route path.
+The [`use_params`][src.reactpy_router.use_params] hook can be used to access route parameters from the current location. It returns a dictionary of route parameters, where each value is mapped to a value that matches the type specified in the route path.
 
 === "components.py"
 

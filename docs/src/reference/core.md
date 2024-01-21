@@ -1,1 +1,1 @@
-::: reactpy_router.core
+::: src.reactpy_router.core

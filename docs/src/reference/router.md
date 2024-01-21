@@ -1,1 +1,1 @@
-::: reactpy_router.simple
+::: src.reactpy_router.simple
