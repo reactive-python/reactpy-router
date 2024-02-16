@@ -1,2 +1,2 @@
-black==23
+black >=23,<24
 ruff
