@@ -1,18 +1,11 @@
-# ReactPy Router
+## Install from PyPI
 
-A URL router for [ReactPy](https://reactpy.dev).
+Run the following command to install [`reactpy-router`](https://pypi.org/project/reactpy-router/) in your Python environment.
 
-!!! note
-
-    If you don't already know the basics of working with ReactPy, you should
-    [start there](https://reactpy.dev/docs/guides/getting-started/index.html).
-
-## Installation
-
-Use `pip` to install this package:
-
-```bash
+```bash linenums="0"
 pip install reactpy-router
 ```
 
-[installer.records][]
+## Done!
+
+You're now ready to start building your own ReactPy applications with URL routing.
