@@ -13,13 +13,12 @@ def test_python(session: Session) -> None:
 
     posargs = session.posargs[:]
 
-    if "--no-cov" in session.posargs:
-        posargs.remove("--no-cov")
-        session.log("Coverage won't be checked")
-        session.install(".")
-    else:
+    if "--coverage" in posargs:
         posargs += ["--cov=reactpy_router", "--cov-report=term"]
+        posargs.remove("--coverage")
         session.install("-e", ".")
+    else:
+        session.log("Coverage won't be checked unless `-- --coverage` is defined.")
 
     session.run("pytest", "tests", *posargs)
 

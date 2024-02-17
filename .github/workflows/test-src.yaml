@@ -26,3 +26,15 @@ jobs:
               run: pip install -r requirements/test-run.txt
             - name: Run Tests
               run: nox -t test
+    coverage:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Latest Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: "3.10"
+            - name: Install Python Dependencies
+              run: pip install -r requirements/nox-deps.txt
+            - name: Run Tests
+              run: nox -t test -- --coverage
