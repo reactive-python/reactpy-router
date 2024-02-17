@@ -12,6 +12,15 @@ def test_python(session: Session) -> None:
     session.run("playwright", "install", "chromium")
 
     posargs = session.posargs[:]
+
+    if "--no-cov" in session.posargs:
+        posargs.remove("--no-cov")
+        session.log("Coverage won't be checked")
+        session.install(".")
+    else:
+        posargs += ["--cov=reactpy_router", "--cov-report=term"]
+        session.install("-e", ".")
+
     session.run("pytest", "tests", *posargs)
 
 
