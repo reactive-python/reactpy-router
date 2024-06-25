@@ -2,8 +2,7 @@ import re
 import uuid
 
 import pytest
-
-from reactpy_router.simple import parse_path
+from reactpy_router.routers import parse_path
 
 
 def test_parse_path():

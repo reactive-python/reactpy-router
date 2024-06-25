@@ -11,7 +11,7 @@ from typing_extensions import TypeAlias, TypedDict
 from reactpy_router.core import create_router
 from reactpy_router.types import Route
 
-__all__ = ["router"]
+__all__ = ["browser_router"]
 
 ConversionFunc: TypeAlias = "Callable[[str], Any]"
 ConverterMapping: TypeAlias = "dict[str, ConversionFunc]"
@@ -94,5 +94,7 @@ CONVERSION_TYPES: dict[str, ConversionInfo] = {
 """The supported conversion types"""
 
 
-router = create_router(SimpleResolver)
-"""The simple router"""
+browser_router = create_router(SimpleResolver)
+"""This is the recommended router for all ReactPy Router web projects.
+It uses the DOM History API to update the URL and manage the history stack."""
+# TODO: Check if this is true. If not, make it true.

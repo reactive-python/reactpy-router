@@ -1,5 +1,5 @@
 from reactpy import component, html
-from reactpy_router import link, route, simple, use_search_params
+from reactpy_router import browser_router, link, route, use_search_params
 
 
 @component
@@ -10,7 +10,7 @@ def search():
 
 @component
 def root():
-    return simple.router(
+    return browser_router(
         route(
             "/",
             html.div(

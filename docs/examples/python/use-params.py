@@ -1,6 +1,5 @@
 from reactpy import component, html
-
-from reactpy_router import link, route, simple, use_params
+from reactpy_router import browser_router, link, route, use_params
 
 
 @component
@@ -11,7 +10,7 @@ def user():
 
 @component
 def root():
-    return simple.router(
+    return browser_router(
         route(
             "/",
             html.div(

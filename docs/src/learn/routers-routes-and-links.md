@@ -4,14 +4,14 @@ We include built-in components that automatically handle routing, which enable S
 
 ## Routers and Routes
 
-The [`simple.router`][src.reactpy_router.simple.router] component is one possible implementation of a [Router][src.reactpy_router.types.Router]. Routers takes a series of [route][src.reactpy_router.route] objects as positional arguments and render whatever element matches the current location.
+The [`browser_router`][src.reactpy_router.browser_router] component is one possible implementation of a [Router][src.reactpy_router.types.Router]. Routers takes a series of [route][src.reactpy_router.route] objects as positional arguments and render whatever element matches the current location.
 
 !!! abstract "Note"
 
     The current location is determined based on the browser's current URL and can be found
     by checking the [`use_location`][reactpy.backend.hooks.use_location] hook.
 
-Here's a basic example showing how to use `#!python simple.router` with two routes.
+Here's a basic example showing how to use `#!python browser_router` with two routes.
 
 === "components.py"
 
@@ -21,9 +21,9 @@ Here's a basic example showing how to use `#!python simple.router` with two rout
 
 Here we'll note some special syntax in the route path for the second route. The `#!python "*"` is a wildcard that will match any path. This is useful for creating a "404" page that will be shown when no other route matches.
 
-### Simple Router
+### Browser Router
 
-The syntax for declaring routes with the [simple.router][src.reactpy_router.simple.router] is very similar to the syntax used by [`starlette`](https://www.starlette.io/routing/) (a popular Python web framework). As such route parameters are declared using the following syntax:
+The syntax for declaring routes with the [`browser_router`][src.reactpy_router.browser_router] is very similar to the syntax used by [`starlette`](https://www.starlette.io/routing/) (a popular Python web framework). As such route parameters are declared using the following syntax:
 
 ```python linenums="0"
 /my/route/{param}
