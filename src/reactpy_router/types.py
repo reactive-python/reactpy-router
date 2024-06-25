@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Literal, Sequence, TypeVar
+from typing import Any, Callable, Literal, Sequence, TypeAlias, TypedDict, TypeVar
 
 from reactpy.core.vdom import is_vdom
 from reactpy.types import ComponentType, Key
 from typing_extensions import Protocol, Self
+
+ConversionFunc: TypeAlias = Callable[[str], Any]
+ConverterMapping: TypeAlias = dict[str, ConversionFunc]
 
 
 @dataclass(frozen=True)
@@ -29,20 +32,20 @@ class Route:
         return hash((self.path, key, self.routes))
 
 
-R = TypeVar("R", bound=Route, contravariant=True)
+R_contra = TypeVar("R_contra", bound=Route, contravariant=True)
 
 
-class Router(Protocol[R]):
+class Router(Protocol[R_contra]):
     """Return a component that renders the first matching route"""
 
-    def __call__(self, *routes: R, select: Literal["first", "all"]) -> ComponentType:
+    def __call__(self, *routes: R_contra, select: Literal["first", "all"]) -> ComponentType:
         ...
 
 
-class RouteCompiler(Protocol[R]):
+class RouteCompiler(Protocol[R_contra]):
     """Compile a route into a resolver that can be matched against a path"""
 
-    def __call__(self, route: R) -> RouteResolver:
+    def __call__(self, route: R_contra) -> RouteResolver:
         ...
 
 
@@ -55,3 +58,12 @@ class RouteResolver(Protocol):
 
     def resolve(self, path: str) -> tuple[Any, dict[str, Any]] | None:
         """Return the path's associated element and path params or None"""
+
+
+class ConversionInfo(TypedDict):
+    """Information about a conversion type"""
+
+    regex: str
+    """The regex to match the conversion type"""
+    func: ConversionFunc
+    """The function to convert the matched string to the expected type"""
