@@ -63,12 +63,13 @@ def router_component(
 
     if match is not None:
         element, params = match
-        return html._(
+        return html.div(
             ConnectionContext(
                 _route_state_context(element, value=_RouteState(set_location, params)),
                 value=Connection(old_conn.scope, location, old_conn.carrier),
             ),
             _history({"on_change": lambda event: set_location(Location(**event))}),
+            key=location.pathname + select,
         )
 
     return None
