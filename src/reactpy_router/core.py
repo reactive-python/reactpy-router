@@ -150,7 +150,12 @@ class _RouteState:
 
 def _use_route_state() -> _RouteState:
     route_state = use_context(_route_state_context)
-    assert route_state is not None
+    if route_state is None:
+        raise RuntimeError(
+            "ReactPy-Router was unable to find a route context. Are you "
+            "sure this hook/component is being called within a router?"
+        )
+
     return route_state
 
 
