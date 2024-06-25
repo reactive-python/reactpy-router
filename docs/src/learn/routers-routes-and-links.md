@@ -54,7 +54,7 @@ Any route parameters collected from the current location then be accessed using 
 
 !!! warning "Pitfall"
 
-    While it is possible to use route parameters to capture values from query strings (such as `#!python /my/route/?foo={bar}`), this is not recommended. Instead, you should use the [`use_query`][src.reactpy_router.use_query] hook to access query string values.
+    While it is possible to use route parameters to capture values from query strings (such as `#!python /my/route/?foo={bar}`), this is not recommended. Instead, you should use the [`use_search_params`][src.reactpy_router.use_search_params] hook to access query string values.
 
 ## Route Links
 

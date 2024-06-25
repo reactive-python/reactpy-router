@@ -88,14 +88,22 @@ def use_params() -> dict[str, Any]:
     return _use_route_state().params
 
 
-def use_query(
+def use_search_params(
     keep_blank_values: bool = False,
     strict_parsing: bool = False,
     errors: str = "replace",
     max_num_fields: int | None = None,
     separator: str = "&",
 ) -> dict[str, list[str]]:
-    """See :func:`urllib.parse.parse_qs` for parameter info."""
+    """
+    The `use_search_params` hook is used to read and modify the query string in the URL \
+    for the current location. Like React's own `use_state` hook, `use_search_params returns \
+    an array of two values: the current location's search params and a function that may \
+    be used to update them.
+
+    See `urllib.parse.parse_qs` for info on this hook's parameters."""
+
+    # FIXME: This needs to return a tuple of the search params and a function to update them
     return parse_qs(
         use_location().search[1:],
         keep_blank_values=keep_blank_values,

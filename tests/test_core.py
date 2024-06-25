@@ -2,7 +2,7 @@ from typing import Any
 
 from reactpy import Ref, component, html, use_location
 from reactpy.testing import DisplayFixture
-from reactpy_router import link, route, simple, use_params, use_query
+from reactpy_router import link, route, simple, use_params, use_search_params
 
 
 async def test_simple_router(display: DisplayFixture):
@@ -40,7 +40,8 @@ async def test_simple_router(display: DisplayFixture):
         root_element = await display.root_element()
     except AttributeError:
         root_element = await display.page.wait_for_selector(
-            f"#display-{display._next_view_id}", state="attached"  # type: ignore
+            f"#display-{display._next_view_id}",
+            state="attached",  # type: ignore
         )
 
     assert not await root_element.inner_html()
@@ -140,7 +141,7 @@ async def test_use_query(display: DisplayFixture):
 
     @component
     def check_query():
-        assert use_query() == expected_query
+        assert use_search_params() == expected_query
         return html.h1({"id": "success"}, "success")
 
     @component

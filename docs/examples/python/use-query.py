@@ -1,11 +1,10 @@
 from reactpy import component, html
-
-from reactpy_router import link, route, simple, use_query
+from reactpy_router import link, route, simple, use_search_params
 
 
 @component
 def search():
-    query = use_query()
+    query = use_search_params()
     return html.h1(f"Search Results for {query['q'][0]} 🔍")
 
 
