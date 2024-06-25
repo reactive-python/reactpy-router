@@ -84,7 +84,14 @@ def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
 
 
 def use_params() -> dict[str, Any]:
-    """Get parameters from the currently matching route pattern"""
+    """The `use_params` hook returns an object of key/value pairs of the dynamic params \
+    from the current URL that were matched by the `Route`. Child routes inherit all params \
+    from their parent routes.
+    
+    For example, if you have a `URL_PARAM` defined in the route `/example/<URL_PARAM>/`,
+    this hook will return the URL_PARAM value that was matched."""
+
+    # TODO: Check if this returns all parent params
     return _use_route_state().params
 
 
@@ -121,9 +128,7 @@ def _iter_routes(routes: Sequence[R]) -> Iterator[R]:
         yield parent
 
 
-def _match_route(
-    compiled_routes: Sequence[RouteResolver], location: Location
-) -> tuple[Any, dict[str, Any]] | None:
+def _match_route(compiled_routes: Sequence[RouteResolver], location: Location) -> tuple[Any, dict[str, Any]] | None:
     for resolver in compiled_routes:
         match = resolver.resolve(location.pathname)
         if match is not None:
