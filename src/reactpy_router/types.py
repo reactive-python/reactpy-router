@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Sequence, TypeVar
+from typing import Any, Literal, Sequence, TypeVar
 
 from reactpy.core.vdom import is_vdom
 from reactpy.types import ComponentType, Key
@@ -35,7 +35,7 @@ R = TypeVar("R", bound=Route, contravariant=True)
 class Router(Protocol[R]):
     """Return a component that renders the first matching route"""
 
-    def __call__(self, *routes: R) -> ComponentType:
+    def __call__(self, *routes: R, select: Literal["first", "all"]) -> ComponentType:
         ...
 
 

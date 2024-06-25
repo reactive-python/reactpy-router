@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from logging import getLogger
 from pathlib import Path
-from typing import Any, Callable, Iterator, Sequence, TypeVar
+from typing import Any, Callable, Iterator, Literal, Sequence, TypeVar
 from urllib.parse import parse_qs
 
 from reactpy import (
@@ -24,6 +25,7 @@ from reactpy.web.module import export, module_from_file
 
 from reactpy_router.types import Route, RouteCompiler, Router, RouteResolver
 
+_logger = getLogger(__name__)
 R = TypeVar("R", bound=Route)
 
 
@@ -35,8 +37,8 @@ def route(path: str, element: Any | None, *routes: Route) -> Route:
 def create_router(compiler: RouteCompiler[R]) -> Router[R]:
     """A decorator that turns a route compiler into a router"""
 
-    def wrapper(*routes: R) -> ComponentType:
-        return router_component(*routes, compiler=compiler)
+    def wrapper(*routes: R, select: Literal["first", "all"] = "first") -> ComponentType:
+        return router_component(*routes, select=select, compiler=compiler)
 
     return wrapper
 
@@ -44,9 +46,10 @@ def create_router(compiler: RouteCompiler[R]) -> Router[R]:
 @component
 def router_component(
     *routes: R,
+    select: Literal["first", "all"],
     compiler: RouteCompiler[R],
 ) -> VdomDict | None:
-    """A component that renders the first matching route using the given compiler"""
+    """A component that renders matching route(s) using the given compiler function."""
 
     old_conn = use_connection()
     location, set_location = use_state(old_conn.location)
@@ -56,7 +59,7 @@ def router_component(
         dependencies=(compiler, hash(routes)),
     )
 
-    match = use_memo(lambda: _match_route(resolvers, location))
+    match = use_memo(lambda: _match_route(resolvers, location, select))
 
     if match is not None:
         element, params = match
@@ -128,12 +131,22 @@ def _iter_routes(routes: Sequence[R]) -> Iterator[R]:
         yield parent
 
 
-def _match_route(compiled_routes: Sequence[RouteResolver], location: Location) -> tuple[Any, dict[str, Any]] | None:
+def _match_route(
+    compiled_routes: Sequence[RouteResolver], location: Location, select: Literal["first", "all"]
+) -> tuple[Any, dict[str, Any]] | None:
+    matches = []
+
     for resolver in compiled_routes:
         match = resolver.resolve(location.pathname)
         if match is not None:
-            return match
-    return None
+            if select == "first":
+                return match
+            matches.append(match)
+
+    if not matches:
+        _logger.debug("No matching route found for %s", location.pathname)
+
+    return matches or None
 
 
 _link, _history = export(
