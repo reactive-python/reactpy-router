@@ -70,28 +70,32 @@ class ConversionInfo(TypedDict):
 
 
 CONVERSION_TYPES: dict[str, ConversionInfo] = {
-    "str": {
-        "regex": r"[^/]+",
-        "func": str,
-    },
     "int": {
         "regex": r"\d+",
         "func": int,
     },
-    "float": {
-        "regex": r"\d+(\.\d+)?",
-        "func": float,
+    "str": {
+        "regex": r"[^/]+",
+        "func": str,
     },
     "uuid": {
         "regex": r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
         "func": uuid.UUID,
     },
+    "slug": {
+        "regex": r"[-a-zA-Z0-9_]+",
+        "func": str,
+    },
     "path": {
         "regex": r".+",
         "func": str,
     },
+    "float": {
+        "regex": r"\d+(\.\d+)?",
+        "func": float,
+    },
 }
-"""The supported conversion types"""
+"""The conversion types supported by the default Resolver. You can add more types if needed."""
 
 
 browser_router = create_router(SimpleResolver)
