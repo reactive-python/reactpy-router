@@ -7,6 +7,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import Any, Callable, Iterator, Literal, Sequence, TypeVar
 from urllib.parse import parse_qs
+from uuid import uuid4
 
 from reactpy import (
     component,
@@ -68,7 +69,7 @@ def router_component(
                 _route_state_context(element, value=_RouteState(set_location, params)),
                 value=Connection(old_conn.scope, location, old_conn.carrier),
             ),
-            _history({"on_change": lambda event: set_location(Location(**event))}),
+            History({"on_change": lambda event: set_location(Location(**event))}),
             key=location.pathname + select,
         )
 
@@ -79,12 +80,14 @@ def router_component(
 def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
     """A component that renders a link to the given path"""
     set_location = _use_route_state().set_location
+    uuid = uuid4().hex
     attrs = {
         **attributes,
         "to": to,
         "onClick": lambda event: set_location(Location(**event)),
+        "id": uuid,
     }
-    return _link(attrs, *children)
+    return html._(html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid)))
 
 
 def use_params() -> dict[str, Any]:
@@ -150,10 +153,11 @@ def _match_route(
     return matches or None
 
 
-_link, _history = export(
+History = export(
     module_from_file("reactpy-router", file=Path(__file__).parent / "bundle.js"),
-    ("Link", "History"),
+    ("History"),
 )
+link_js_content = (Path(__file__).parent / "js" / "Link.js").read_text(encoding="utf-8")
 
 
 @dataclass

@@ -11,4 +11,3 @@ __all__ = ["browser_router"]
 browser_router = create_router(Resolver)
 """This is the recommended router for all ReactPy Router web projects.
 It uses the DOM History API to update the URL and manage the history stack."""
-# TODO: Check if this is true. If not, make it true.
