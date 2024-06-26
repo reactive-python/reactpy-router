@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, Literal, Sequence, TypeAlias, TypedDict, TypeVar
+from typing import Any, Callable, Literal, Sequence, TypedDict, TypeVar
 
 from reactpy.core.vdom import is_vdom
 from reactpy.types import ComponentType, Key
-from typing_extensions import Protocol, Self
+from typing_extensions import Protocol, Self, TypeAlias
 
 ConversionFunc: TypeAlias = Callable[[str], Any]
 ConverterMapping: TypeAlias = dict[str, ConversionFunc]
