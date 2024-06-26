@@ -19,12 +19,13 @@ class Resolver:
     ) -> None:
         self.element = route.element
         self.pattern, self.converter_mapping = self.parse_path(route.path)
-        self.converters = converters or CONVERTERS
+        self.registered_converters = converters or CONVERTERS
         self.key = self.pattern.pattern
         self.param_regex = re.compile(param_pattern)
         self.match_any = match_any_identifier
 
     def parse_path(self, path: str) -> tuple[re.Pattern[str], ConverterMapping]:
+        # Convert path to regex pattern, then interpret using registered converters
         pattern = "^"
         last_match_end = 0
         converter_mapping: ConverterMapping = {}
@@ -32,9 +33,11 @@ class Resolver:
             param_name = match.group("name")
             param_type = (match.group("type") or "str").strip(":")
             try:
-                param_conv = self.converter_mapping[param_type]
+                param_conv = self.registered_converters[param_type]
             except KeyError as e:
-                raise ValueError(f"Unknown conversion type {param_type!r} in {path!r}") from e
+                raise ValueError(
+                    f"Unknown conversion type {param_type!r} in {path!r}"
+                ) from e
             pattern += re.escape(path[last_match_end : match.start()])
             pattern += f"(?P<{param_name}>{param_conv['regex']})"
             converter_mapping[param_name] = param_conv["func"]

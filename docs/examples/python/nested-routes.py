@@ -40,7 +40,10 @@ def home():
 
 @component
 def all_messages():
-    last_messages = {", ".join(msg["with"]): msg for msg in sorted(message_data, key=lambda m: m["id"])}
+    last_messages = {
+        ", ".join(msg["with"]): msg
+        for msg in sorted(message_data, key=lambda m: m["id"])
+    }
     return html.div(
         html.h1("All Messages 💬"),
         html.ul(

@@ -3,7 +3,14 @@ __version__ = "0.1.1"
 
 
 from .converters import CONVERTERS
-from .core import create_router, link, route, router_component, use_params, use_search_params
+from .core import (
+    create_router,
+    link,
+    route,
+    router_component,
+    use_params,
+    use_search_params,
+)
 from .resolvers import Resolver
 from .routers import browser_router
 from .types import Route, RouteCompiler, RouteResolver

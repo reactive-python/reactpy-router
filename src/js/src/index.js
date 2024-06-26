@@ -13,7 +13,7 @@ export function bind(node) {
 }
 
 export function History({ onChange }) {
-    // capture changes to the browser's history
+    // Capture changes to the browser's history
     React.useEffect(() => {
         const listener = () => {
             onChange({

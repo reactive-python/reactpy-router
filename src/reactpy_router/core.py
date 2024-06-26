@@ -62,15 +62,23 @@ def router_component(
 
     match = use_memo(lambda: _match_route(resolvers, location, select))
 
-    if match is not None:
-        element, params = match
-        return html.div(
-            ConnectionContext(
-                _route_state_context(element, value=_RouteState(set_location, params)),
-                value=Connection(old_conn.scope, location, old_conn.carrier),
+    if match:
+        route_elements = [
+            _route_state_context(
+                html.div(
+                    element,  # type: ignore
+                    key=f"{location.pathname}{select}{params}{element}{id(element)}",
+                ),
+                value=_RouteState(set_location, params),
+            )
+            for element, params in match
+        ]
+        return ConnectionContext(
+            History(  # type: ignore
+                {"on_change": lambda event: set_location(Location(**event))}
             ),
-            History({"on_change": lambda event: set_location(Location(**event))}),
-            key=location.pathname + select,
+            route_elements,
+            value=Connection(old_conn.scope, location, old_conn.carrier),
         )
 
     return None
@@ -87,7 +95,9 @@ def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
         "onClick": lambda event: set_location(Location(**event)),
         "id": uuid,
     }
-    return html._(html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid)))
+    return html._(
+        html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid))
+    )
 
 
 def use_params() -> dict[str, Any]:
@@ -136,28 +146,34 @@ def _iter_routes(routes: Sequence[R]) -> Iterator[R]:
 
 
 def _match_route(
-    compiled_routes: Sequence[RouteResolver], location: Location, select: Literal["first", "all"]
-) -> tuple[Any, dict[str, Any]] | None:
+    compiled_routes: Sequence[RouteResolver],
+    location: Location,
+    select: Literal["first", "all"],
+) -> list[tuple[Any, dict[str, Any]]]:
     matches = []
 
     for resolver in compiled_routes:
         match = resolver.resolve(location.pathname)
         if match is not None:
             if select == "first":
-                return match
+                return [match]
             matches.append(match)
 
     if not matches:
         _logger.debug("No matching route found for %s", location.pathname)
 
-    return matches or None
+    return matches
 
 
 History = export(
-    module_from_file("reactpy-router", file=Path(__file__).parent / "bundle.js"),
+    module_from_file(
+        "reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"
+    ),
     ("History"),
 )
-link_js_content = (Path(__file__).parent / "js" / "Link.js").read_text(encoding="utf-8")
+link_js_content = (Path(__file__).parent / "static" / "link.js").read_text(
+    encoding="utf-8"
+)
 
 
 @dataclass

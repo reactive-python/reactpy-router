@@ -1,2 +1,2 @@
-include src/reactpy_router/bundle.js
+recursive-include src/reactpy_router/static *
 include src/reactpy_router/py.typed

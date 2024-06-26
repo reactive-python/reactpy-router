@@ -2,7 +2,7 @@ from typing import Any
 
 from reactpy import Ref, component, html, use_location
 from reactpy.testing import DisplayFixture
-from reactpy_router import link, route, routers, use_params, use_search_params
+from reactpy_router import browser_router, link, route, use_params, use_search_params
 
 
 async def test_simple_router(display: DisplayFixture):
@@ -18,7 +18,7 @@ async def test_simple_router(display: DisplayFixture):
 
     @component
     def sample():
-        return routers.browser_router(
+        return browser_router(
             make_location_check("/a"),
             make_location_check("/b"),
             make_location_check("/c"),
@@ -40,8 +40,8 @@ async def test_simple_router(display: DisplayFixture):
         root_element = await display.root_element()
     except AttributeError:
         root_element = await display.page.wait_for_selector(
-            f"#display-{display._next_view_id}",
-            state="attached",  # type: ignore
+            f"#display-{display._next_view_id}",  # type: ignore
+            state="attached",
         )
 
     assert not await root_element.inner_html()
@@ -50,7 +50,7 @@ async def test_simple_router(display: DisplayFixture):
 async def test_nested_routes(display: DisplayFixture):
     @component
     def sample():
-        return routers.browser_router(
+        return browser_router(
             route(
                 "/a",
                 html.h1({"id": "a"}, "A"),
@@ -79,7 +79,7 @@ async def test_navigate_with_link(display: DisplayFixture):
     @component
     def sample():
         render_count.current += 1
-        return routers.browser_router(
+        return browser_router(
             route("/", link("Root", to="/a", id="root")),
             route("/a", link("A", to="/b", id="a")),
             route("/b", link("B", to="/c", id="b")),
@@ -110,7 +110,7 @@ async def test_use_params(display: DisplayFixture):
 
     @component
     def sample():
-        return routers.browser_router(
+        return browser_router(
             route(
                 "/first/{first:str}",
                 check_params(),
@@ -146,7 +146,7 @@ async def test_use_query(display: DisplayFixture):
 
     @component
     def sample():
-        return routers.browser_router(route("/", check_query()))
+        return browser_router(route("/", check_query()))
 
     await display.show(sample)
 
@@ -158,7 +158,7 @@ async def test_use_query(display: DisplayFixture):
 async def test_browser_popstate(display: DisplayFixture):
     @component
     def sample():
-        return routers.browser_router(
+        return browser_router(
             route("/", link("Root", to="/a", id="root")),
             route("/a", link("A", to="/b", id="a")),
             route("/b", link("B", to="/c", id="b")),
@@ -190,7 +190,7 @@ async def test_browser_popstate(display: DisplayFixture):
 async def test_relative_links(display: DisplayFixture):
     @component
     def sample():
-        return routers.browser_router(
+        return browser_router(
             route("/", link("Root", to="/a", id="root")),
             route("/a", link("A", to="/a/b", id="a")),
             route("/a/b", link("B", to="../a/b/c", id="b")),
