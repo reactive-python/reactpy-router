@@ -26,7 +26,7 @@ def root():
             route("/with/Alice", messages_with("Alice")),
             route("/with/Alice-Bob", messages_with("Alice", "Bob")),
         ),
-        route("*", html.h1("Missing Link 🔗‍💥")),
+        route("{404:any}", html.h1("Missing Link 🔗‍💥")),
     )
 
 

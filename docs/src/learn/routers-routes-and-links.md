@@ -19,7 +19,7 @@ Here's a basic example showing how to use `#!python browser_router` with two rou
     {% include "../../examples/python/basic-routing.py" %}
     ```
 
-Here we'll note some special syntax in the route path for the second route. The `#!python "*"` is a wildcard that will match any path. This is useful for creating a "404" page that will be shown when no other route matches.
+Here we'll note some special syntax in the route path for the second route. The `#!python "any"` type is a wildcard that will match any path. This is useful for creating a default page or error page such as "404 NOT FOUND".
 
 ### Browser Router
 
@@ -34,11 +34,13 @@ In this case, `#!python param` is the name of the route parameter and the option
 
 | Type | Pattern |
 | --- | --- |
-| `#!python str` (default) | `#!python [^/]+` |
 | `#!python int` | `#!python \d+` |
-| `#!python float` | `#!python \d+(\.\d+)?` |
+| `#!python str` (default) | `#!python [^/]+` |
 | `#!python uuid` | `#!python [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}` |
+| `#!python slug` | `#!python [-a-zA-Z0-9_]+` |
 | `#!python path` | `#!python .+` |
+| `#!python float` | `#!python \d+(\.\d+)?` |
+| `#!python any` | `#!python .*` |
 
 So in practice these each might look like:
 

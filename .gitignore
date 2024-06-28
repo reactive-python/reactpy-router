@@ -4,7 +4,7 @@ docs/site
 
 # --- JAVASCRIPT BUNDLES ---
 
-src/reactpy_router/bundle.js
+src/reactpy_router/static/bundle.js
 
 # --- PYTHON IGNORE FILES ----
 

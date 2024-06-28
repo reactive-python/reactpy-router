@@ -25,7 +25,7 @@ def root():
             all_messages(),
             route("/with/{names}", messages_with()),  # note the path param
         ),
-        route("*", html.h1("Missing Link 🔗‍💥")),
+        route("{404:any}", html.h1("Missing Link 🔗‍💥")),
     )
 
 

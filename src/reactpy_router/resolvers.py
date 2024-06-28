@@ -16,47 +16,63 @@ class Resolver:
         self,
         route: Route,
         param_pattern=r"{(?P<name>\w+)(?P<type>:\w+)?}",
-        match_any_identifier=r"\*$",
         converters: dict[str, ConversionInfo] | None = None,
     ) -> None:
         self.element = route.element
-        self.pattern, self.converter_mapping = self.parse_path(route.path)
         self.registered_converters = converters or CONVERTERS
-        self.key = self.pattern.pattern
+        self.converter_mapping: ConverterMapping = {}
+        # self.match_any_indentifier = match_any_identifier
         self.param_regex = re.compile(param_pattern)
-        self.match_any = match_any_identifier
+        self.pattern = self.parse_path(route.path)
+        self.key = self.pattern.pattern  # Unique identifier for ReactPy rendering
 
-    def parse_path(self, path: str) -> tuple[re.Pattern[str], ConverterMapping]:
+    def parse_path(self, path: str) -> re.Pattern[str]:
         # Convert path to regex pattern, then interpret using registered converters
         pattern = "^"
         last_match_end = 0
-        converter_mapping: ConverterMapping = {}
+
+        # Iterate through matches of the parameter pattern
         for match in self.param_regex.finditer(path):
-            param_name = match.group("name")
+            # Extract parameter name and type
+            name = match.group("name")
+            if name[0].isnumeric():
+                name = f"_numeric_{name}"
             param_type = (match.group("type") or "str").strip(":")
+
+            # Check if a converter exists for the type
             try:
-                param_conv = self.registered_converters[param_type]
+                conversion_info = self.registered_converters[param_type]
             except KeyError as e:
                 raise ValueError(
                     f"Unknown conversion type {param_type!r} in {path!r}"
                 ) from e
+
+            # Add the string before the match to the pattern
             pattern += re.escape(path[last_match_end : match.start()])
-            pattern += f"(?P<{param_name}>{param_conv['regex']})"
-            converter_mapping[param_name] = param_conv["func"]
+
+            # Add the match to the pattern
+            pattern += f"(?P<{name}>{conversion_info['regex']})"
+
+            # Keep a local mapping of parameter names to conversion functions.
+            self.converter_mapping[name] = conversion_info["func"]
+
+            # Update the last match end
             last_match_end = match.end()
+
+        # Add the string after the last match
         pattern += f"{re.escape(path[last_match_end:])}$"
 
-        # Replace "match anything" pattern with regex, if it's at the end of the path
-        if pattern.endswith(self.match_any):
-            pattern = f"{pattern[:-3]}.*$"
-
-        return re.compile(pattern), converter_mapping
+        return re.compile(pattern)
 
     def resolve(self, path: str) -> tuple[Any, dict[str, Any]] | None:
         match = self.pattern.match(path)
         if match:
-            return (
-                self.element,
-                {k: self.converter_mapping[k](v) for k, v in match.groupdict().items()},
-            )
+            # Convert the matched groups to the correct types
+            params = {
+                parameter_name.strip("_numeric_"): self.converter_mapping[
+                    parameter_name
+                ](value)
+                for parameter_name, value in match.groupdict().items()
+            }
+            return (self.element, params)
         return None

@@ -65,10 +65,7 @@ def router_component(
     if match:
         route_elements = [
             _route_state_context(
-                html.div(
-                    element,  # type: ignore
-                    key=f"{location.pathname}{select}{params}{element}{id(element)}",
-                ),
+                element,
                 value=_RouteState(set_location, params),
             )
             for element, params in match

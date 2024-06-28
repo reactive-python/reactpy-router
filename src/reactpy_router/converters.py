@@ -29,5 +29,9 @@ CONVERTERS: dict[str, ConversionInfo] = {
         "regex": r"\d+(\.\d+)?",
         "func": float,
     },
+    "any": {
+        "regex": r".*",
+        "func": str,
+    },
 }
 """The conversion types supported by the default Resolver. You can add more types if needed."""

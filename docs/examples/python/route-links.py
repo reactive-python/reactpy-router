@@ -7,7 +7,7 @@ def root():
     return browser_router(
         route("/", home()),
         route("/messages", html.h1("Messages 💬")),
-        route("*", html.h1("Missing Link 🔗‍💥")),
+        route("{404:any}", html.h1("Missing Link 🔗‍💥")),
     )
 
 
