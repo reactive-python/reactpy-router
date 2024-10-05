@@ -1,16 +1,19 @@
 import asyncio
+import os
 import sys
 
 import pytest
 from playwright.async_api import async_playwright
 from reactpy.testing import BackendFixture, DisplayFixture
 
+GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
+
 
 def pytest_addoption(parser) -> None:
     parser.addoption(
         "--headless",
         dest="headless",
-        action="store_false",
+        action="store_true",
         help="Hide the browser window when running web-based tests",
     )
 
@@ -33,4 +36,4 @@ async def backend():
 @pytest.fixture
 async def browser(pytestconfig):
     async with async_playwright() as pw:
-        yield await pw.chromium.launch(headless=False)
+        yield await pw.chromium.launch(headless=True if GITHUB_ACTIONS else pytestconfig.getoption("headless"))

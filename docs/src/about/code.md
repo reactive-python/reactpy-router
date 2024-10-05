@@ -40,12 +40,10 @@ By running the command below you can run the full test suite:
 nox -t test
 ```
 
-Or, if you want to run the tests in the foreground with a visible browser window, run:
-
-<!-- TODO: Change `headed` to `headless` -->
+Or, if you want to run the tests in the background run:
 
 ```bash linenums="0"
-nox -t test -- --headed
+nox -t test -- --headless
 ```
 
 ## Creating a pull request
