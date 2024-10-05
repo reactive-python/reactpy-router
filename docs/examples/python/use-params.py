@@ -1,4 +1,5 @@
-from reactpy import component, html
+from reactpy import component, html, run
+
 from reactpy_router import browser_router, link, route, use_params
 
 
@@ -20,3 +21,6 @@ def root():
         ),
         route("/user/{id:int}", user()),
     )
+
+
+run(root)
