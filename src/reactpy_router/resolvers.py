@@ -43,9 +43,7 @@ class Resolver:
             try:
                 conversion_info = self.registered_converters[param_type]
             except KeyError as e:
-                raise ValueError(
-                    f"Unknown conversion type {param_type!r} in {path!r}"
-                ) from e
+                raise ValueError(f"Unknown conversion type {param_type!r} in {path!r}") from e
 
             # Add the string before the match to the pattern
             pattern += re.escape(path[last_match_end : match.start()])
@@ -69,9 +67,9 @@ class Resolver:
         if match:
             # Convert the matched groups to the correct types
             params = {
-                parameter_name.strip("_numeric_"): self.converter_mapping[
-                    parameter_name
-                ](value)
+                parameter_name[len("_numeric_") :]
+                if parameter_name.startswith("_numeric_")
+                else parameter_name: self.converter_mapping[parameter_name](value)
                 for parameter_name, value in match.groupdict().items()
             }
             return (self.element, params)

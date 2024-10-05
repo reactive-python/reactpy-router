@@ -63,7 +63,7 @@ def all_messages():
 
 @component
 def messages_with():
-    names = set(use_params()["names"].split("-"))  # and here we use the path param
+    names = tuple(use_params()["names"].split("-"))  # and here we use the path param
     messages = [msg for msg in message_data if tuple(msg["with"]) == names]
     return html.div(
         html.h1(f"Messages with {', '.join(names)} 💬"),
