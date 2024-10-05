@@ -38,7 +38,7 @@ R_contra = TypeVar("R_contra", bound=Route, contravariant=True)
 class Router(Protocol[R_contra]):
     """Return a component that renders the first matching route"""
 
-    def __call__(self, *routes: R_contra, select: Literal["first", "all"] = "first") -> ComponentType: ...
+    def __call__(self, *routes: R_contra) -> ComponentType: ...
 
 
 class RouteCompiler(Protocol[R_contra]):

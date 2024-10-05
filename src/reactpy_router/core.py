@@ -38,16 +38,15 @@ def route(path: str, element: Any | None, *routes: Route) -> Route:
 def create_router(compiler: RouteCompiler[R]) -> Router[R]:
     """A decorator that turns a route compiler into a router"""
 
-    def wrapper(*routes: R, select: Literal["first", "all"] = "first") -> ComponentType:
-        return router_component(*routes, select=select, compiler=compiler)
+    def wrapper(*routes: R) -> ComponentType:
+        return router(*routes, compiler=compiler)
 
     return wrapper
 
 
 @component
-def router_component(
+def router(
     *routes: R,
-    select: Literal["first", "all"],
     compiler: RouteCompiler[R],
 ) -> VdomDict | None:
     """A component that renders matching route(s) using the given compiler function."""
@@ -60,7 +59,7 @@ def router_component(
         dependencies=(compiler, hash(routes)),
     )
 
-    match = use_memo(lambda: _match_route(resolvers, location, select))
+    match = use_memo(lambda: _match_route(resolvers, location, select="first"))
 
     if match:
         route_elements = [
@@ -86,8 +85,8 @@ def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
     """A component that renders a link to the given path.
 
     FIXME: This currently works in a "dumb" way by trusting that ReactPy's script tag
-    properly sets the location. When a client-server communication layer is added to
-    ReactPy, this component will need to be rewritten to use that instead."""
+    properly sets the location. When a client-server communication layer is added to a
+    future ReactPy release, this component will need to be rewritten to use that instead."""
     set_location = _use_route_state().set_location
     uuid = uuid4().hex
 
