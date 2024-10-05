@@ -93,6 +93,8 @@ def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
 
     def on_click(_event: dict[str, Any]) -> None:
         pathname, search = to.split("?", 1) if "?" in to else (to, "")
+        if search:
+            search = f"?{search}"
         set_location(Location(pathname, search))
 
     attrs = {

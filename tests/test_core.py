@@ -2,6 +2,7 @@ from typing import Any
 
 from reactpy import Ref, component, html, use_location
 from reactpy.testing import DisplayFixture
+
 from reactpy_router import browser_router, link, route, use_params, use_search_params
 
 
@@ -136,7 +137,7 @@ async def test_use_params(display: DisplayFixture):
         await display.page.wait_for_selector("#success")
 
 
-async def test_use_query(display: DisplayFixture):
+async def test_search_params(display: DisplayFixture):
     expected_query: dict[str, Any] = {}
 
     @component
