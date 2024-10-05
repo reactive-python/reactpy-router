@@ -74,7 +74,7 @@ def router_component(
             History(  # type: ignore
                 {"on_change": lambda event: set_location(Location(**event))}
             ),
-            route_elements,
+            html._(route_elements),
             value=Connection(old_conn.scope, location, old_conn.carrier),
         )
 
@@ -92,16 +92,14 @@ def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
         "onClick": lambda event: set_location(Location(**event)),
         "id": uuid,
     }
-    return html._(
-        html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid))
-    )
+    return html._(html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid)))
 
 
 def use_params() -> dict[str, Any]:
     """The `use_params` hook returns an object of key/value pairs of the dynamic params \
     from the current URL that were matched by the `Route`. Child routes inherit all params \
     from their parent routes.
-    
+
     For example, if you have a `URL_PARAM` defined in the route `/example/<URL_PARAM>/`,
     this hook will return the URL_PARAM value that was matched."""
 
@@ -163,14 +161,10 @@ def _match_route(
 
 
 History = export(
-    module_from_file(
-        "reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"
-    ),
+    module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
     ("History"),
 )
-link_js_content = (Path(__file__).parent / "static" / "link.js").read_text(
-    encoding="utf-8"
-)
+link_js_content = (Path(__file__).parent / "static" / "link.js").read_text(encoding="utf-8")
 
 
 @dataclass

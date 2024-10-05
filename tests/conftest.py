@@ -1,3 +1,6 @@
+import asyncio
+import sys
+
 import pytest
 from playwright.async_api import async_playwright
 from reactpy.testing import BackendFixture, DisplayFixture
@@ -5,27 +8,29 @@ from reactpy.testing import BackendFixture, DisplayFixture
 
 def pytest_addoption(parser) -> None:
     parser.addoption(
-        "--headed",
-        dest="headed",
-        action="store_true",
-        help="Open a browser window when runnging web-based tests",
+        "--headless",
+        dest="headless",
+        action="store_false",
+        help="Hide the browser window when running web-based tests",
     )
 
 
 @pytest.fixture
 async def display(backend, browser):
-    async with DisplayFixture(backend, browser) as display:
-        display.page.set_default_timeout(10000)
-        yield display
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+    async with DisplayFixture(backend, browser) as display_fixture:
+        display_fixture.page.set_default_timeout(10000)
+        yield display_fixture
 
 
 @pytest.fixture
 async def backend():
-    async with BackendFixture() as backend:
-        yield backend
+    async with BackendFixture() as backend_fixture:
+        yield backend_fixture
 
 
 @pytest.fixture
 async def browser(pytestconfig):
     async with async_playwright() as pw:
-        yield await pw.chromium.launch(headless=not bool(pytestconfig.option.headed))
+        yield await pw.chromium.launch(headless=False)
