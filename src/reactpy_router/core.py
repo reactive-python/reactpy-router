@@ -83,13 +83,22 @@ def router_component(
 
 @component
 def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
-    """A component that renders a link to the given path"""
+    """A component that renders a link to the given path.
+
+    FIXME: This currently works in a "dumb" way by trusting that ReactPy's script tag
+    properly sets the location. When a client-server communication layer is added to
+    ReactPy, this component will need to be rewritten to use that instead."""
     set_location = _use_route_state().set_location
     uuid = uuid4().hex
+
+    def on_click(_event: dict[str, Any]) -> None:
+        pathname, search = to.split("?", 1) if "?" in to else (to, "")
+        set_location(Location(pathname, search))
+
     attrs = {
         **attributes,
-        "to": to,
-        "onClick": lambda event: set_location(Location(**event)),
+        "href": to,
+        "onClick": on_click,
         "id": uuid,
     }
     return html._(html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid)))

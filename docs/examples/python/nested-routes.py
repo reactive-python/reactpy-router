@@ -1,6 +1,7 @@
 from typing import TypedDict
 
 from reactpy import component, html, run
+
 from reactpy_router import browser_router, link, route
 
 message_data: list["MessageDataType"] = [
@@ -40,10 +41,7 @@ def home():
 
 @component
 def all_messages():
-    last_messages = {
-        ", ".join(msg["with"]): msg
-        for msg in sorted(message_data, key=lambda m: m["id"])
-    }
+    last_messages = {", ".join(msg["with"]): msg for msg in sorted(message_data, key=lambda m: m["id"])}
     return html.div(
         html.h1("All Messages 💬"),
         html.ul(
@@ -66,7 +64,7 @@ def all_messages():
 
 @component
 def messages_with(*names):
-    messages = [msg for msg in message_data if set(msg["with"]) == names]
+    messages = [msg for msg in message_data if tuple(msg["with"]) == names]
     return html.div(
         html.h1(f"Messages with {', '.join(names)} 💬"),
         html.ul(
