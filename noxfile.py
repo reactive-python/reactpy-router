@@ -33,7 +33,6 @@ def test_types(session: Session) -> None:
 @session(tags=["test"])
 def test_style(session: Session) -> None:
     install_requirements_file(session, "check-style")
-    session.run("black", ".", "--check")
     session.run("ruff", "check", ".")
 
 

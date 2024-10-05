@@ -9,11 +9,9 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 check_untyped_defs = true
 
-[tool.ruff.isort]
-known-first-party = ["src", "tests"]
-
 [tool.ruff]
-ignore = ["E501"]
+lint.ignore = ["E501"]
+lint.isort.known-first-party = ["src", "tests"]
 extend-exclude = [".venv/*", ".eggs/*", ".nox/*", "build/*"]
 line-length = 120
 
