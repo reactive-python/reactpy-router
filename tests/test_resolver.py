@@ -3,7 +3,8 @@ import uuid
 
 import pytest
 
-from reactpy_router import StarletteResolver, route
+from reactpy_router import route
+from reactpy_router.resolvers import StarletteResolver
 
 
 def test_resolve_any():
