@@ -39,7 +39,7 @@ The first step is to create a basic router that will display the home page when 
     {% include "../../examples/python/basic-routing.py" %}
     ```
 
-When navigating to [`http://127.0.0.1:8000``](http://127.0.0.1:8000) you should see `Home Page 🏠`. However, if you go to any other route you will instead see `Missing Link 🔗‍💥`.
+When navigating to [`http://127.0.0.1:8000`](http://127.0.0.1:8000) you should see `Home Page 🏠`. However, if you go to any other route you will instead see `Missing Link 🔗‍💥`.
 
 With this foundation you can start adding more routes.
 

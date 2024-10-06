@@ -32,15 +32,15 @@ The syntax for declaring routes with the [`browser_router`][src.reactpy_router.b
 
 In this case, `#!python param` is the name of the route parameter and the optionally declared `#!python type` specifies what kind of parameter it is. The available parameter types and what patterns they match are are:
 
-| Type                     | Pattern                                                                 |
-| ------------------------ | ----------------------------------------------------------------------- |
-| `#!python str` (default) | `#!python [^/]+`                                                        |
-| `#!python int`           | `#!python \d+`                                                          |
-| `#!python float`         | `#!python \d+(\.\d+)?`                                                  |
-| `#!python uuid`          | `#!python [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}` |
-| `#!python slug`          | `#!python [-a-zA-Z0-9_]+`                                               |
-| `#!python path`          | `#!python .+`                                                           |
-| `#!python any`           | `#!python .*`                                                           |
+| Type | Pattern |
+| --- | --- |
+| `#!python str` (default) | `#!python [^/]+` |
+| `#!python int` | `#!python \d+` |
+| `#!python float` | `#!python \d+(\.\d+)?` |
+| `#!python uuid` | `#!python [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}` |
+| `#!python slug` | `#!python [-a-zA-Z0-9_]+` |
+| `#!python path` | `#!python .+` |
+| `#!python any` | `#!python .*` |
 
 So in practice these each might look like:
 
@@ -52,7 +52,7 @@ So in practice these each might look like:
 /my/route/{param:path}
 ```
 
-Any route parameters collected from the current location then be accessed using the [`use_params`](#using-parameters) hook.
+Any route parameters collected from the current location then be accessed using the [`use_params`](hooks.md#use-parameters) hook.
 
 !!! warning "Pitfall"
 

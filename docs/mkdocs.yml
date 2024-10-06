@@ -1,8 +1,8 @@
 ---
 nav:
-    - Get Started: 
+    - Get Started:
         - Add ReactPy-Router to Your Project: index.md
-        - Your First Routed Application: learn/simple-application.md
+        - Your First Routed Application: learn/your-first-app.md
         - Advanced Topics:
             - Routers, Routes, and Links: learn/routers-routes-and-links.md
             - Hooks: learn/hooks.md
