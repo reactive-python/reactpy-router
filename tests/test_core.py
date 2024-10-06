@@ -226,3 +226,24 @@ async def test_relative_links(display: DisplayFixture):
 
     await display.page.go_back()
     await display.page.wait_for_selector("#root")
+
+
+async def test_link_with_query_string(display: DisplayFixture):
+    @component
+    def check_search_params():
+        query = use_search_params()
+        assert query == {"a": ["1"], "b": ["2"]}
+        return html.h1({"id": "success"}, "success")
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", link("Root", to="/a?a=1&b=2", id="root")),
+            route("/a", check_search_params()),
+        )
+
+    await display.show(sample)
+    await display.page.wait_for_selector("#root")
+    lnk = await display.page.wait_for_selector("#root")
+    await lnk.click()
+    await display.page.wait_for_selector("#success")
