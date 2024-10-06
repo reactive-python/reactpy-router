@@ -38,7 +38,7 @@ def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
     if "className" in attributes:
         class_name = " ".join([attributes.pop("className"), class_name])
     # TODO: This can be removed when ReactPy stops supporting underscores in attribute names
-    if "class_name" in attributes:
+    if "class_name" in attributes:  # pragma: no cover
         class_name = " ".join([attributes.pop("class_name"), class_name])
 
     attrs = {
