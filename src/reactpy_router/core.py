@@ -31,7 +31,7 @@ R = TypeVar("R", bound=Route)
 
 
 def route(path: str, element: Any | None, *routes: Route) -> Route:
-    """Create a route with the given path, element, and child routes"""
+    """Create a route with the given path, element, and child routes."""
     return Route(path, element, routes)
 
 
@@ -49,7 +49,10 @@ def router(
     *routes: R,
     compiler: RouteCompiler[R],
 ) -> VdomDict | None:
-    """A component that renders matching route(s) using the given compiler function."""
+    """A component that renders matching route(s) using the given compiler function.
+
+    This typically should never be used by a user. Instead, use `create_router` if creating
+    a custom routing engine."""
 
     old_conn = use_connection()
     location, set_location = use_state(old_conn.location)
@@ -82,11 +85,10 @@ def router(
 
 @component
 def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
-    """A component that renders a link to the given path.
-
-    FIXME: This currently works in a "dumb" way by trusting that ReactPy's script tag
-    properly sets the location. When a client-server communication layer is added to a
-    future ReactPy release, this component will need to be rewritten to use that instead."""
+    """A component that renders a link to the given path."""
+    # FIXME: This currently works in a "dumb" way by trusting that ReactPy's script tag \
+    # properly sets the location. When a client-server communication layer is added to a \
+    # future ReactPy release, this component will need to be rewritten to use that instead. \
     set_location = _use_route_state().set_location
     uuid = uuid4().hex
 
@@ -106,8 +108,8 @@ def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
 
 
 def use_params() -> dict[str, Any]:
-    """The `use_params` hook returns an object of key/value pairs of the dynamic params \
-    from the current URL that were matched by the `Route`. Child routes inherit all params \
+    """The `use_params` hook returns an object of key/value pairs of the dynamic parameters \
+    from the current URL that were matched by the `Route`. Child routes inherit all parameters \
     from their parent routes.
 
     For example, if you have a `URL_PARAM` defined in the route `/example/<URL_PARAM>/`,
@@ -126,8 +128,8 @@ def use_search_params(
 ) -> dict[str, list[str]]:
     """
     The `use_search_params` hook is used to read and modify the query string in the URL \
-    for the current location. Like React's own `use_state` hook, `use_search_params returns \
-    an array of two values: the current location's search params and a function that may \
+    for the current location. Like React's own `use_state` hook, `use_search_params` returns \
+    an array of two values: the current location's search parameters and a function that may \
     be used to update them.
 
     See `urllib.parse.parse_qs` for info on this hook's parameters."""

@@ -7,7 +7,6 @@ from .core import (
     create_router,
     link,
     route,
-    router,
     use_params,
     use_search_params,
 )
@@ -21,7 +20,6 @@ __all__ = (
     "route",
     "Route",
     "RouteCompiler",
-    "router",
     "RouteResolver",
     "browser_router",
     "use_params",

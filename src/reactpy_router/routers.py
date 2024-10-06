@@ -1,4 +1,4 @@
-"""A simple router implementation for ReactPy"""
+"""URL router implementation for ReactPy"""
 
 from __future__ import annotations
 

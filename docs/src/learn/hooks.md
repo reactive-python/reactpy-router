@@ -6,7 +6,7 @@ Several pre-fabricated hooks are provided to help integrate with routing feature
 
 ---
 
-## Use Search Params
+## Use Search Parameters
 
 The [`use_search_params`][src.reactpy_router.use_search_params] hook can be used to access query parameters from the current location. It returns a dictionary of query parameters, where each value is a list of strings.
 
