@@ -193,21 +193,25 @@ async def test_relative_links(display: DisplayFixture):
     def sample():
         return browser_router(
             route("/", link("Root", to="/a", id="root")),
-            route("/a", link("A", to="/a/b", id="a")),
+            route("/a", link("A", to="/a/a/../b", id="a")),
             route("/a/b", link("B", to="../a/b/c", id="b")),
             route("/a/b/c", link("C", to="../d", id="c")),
             route("/a/d", link("D", to="e", id="d")),
-            route("/a/e", link("E", to="../default", id="e")),
+            route("/a/e", link("E", to="/a/./f", id="e")),
+            route("/a/f", link("F", to="../default", id="f")),
             route("{default:any}", html.h1({"id": "default"}, "Default")),
         )
 
     await display.show(sample)
 
-    for link_selector in ["#root", "#a", "#b", "#c", "#d", "#e"]:
+    for link_selector in ["#root", "#a", "#b", "#c", "#d", "#e", "#f"]:
         lnk = await display.page.wait_for_selector(link_selector)
         await lnk.click()
 
     await display.page.wait_for_selector("#default")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#f")
 
     await display.page.go_back()
     await display.page.wait_for_selector("#e")
