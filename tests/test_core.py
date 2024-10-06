@@ -92,7 +92,7 @@ async def test_navigate_with_link(display: DisplayFixture):
 
     for link_selector in ["#root", "#a", "#b", "#c"]:
         lnk = await display.page.wait_for_selector(link_selector)
-        await lnk.click()  # type: ignore
+        await lnk.click()
 
     await display.page.wait_for_selector("#default")
 
@@ -171,7 +171,7 @@ async def test_browser_popstate(display: DisplayFixture):
 
     for link_selector in ["#root", "#a", "#b", "#c"]:
         lnk = await display.page.wait_for_selector(link_selector)
-        await lnk.click()  # type: ignore
+        await lnk.click()
 
     await display.page.wait_for_selector("#default")
 
@@ -205,7 +205,7 @@ async def test_relative_links(display: DisplayFixture):
 
     for link_selector in ["#root", "#a", "#b", "#c", "#d", "#e"]:
         lnk = await display.page.wait_for_selector(link_selector)
-        await lnk.click()  # type: ignore
+        await lnk.click()
 
     await display.page.wait_for_selector("#default")
 
