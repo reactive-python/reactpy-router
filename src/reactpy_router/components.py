@@ -34,11 +34,18 @@ def link(*children: VdomChild, to: str, **attributes: Any) -> VdomDict:
             search = f"?{search}"
         set_location(Location(pathname, search))
 
+    class_name = uuid
+    if "className" in attributes:
+        class_name = " ".join([attributes.pop("className"), class_name])
+    # TODO: This can be removed when ReactPy stops supporting underscores in attribute names
+    if "class_name" in attributes:
+        class_name = " ".join([attributes.pop("class_name"), class_name])
+
     attrs = {
         **attributes,
         "href": to,
         "onClick": on_click,
-        "id": uuid,
+        "className": uuid,
     }
     return html._(html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid)))
 
