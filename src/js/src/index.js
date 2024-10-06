@@ -13,7 +13,8 @@ export function bind(node) {
 }
 
 export function History({ onChange }) {
-  // Capture changes to the browser's history
+  // Capture browser "history go back" action and tell the server about it
+  // Note: Browsers do not allow you to detect "history go forward" actions.
   React.useEffect(() => {
     const listener = () => {
       onChange({
