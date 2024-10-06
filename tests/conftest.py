@@ -20,8 +20,6 @@ def pytest_addoption(parser) -> None:
 
 @pytest.fixture
 async def display(backend, browser):
-    if sys.platform == "win32":
-        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
     async with DisplayFixture(backend, browser) as display_fixture:
         display_fixture.page.set_default_timeout(10000)
         yield display_fixture
@@ -37,3 +35,10 @@ async def backend():
 async def browser(pytestconfig):
     async with async_playwright() as pw:
         yield await pw.chromium.launch(headless=True if GITHUB_ACTIONS else pytestconfig.getoption("headless"))
+
+
+@pytest.fixture
+def event_loop_policy(request):
+    if sys.platform == "win32":
+        return asyncio.WindowsProactorEventLoopPolicy()
+    return asyncio.get_event_loop_policy()
