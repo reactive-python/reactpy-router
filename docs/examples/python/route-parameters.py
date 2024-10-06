@@ -2,8 +2,7 @@ from typing import TypedDict
 
 from reactpy import component, html, run
 
-from reactpy_router import browser_router, link, route
-from reactpy_router.core import use_params
+from reactpy_router import browser_router, link, route, use_params
 
 message_data: list["MessageDataType"] = [
     {"id": 1, "with": ["Alice"], "from": None, "message": "Hello!"},

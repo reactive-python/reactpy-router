@@ -1,6 +1,6 @@
 <p class="intro" markdown>
 
-Here you'll learn the various features of `reactpy-router` and how to use them. These examples will utilize the [`reactpy_router.browser_router`][src.reactpy_router.browser_router].
+Here you'll learn the various features of `reactpy-router` and how to use them. These examples will utilize the [`reactpy_router.browser_router`][reactpy_router.browser_router].
 
 </p>
 

@@ -96,8 +96,8 @@ plugins:
             - https://reactpy.dev/docs/objects.inv
             - https://installer.readthedocs.io/en/stable/objects.inv
           options:
-            show_root_heading: true
             show_bases: false
+            show_root_members_full_path: true
 extra:
   generator: false
   version:

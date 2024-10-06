@@ -20,9 +20,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - name: Check docs build
+      - name: Install Python Dependencies
         run: |
           pip install -r requirements/build-docs.txt
+          pip install -r requirements/check-types.txt
+          pip install -r requirements/check-style.txt
+          pip install -e .
+      - name: Check docs build
+        run: |
           linkcheckMarkdown docs/ -v -r
           linkcheckMarkdown README.md -v -r
           linkcheckMarkdown CHANGELOG.md -v -r
@@ -30,7 +35,5 @@ jobs:
           mkdocs build --strict
       - name: Check docs examples
         run: |
-          pip install -r requirements/check-types.txt
-          pip install -r requirements/check-style.txt
           mypy --show-error-codes docs/examples/python/
           ruff check docs/examples/python/
