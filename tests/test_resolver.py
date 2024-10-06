@@ -2,18 +2,19 @@ import re
 import uuid
 
 import pytest
-from reactpy_router import Resolver, route
+
+from reactpy_router import StarletteResolver, route
 
 
 def test_resolve_any():
-    resolver = Resolver(route("{404:any}", "Hello World"))
+    resolver = StarletteResolver(route("{404:any}", "Hello World"))
     assert resolver.parse_path("{404:any}") == re.compile("^(?P<_numeric_404>.*)$")
     assert resolver.converter_mapping == {"_numeric_404": str}
     assert resolver.resolve("/hello/world") == ("Hello World", {"404": "/hello/world"})
 
 
 def test_parse_path():
-    resolver = Resolver(route("/", None))
+    resolver = StarletteResolver(route("/", None))
     assert resolver.parse_path("/a/b/c") == re.compile("^/a/b/c$")
     assert resolver.converter_mapping == {}
 
@@ -23,9 +24,7 @@ def test_parse_path():
     assert resolver.parse_path("/a/{b:int}/c") == re.compile(r"^/a/(?P<b>\d+)/c$")
     assert resolver.converter_mapping == {"b": int}
 
-    assert resolver.parse_path("/a/{b:int}/{c:float}/c") == re.compile(
-        r"^/a/(?P<b>\d+)/(?P<c>\d+(\.\d+)?)/c$"
-    )
+    assert resolver.parse_path("/a/{b:int}/{c:float}/c") == re.compile(r"^/a/(?P<b>\d+)/(?P<c>\d+(\.\d+)?)/c$")
     assert resolver.converter_mapping == {"b": int, "c": float}
 
     assert resolver.parse_path("/a/{b:int}/{c:float}/{d:uuid}/c") == re.compile(
@@ -33,9 +32,7 @@ def test_parse_path():
     )
     assert resolver.converter_mapping == {"b": int, "c": float, "d": uuid.UUID}
 
-    assert resolver.parse_path(
-        "/a/{b:int}/{c:float}/{d:uuid}/{e:path}/c"
-    ) == re.compile(
+    assert resolver.parse_path("/a/{b:int}/{c:float}/{d:uuid}/{e:path}/c") == re.compile(
         r"^/a/(?P<b>\d+)/(?P<c>\d+(\.\d+)?)/(?P<d>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/(?P<e>.+)/c$"
     )
     assert resolver.converter_mapping == {
@@ -47,13 +44,13 @@ def test_parse_path():
 
 
 def test_parse_path_unkown_conversion():
-    resolver = Resolver(route("/", None))
+    resolver = StarletteResolver(route("/", None))
     with pytest.raises(ValueError):
         resolver.parse_path("/a/{b:unknown}/c")
 
 
 def test_parse_path_re_escape():
     """Check that we escape regex characters in the path"""
-    resolver = Resolver(route("/", None))
+    resolver = StarletteResolver(route("/", None))
     assert resolver.parse_path("/a/{b:int}/c.d") == re.compile(r"^/a/(?P<b>\d+)/c\.d$")
     assert resolver.converter_mapping == {"b": int}

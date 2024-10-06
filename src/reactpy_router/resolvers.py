@@ -6,11 +6,13 @@ from typing import Any
 from reactpy_router.converters import CONVERTERS
 from reactpy_router.types import ConversionInfo, ConverterMapping, Route
 
-__all__ = ["Resolver"]
+__all__ = ["StarletteResolver"]
 
 
-class Resolver:
-    """A simple route resolver that uses regex to match paths."""
+class StarletteResolver:
+    """URL resolver that matches routes that match the starlette URL routing syntax.
+
+    However, we add a few additional parameter types on top of Starlette's syntax."""
 
     def __init__(
         self,
@@ -21,7 +23,6 @@ class Resolver:
         self.element = route.element
         self.registered_converters = converters or CONVERTERS
         self.converter_mapping: ConverterMapping = {}
-        # self.match_any_indentifier = match_any_identifier
         self.param_regex = re.compile(param_pattern)
         self.pattern = self.parse_path(route.path)
         self.key = self.pattern.pattern  # Unique identifier for ReactPy rendering
