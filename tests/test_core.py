@@ -251,3 +251,14 @@ async def test_link_with_query_string(display: DisplayFixture):
     lnk = await display.page.wait_for_selector("#root")
     await lnk.click()
     await display.page.wait_for_selector("#success")
+
+
+async def test_link_class_name(display: DisplayFixture):
+    @component
+    def sample():
+        return browser_router(route("/", link("Root", to="/a", id="root", className="class1")))
+
+    await display.show(sample)
+
+    lnk = await display.page.wait_for_selector("#root")
+    assert "class1" in await lnk.get_attribute("class")
