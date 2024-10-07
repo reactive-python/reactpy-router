@@ -99,7 +99,10 @@ def _match_route(
         if match is not None:
             if select == "first":
                 return [match]
-            matches.append(match)
+
+            # This is no longer used by `reactpy-router`, since `react-router>=6.0.0` no longer supports
+            # multiple matches. However, it's kept here to support future changes.
+            matches.append(match)  # pragma: no cover
 
     if not matches:
         _logger.debug("No matching route found for %s", location.pathname)
