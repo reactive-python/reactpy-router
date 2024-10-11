@@ -1,9 +1,13 @@
+import os
 from typing import Any
 
 from reactpy import Ref, component, html, use_location
 from reactpy.testing import DisplayFixture
 
 from reactpy_router import browser_router, link, route, use_params, use_search_params
+
+GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
+CLICK_DELAY = 250 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
 
 
 async def test_simple_router(display: DisplayFixture):
@@ -92,7 +96,7 @@ async def test_navigate_with_link(display: DisplayFixture):
 
     for link_selector in ["#root", "#a", "#b", "#c"]:
         lnk = await display.page.wait_for_selector(link_selector)
-        await lnk.click()
+        await lnk.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
 
@@ -171,7 +175,7 @@ async def test_browser_popstate(display: DisplayFixture):
 
     for link_selector in ["#root", "#a", "#b", "#c"]:
         lnk = await display.page.wait_for_selector(link_selector)
-        await lnk.click()
+        await lnk.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
 
@@ -206,7 +210,7 @@ async def test_relative_links(display: DisplayFixture):
 
     for link_selector in ["#root", "#a", "#b", "#c", "#d", "#e", "#f"]:
         lnk = await display.page.wait_for_selector(link_selector)
-        await lnk.click()
+        await lnk.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
 
@@ -249,7 +253,7 @@ async def test_link_with_query_string(display: DisplayFixture):
     await display.show(sample)
     await display.page.wait_for_selector("#root")
     lnk = await display.page.wait_for_selector("#root")
-    await lnk.click()
+    await lnk.click(delay=CLICK_DELAY)
     await display.page.wait_for_selector("#success")
 
 
