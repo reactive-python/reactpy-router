@@ -5,8 +5,8 @@ from reactpy_router import browser_router, link, route, use_search_params
 
 @component
 def search():
-    query = use_search_params()
-    return html._(html.h1(f"Search Results for {query['q'][0]} 🔍"), html.p("Nothing (yet)."))
+    search_params = use_search_params()
+    return html._(html.h1(f"Search Results for {search_params['query'][0]} 🔍"), html.p("Nothing (yet)."))
 
 
 @component
@@ -16,7 +16,7 @@ def root():
             "/",
             html.div(
                 html.h1("Home Page 🏠"),
-                link("Search", to="/search?q=reactpy"),
+                link("Search", to="/search?query=reactpy"),
             ),
         ),
         route("/search", search()),

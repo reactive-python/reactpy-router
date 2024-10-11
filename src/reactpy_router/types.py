@@ -32,22 +32,23 @@ class Route:
         return hash((self.path, key, self.routes))
 
 
-R_contra = TypeVar("R_contra", bound=Route, contravariant=True)
+RouteType = TypeVar("RouteType", bound=Route)
+RouteType_contra = TypeVar("RouteType_contra", bound=Route, contravariant=True)
 
 
-class Router(Protocol[R_contra]):
+class Router(Protocol[RouteType_contra]):
     """Return a component that renders the first matching route."""
 
-    def __call__(self, *routes: R_contra) -> ComponentType: ...
+    def __call__(self, *routes: RouteType_contra) -> ComponentType: ...
 
 
-class RouteCompiler(Protocol[R_contra]):
-    """Compile a route into a resolver that can be matched against a path."""
+class Resolver(Protocol[RouteType_contra]):
+    """Compile a route into a resolver that can be matched against a given path."""
 
-    def __call__(self, route: R_contra) -> RouteResolver: ...
+    def __call__(self, route: RouteType_contra) -> CompiledRoute: ...
 
 
-class RouteResolver(Protocol):
+class CompiledRoute(Protocol):
     """A compiled route that can be matched against a path."""
 
     @property

@@ -10,9 +10,9 @@ __all__ = ["StarletteResolver"]
 
 
 class StarletteResolver:
-    """URL resolver that matches routes that match the starlette URL routing syntax.
+    """URL resolver that matches routes using starlette's URL routing syntax.
 
-    However, we add a few additional parameter types on top of Starlette's syntax."""
+    However, this resolver adds a few additional parameter types on top of Starlette's syntax."""
 
     def __init__(
         self,
@@ -34,10 +34,14 @@ class StarletteResolver:
 
         # Iterate through matches of the parameter pattern
         for match in self.param_regex.finditer(path):
-            # Extract parameter name and type
+            # Extract parameter name
             name = match.group("name")
             if name[0].isnumeric():
+                # Regex group names can't begin with a number, so we must prefix them with
+                # "_numeric_". This prefix is removed later within this function.
                 name = f"_numeric_{name}"
+
+            # Extract the parameter type
             param_type = (match.group("type") or "str").strip(":")
 
             # Check if a converter exists for the type

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from logging import getLogger
-from typing import Any, Iterator, Literal, Sequence, TypeVar
+from typing import Any, Iterator, Literal, Sequence
 
 from reactpy import (
     component,
@@ -20,33 +20,32 @@ from reactpy.types import ComponentType
 from reactpy_router.components import History
 from reactpy_router.hooks import _route_state_context, _RouteState
 from reactpy_router.resolvers import StarletteResolver
-from reactpy_router.types import Route, RouteCompiler, Router, RouteResolver
+from reactpy_router.types import CompiledRoute, Resolver, Router, RouteType
 
 __all__ = ["browser_router", "create_router"]
 _logger = getLogger(__name__)
-R = TypeVar("R", bound=Route)
 
 
-def create_router(compiler: RouteCompiler[R]) -> Router[R]:
-    """A decorator that turns a route compiler into a router"""
+def create_router(resolver: Resolver[RouteType]) -> Router[RouteType]:
+    """A decorator that turns a resolver into a router"""
 
-    def wrapper(*routes: R) -> ComponentType:
-        return router(*routes, compiler=compiler)
+    def wrapper(*routes: RouteType) -> ComponentType:
+        return router(*routes, resolver=resolver)
 
     return wrapper
 
 
 browser_router = create_router(StarletteResolver)
 """This is the recommended router for all ReactPy Router web projects.
-It uses the DOM History API to update the URL and manage the history stack."""
+It uses the JavaScript DOM History API to manage the history stack."""
 
 
 @component
 def router(
-    *routes: R,
-    compiler: RouteCompiler[R],
+    *routes: RouteType,
+    resolver: Resolver[RouteType],
 ) -> VdomDict | None:
-    """A component that renders matching route(s) using the given compiler function.
+    """A component that renders matching route(s) using the given resolver.
 
     This typically should never be used by a user. Instead, use `create_router` if creating
     a custom routing engine."""
@@ -55,8 +54,8 @@ def router(
     location, set_location = use_state(old_conn.location)
 
     resolvers = use_memo(
-        lambda: tuple(map(compiler, _iter_routes(routes))),
-        dependencies=(compiler, hash(routes)),
+        lambda: tuple(map(resolver, _iter_routes(routes))),
+        dependencies=(resolver, hash(routes)),
     )
 
     match = use_memo(lambda: _match_route(resolvers, location, select="first"))
@@ -80,7 +79,7 @@ def router(
     return None
 
 
-def _iter_routes(routes: Sequence[R]) -> Iterator[R]:
+def _iter_routes(routes: Sequence[RouteType]) -> Iterator[RouteType]:
     for parent in routes:
         for child in _iter_routes(parent.routes):
             yield replace(child, path=parent.path + child.path)  # type: ignore[misc]
@@ -88,7 +87,7 @@ def _iter_routes(routes: Sequence[R]) -> Iterator[R]:
 
 
 def _match_route(
-    compiled_routes: Sequence[RouteResolver],
+    compiled_routes: Sequence[CompiledRoute],
     location: Location,
     select: Literal["first", "all"],
 ) -> list[tuple[Any, dict[str, Any]]]:
@@ -100,8 +99,9 @@ def _match_route(
             if select == "first":
                 return [match]
 
-            # This is no longer used by `reactpy-router`, since `react-router>=6.0.0` no longer supports
-            # multiple matches. However, it's kept here to support future changes.
+            # Matching multiple routes is disabled since `react-router` no longer supports multiple
+            # matches via the `Route` component. However, it's kept here to support future changes
+            # or third-party routers.
             matches.append(match)  # pragma: no cover
 
     if not matches:

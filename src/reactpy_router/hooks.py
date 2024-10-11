@@ -53,14 +53,14 @@ def use_search_params(
     separator: str = "&",
 ) -> dict[str, list[str]]:
     """
-    The `use_search_params` hook is used to read and modify the query string in the URL \
-    for the current location. Like React's own `use_state` hook, `use_search_params` returns \
-    an array of two values: the current location's search parameters and a function that may \
-    be used to update them.
+    The `use_search_params` hook is used to read the query string in the URL \
+    for the current location.
 
     See `urllib.parse.parse_qs` for info on this hook's parameters."""
 
-    # FIXME: This needs to return a tuple of the search params and a function to update them
+    # TODO: In order to match `react-router`, this will need to return a tuple of the search params \
+    # and a function to update them. This is currently not possible without reactpy core having a \
+    # communication layer.
     return parse_qs(
         use_location().search[1:],
         keep_blank_values=keep_blank_values,

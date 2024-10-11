@@ -34,4 +34,4 @@ CONVERTERS: dict[str, ConversionInfo] = {
         "func": str,
     },
 }
-"""The conversion types supported by the default Resolver. You can add more types if needed."""
+"""The conversion types supported by the default Resolver."""
