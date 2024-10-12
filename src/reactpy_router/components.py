@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
+from urllib.parse import urljoin
 from uuid import uuid4
 
-from reactpy import component, html
+from reactpy import component, event, html, use_connection
 from reactpy.backend.types import Location
 from reactpy.core.component import Component
 from reactpy.core.types import VdomDict
@@ -24,6 +25,8 @@ Link = export(
     ("Link"),
 )
 """Client-side portion of link handling"""
+
+link_js_content = (Path(__file__).parent / "static" / "link.js").read_text(encoding="utf-8")
 
 
 def link(attributes: dict[str, Any], *children: Any) -> Component:
@@ -55,10 +58,42 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
         "className": class_name,
     }
 
-    def on_click(_event: dict[str, Any]) -> None:
-        set_location(Location(**_event))
+    # FIXME: This component currently works in a "dumb" way by trusting that ReactPy's script tag \
+    # properly sets the location due to bugs in ReactPy rendering.
+    # https://github.com/reactive-python/reactpy/pull/1224
+    current_path = use_connection().location.pathname
 
-    return html._(html.a(attrs, *children), Link({"onClick": on_click, "linkClass": uuid_string}))
+    @event(prevent_default=True)
+    def on_click(_event: dict[str, Any]) -> None:
+        pathname, search = to.split("?", 1) if "?" in to else (to, "")
+        if search:
+            search = f"?{search}"
+
+        # Resolve relative paths that match `../foo`
+        if pathname.startswith("../"):
+            pathname = urljoin(current_path, pathname)
+
+        # Resolve relative paths that match `foo`
+        if not pathname.startswith("/"):
+            pathname = urljoin(current_path, pathname)
+
+        # Resolve relative paths that match `/foo/../bar`
+        while "/../" in pathname:
+            part_1, part_2 = pathname.split("/../", 1)
+            pathname = urljoin(f"{part_1}/", f"../{part_2}")
+
+        # Resolve relative paths that match `foo/./bar`
+        pathname = pathname.replace("/./", "/")
+
+        set_location(Location(pathname, search))
+
+    attrs["onClick"] = on_click
+
+    return html._(html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid_string)))
+
+    # def on_click(_event: dict[str, Any]) -> None:
+    #     set_location(Location(**_event))
+    # return html._(html.a(attrs, *children), Link({"onClick": on_click, "linkClass": uuid_string}))
 
 
 def route(path: str, element: Any | None, *routes: Route) -> Route:

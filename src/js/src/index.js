@@ -44,6 +44,9 @@ export function History({ onHistoryChange }) {
   return null;
 }
 
+// FIXME: The Link component is unused due to a ReactPy core rendering bug
+// which causes duplicate rendering (and thus duplicate event listeners).
+// https://github.com/reactive-python/reactpy/pull/1224
 export function Link({ onClick, linkClass }) {
   // This component is not the actual anchor link.
   // It is an event listener for the link component created by ReactPy.
