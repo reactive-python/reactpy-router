@@ -48,7 +48,7 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
         class_name = " ".join([attributes.pop("class_name"), class_name])
     if "href" in attributes and "to" not in attributes:
         attributes["to"] = attributes.pop("href")
-    if "to" not in attributes:
+    if "to" not in attributes:  # pragma: no cover
         raise ValueError("The `to` attribute is required for the `Link` component.")
     to = attributes.pop("to")
 
