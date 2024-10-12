@@ -57,6 +57,7 @@ Using the following categories, list your changes in this order:
 -   Fix bug where changing routes could cause render failure due to key identity.
 -   Fix bug where "Match Any" pattern wouldn't work when used in complex or nested paths.
 -   Fix bug where `link` elements could not have `@component` type children.
+-   Fix bug where the ReactPy would not detect the current URL after a reconnection.
 -   Fixed flakey tests being flakey on GitHub CI by adding click delays.
 
 ## [0.1.1] - 2023-12-13
