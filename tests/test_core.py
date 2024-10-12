@@ -197,7 +197,7 @@ async def test_relative_links(display: DisplayFixture):
     def sample():
         return browser_router(
             route("/", link({"to": "a", "id": "root"}, "Root")),
-            route("/a", link({"to": "a/a/../b", "id": "a"}, "A")),
+            route("/a", link({"to": "/a/a/../b", "id": "a"}, "A")),
             route("/a/b", link({"to": "../a/b/c", "id": "b"}, "B")),
             route("/a/b/c", link({"to": "../d", "id": "c"}, "C")),
             route("/a/d", link({"to": "e", "id": "d"}, "D")),
