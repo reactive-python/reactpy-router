@@ -16,7 +16,7 @@ def root():
             "/",
             html.div(
                 html.h1("Home Page 🏠"),
-                link("Search", to="/search?query=reactpy"),
+                link({"to": "/search?query=reactpy"}, "Search"),
             ),
         ),
         route("/search", search()),

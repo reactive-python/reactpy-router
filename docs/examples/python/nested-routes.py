@@ -35,30 +35,26 @@ def root():
 def home():
     return html.div(
         html.h1("Home Page 🏠"),
-        link("Messages", to="/messages"),
+        link({"to": "/messages"}, "Messages"),
     )
 
 
 @component
 def all_messages():
     last_messages = {", ".join(msg["with"]): msg for msg in sorted(message_data, key=lambda m: m["id"])}
+
+    messages = []
+    for msg in last_messages.values():
+        _link = link(
+            {"to": f"/messages/with/{'-'.join(msg['with'])}"},
+            f"Conversation with: {', '.join(msg['with'])}",
+        )
+        msg_from = f"{'' if msg['from'] is None else '🔴'} {msg['message']}"
+        messages.append(html.li({"key": msg["id"]}, html.p(_link), msg_from))
+
     return html.div(
         html.h1("All Messages 💬"),
-        html.ul(
-            [
-                html.li(
-                    {"key": msg["id"]},
-                    html.p(
-                        link(
-                            f"Conversation with: {', '.join(msg['with'])}",
-                            to=f"/messages/with/{'-'.join(msg['with'])}",
-                        ),
-                    ),
-                    f"{'' if msg['from'] is None else '🔴'} {msg['message']}",
-                )
-                for msg in last_messages.values()
-            ]
-        ),
+        html.ul(messages),
     )
 
 

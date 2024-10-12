@@ -1,4 +1,5 @@
 from reactpy import component, html, run
+
 from reactpy_router import browser_router, link, route
 
 
@@ -15,7 +16,7 @@ def root():
 def home():
     return html.div(
         html.h1("Home Page 🏠"),
-        link("Messages", to="/messages"),
+        link({"to": "/messages"}, "Messages"),
     )
 
 

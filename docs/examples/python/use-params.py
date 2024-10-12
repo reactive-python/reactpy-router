@@ -16,7 +16,7 @@ def root():
             "/",
             html.div(
                 html.h1("Home Page 🏠"),
-                link("User 123", to="/user/123"),
+                link({"to": "/user/123"}, "User 123"),
             ),
         ),
         route("/user/{id:int}", user()),
