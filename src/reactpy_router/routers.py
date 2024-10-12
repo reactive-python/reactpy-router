@@ -68,10 +68,13 @@ def router(
             )
             for element, params in match
         ]
+
+        def on_browser_back(event: dict[str, Any]) -> None:
+            """Callback function used within the JavaScript `History` component."""
+            set_location(Location(**event))
+
         return ConnectionContext(
-            History(  # type: ignore
-                {"onChange": lambda event: set_location(Location(**event))}
-            ),
+            History({"onBrowserBack": on_browser_back}),  # type: ignore[return-value]
             html._(route_elements),
             value=Connection(old_conn.scope, location, old_conn.carrier),
         )
