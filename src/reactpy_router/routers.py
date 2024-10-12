@@ -70,7 +70,7 @@ def router(
         ]
         return ConnectionContext(
             History(  # type: ignore
-                {"on_change": lambda event: set_location(Location(**event))}
+                {"onChange": lambda event: set_location(Location(**event))}
             ),
             html._(route_elements),
             value=Connection(old_conn.scope, location, old_conn.carrier),
