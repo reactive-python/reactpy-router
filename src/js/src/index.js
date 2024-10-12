@@ -12,13 +12,13 @@ export function bind(node) {
   };
 }
 
-export function History({ onBrowserBack }) {
+export function History({ onHistoryChange }) {
   // Capture browser "history go back" action and tell the server about it
-  // Note: Browsers do not allow you to detect "history go forward" actions.
+  // Note: Browsers do not allow us to detect "history go forward" actions.
   React.useEffect(() => {
-    // Register a listener for the "popstate" event and send data back to the server using the `onBrowserBack` callback.
+    // Register a listener for the "popstate" event and send data back to the server using the `onHistoryChange` callback.
     const listener = () => {
-      onBrowserBack({
+      onHistoryChange({
         pathname: window.location.pathname,
         search: window.location.search,
       });
@@ -30,6 +30,17 @@ export function History({ onBrowserBack }) {
     // Delete the event listener when the component is unmounted
     return () => window.removeEventListener("popstate", listener);
   });
+
+  // Tell the server about the URL during the initial page load
+  // FIXME: This currently runs every time any component is mounted due to a ReactPy core rendering bug.
+  // https://github.com/reactive-python/reactpy/pull/1224
+  React.useEffect(() => {
+    onHistoryChange({
+      pathname: window.location.pathname,
+      search: window.location.search,
+    });
+    return () => {};
+  }, []);
   return null;
 }
 
@@ -49,15 +60,17 @@ export function Link({ onClick, linkClass }) {
     };
 
     // Register the event listener
-    document
-      .querySelector(`.${linkClass}`)
-      .addEventListener("click", handleClick);
+    let link = document.querySelector(`.${linkClass}`);
+    if (link) {
+      link.addEventListener("click", handleClick);
+    }
 
     // Delete the event listener when the component is unmounted
     return () => {
-      document
-        .querySelector(`.${linkClass}`)
-        .removeEventListener("click", handleClick);
+      let link = document.querySelector(`.${linkClass}`);
+      if (link) {
+        link.removeEventListener("click", handleClick);
+      }
     };
   });
   return null;
