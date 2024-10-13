@@ -56,7 +56,7 @@ class StarletteResolver:
             # Add the match to the pattern
             pattern += f"(?P<{name}>{conversion_info['regex']})"
 
-            # Keep a local mapping of parameter names to conversion functions.
+            # Keep a local mapping of the URL's parameter names to conversion functions.
             self.converter_mapping[name] = conversion_info["func"]
 
             # Update the last match end
