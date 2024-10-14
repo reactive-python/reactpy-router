@@ -36,7 +36,6 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
--   Bump GitHub workflows
 -   Rename `use_query` to `use_search_params`.
 -   Rename `simple.router` to `browser_router`.
 -   Rename `SimpleResolver` to `StarletteResolver`.
@@ -58,7 +57,7 @@ Using the following categories, list your changes in this order:
 -   Fix bug where "Match Any" pattern wouldn't work when used in complex or nested paths.
 -   Fix bug where `link` elements could not have `@component` type children.
 -   Fix bug where the ReactPy would not detect the current URL after a reconnection.
--   Fixed flakey tests on GitHub CI by adding click delays.
+-   Fix bug where `ctrl` + `click` on a `link` element would not open in a new tab.
 
 ## [0.1.1] - 2023-12-13
 

@@ -5,7 +5,7 @@ from typing import Any
 from urllib.parse import urljoin
 from uuid import uuid4
 
-from reactpy import component, event, html, use_connection
+from reactpy import component, html, use_connection
 from reactpy.backend.types import Location
 from reactpy.core.component import Component
 from reactpy.core.types import VdomDict
@@ -63,8 +63,10 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
     # https://github.com/reactive-python/reactpy/pull/1224
     current_path = use_connection().location.pathname
 
-    @event(prevent_default=True)
     def on_click(_event: dict[str, Any]) -> None:
+        if _event.get("ctrlKey", False):
+            return
+
         pathname, search = to.split("?", 1) if "?" in to else (to, "")
         if search:
             search = f"?{search}"
