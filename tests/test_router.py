@@ -1,7 +1,7 @@
 import os
 from typing import Any
 
-from playwright.async_api._generated import Browser
+from playwright.async_api._generated import Browser, Page
 from reactpy import Ref, component, html, use_location
 from reactpy.testing import DisplayFixture
 
@@ -293,5 +293,5 @@ async def test_ctrl_click(display: DisplayFixture, browser: Browser):
     _link = await display.page.wait_for_selector("#root")
     await _link.click(delay=CLICK_DELAY, modifiers=["Control"])
     browser_context = browser.contexts[0]
-    new_page = await browser_context.wait_for_event("page")
+    new_page: Page = await browser_context.wait_for_event("page")
     await new_page.wait_for_selector("#a")
