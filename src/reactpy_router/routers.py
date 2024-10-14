@@ -77,7 +77,7 @@ def router(
 
         return ConnectionContext(
             History({"onHistoryChange": on_history_change}),  # type: ignore[return-value]
-            html._(route_elements),
+            *route_elements,
             value=Connection(old_conn.scope, location, old_conn.carrier),
         )
 
