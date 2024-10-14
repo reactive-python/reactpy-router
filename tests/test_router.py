@@ -1,6 +1,7 @@
 import os
 from typing import Any
 
+from playwright.async_api._generated import Browser
 from reactpy import Ref, component, html, use_location
 from reactpy.testing import DisplayFixture
 
@@ -279,7 +280,7 @@ async def test_link_href(display: DisplayFixture):
     assert "/a" in await _link.get_attribute("href")
 
 
-async def test_ctrl_click(display: DisplayFixture, browser):
+async def test_ctrl_click(display: DisplayFixture, browser: Browser):
     @component
     def sample():
         return browser_router(
