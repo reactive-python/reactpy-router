@@ -277,3 +277,20 @@ async def test_link_href(display: DisplayFixture):
 
     _link = await display.page.wait_for_selector("#root")
     assert "/a" in await _link.get_attribute("href")
+
+
+async def test_ctrl_click(display: DisplayFixture, browser):
+    @component
+    def sample():
+        return browser_router(
+            route("/", link({"to": "/a", "id": "root"}, "Root")),
+            route("/a", link({"to": "/a", "id": "a"}, "a")),
+        )
+
+    await display.show(sample)
+
+    _link = await display.page.wait_for_selector("#root")
+    await _link.click(delay=CLICK_DELAY, modifiers=["Control"])
+    browser_context = browser.contexts[0]
+    new_page = await browser_context.wait_for_event("page")
+    await new_page.wait_for_selector("#a")
