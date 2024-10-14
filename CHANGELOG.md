@@ -34,7 +34,31 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+-   Bump GitHub workflows
+-   Rename `use_query` to `use_search_params`.
+-   Rename `simple.router` to `browser_router`.
+-   Rename `SimpleResolver` to `StarletteResolver`.
+-   Rename `CONVERSION_TYPES` to `CONVERTERS`.
+-   Change "Match Any" syntax from a star `*` to `{name:any}`.
+-   Rewrite `reactpy_router.link` to be a server-side component.
+-   Simplified top-level exports within `reactpy_router`.
+
+### Added
+
+-   New error for ReactPy router elements being used outside router context.
+-   Configurable/inheritable `Resolver` base class.
+-   Add debug log message for when there are no router matches.
+-   Add slug as a supported type.
+
+### Fixed
+
+-   Fix bug where changing routes could cause render failure due to key identity.
+-   Fix bug where "Match Any" pattern wouldn't work when used in complex or nested paths.
+-   Fix bug where `link` elements could not have `@component` type children.
+-   Fix bug where the ReactPy would not detect the current URL after a reconnection.
+-   Fixed flakey tests on GitHub CI by adding click delays.
 
 ## [0.1.1] - 2023-12-13
 

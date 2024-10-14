@@ -1,8 +1,13 @@
+import os
 from typing import Any
 
 from reactpy import Ref, component, html, use_location
 from reactpy.testing import DisplayFixture
-from reactpy_router import link, route, simple, use_params, use_query
+
+from reactpy_router import browser_router, link, route, use_params, use_search_params
+
+GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
+CLICK_DELAY = 350 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
 
 
 async def test_simple_router(display: DisplayFixture):
@@ -18,7 +23,7 @@ async def test_simple_router(display: DisplayFixture):
 
     @component
     def sample():
-        return simple.router(
+        return browser_router(
             make_location_check("/a"),
             make_location_check("/b"),
             make_location_check("/c"),
@@ -40,7 +45,8 @@ async def test_simple_router(display: DisplayFixture):
         root_element = await display.root_element()
     except AttributeError:
         root_element = await display.page.wait_for_selector(
-            f"#display-{display._next_view_id}", state="attached"  # type: ignore
+            f"#display-{display._next_view_id}",  # type: ignore
+            state="attached",
         )
 
     assert not await root_element.inner_html()
@@ -49,7 +55,7 @@ async def test_simple_router(display: DisplayFixture):
 async def test_nested_routes(display: DisplayFixture):
     @component
     def sample():
-        return simple.router(
+        return browser_router(
             route(
                 "/a",
                 html.h1({"id": "a"}, "A"),
@@ -78,19 +84,19 @@ async def test_navigate_with_link(display: DisplayFixture):
     @component
     def sample():
         render_count.current += 1
-        return simple.router(
-            route("/", link("Root", to="/a", id="root")),
-            route("/a", link("A", to="/b", id="a")),
-            route("/b", link("B", to="/c", id="b")),
-            route("/c", link("C", to="/default", id="c")),
-            route("*", html.h1({"id": "default"}, "Default")),
+        return browser_router(
+            route("/", link({"to": "/a", "id": "root"}, "Root")),
+            route("/a", link({"to": "/b", "id": "a"}, "A")),
+            route("/b", link({"to": "/c", "id": "b"}, "B")),
+            route("/c", link({"to": "/default", "id": "c"}, "C")),
+            route("{default:any}", html.h1({"id": "default"}, "Default")),
         )
 
     await display.show(sample)
 
     for link_selector in ["#root", "#a", "#b", "#c"]:
-        lnk = await display.page.wait_for_selector(link_selector)
-        await lnk.click()
+        _link = await display.page.wait_for_selector(link_selector)
+        await _link.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
 
@@ -109,7 +115,7 @@ async def test_use_params(display: DisplayFixture):
 
     @component
     def sample():
-        return simple.router(
+        return browser_router(
             route(
                 "/first/{first:str}",
                 check_params(),
@@ -135,17 +141,17 @@ async def test_use_params(display: DisplayFixture):
         await display.page.wait_for_selector("#success")
 
 
-async def test_use_query(display: DisplayFixture):
+async def test_search_params(display: DisplayFixture):
     expected_query: dict[str, Any] = {}
 
     @component
     def check_query():
-        assert use_query() == expected_query
+        assert use_search_params() == expected_query
         return html.h1({"id": "success"}, "success")
 
     @component
     def sample():
-        return simple.router(route("/", check_query()))
+        return browser_router(route("/", check_query()))
 
     await display.show(sample)
 
@@ -157,19 +163,19 @@ async def test_use_query(display: DisplayFixture):
 async def test_browser_popstate(display: DisplayFixture):
     @component
     def sample():
-        return simple.router(
-            route("/", link("Root", to="/a", id="root")),
-            route("/a", link("A", to="/b", id="a")),
-            route("/b", link("B", to="/c", id="b")),
-            route("/c", link("C", to="/default", id="c")),
-            route("*", html.h1({"id": "default"}, "Default")),
+        return browser_router(
+            route("/", link({"to": "/a", "id": "root"}, "Root")),
+            route("/a", link({"to": "/b", "id": "a"}, "A")),
+            route("/b", link({"to": "/c", "id": "b"}, "B")),
+            route("/c", link({"to": "/default", "id": "c"}, "C")),
+            route("{default:any}", html.h1({"id": "default"}, "Default")),
         )
 
     await display.show(sample)
 
     for link_selector in ["#root", "#a", "#b", "#c"]:
-        lnk = await display.page.wait_for_selector(link_selector)
-        await lnk.click()
+        _link = await display.page.wait_for_selector(link_selector)
+        await _link.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
 
@@ -189,23 +195,27 @@ async def test_browser_popstate(display: DisplayFixture):
 async def test_relative_links(display: DisplayFixture):
     @component
     def sample():
-        return simple.router(
-            route("/", link("Root", to="/a", id="root")),
-            route("/a", link("A", to="/a/b", id="a")),
-            route("/a/b", link("B", to="../a/b/c", id="b")),
-            route("/a/b/c", link("C", to="../d", id="c")),
-            route("/a/d", link("D", to="e", id="d")),
-            route("/a/e", link("E", to="../default", id="e")),
-            route("*", html.h1({"id": "default"}, "Default")),
+        return browser_router(
+            route("/", link({"to": "a", "id": "root"}, "Root")),
+            route("/a", link({"to": "/a/a/../b", "id": "a"}, "A")),
+            route("/a/b", link({"to": "../a/b/c", "id": "b"}, "B")),
+            route("/a/b/c", link({"to": "../d", "id": "c"}, "C")),
+            route("/a/d", link({"to": "e", "id": "d"}, "D")),
+            route("/a/e", link({"to": "/a/./f", "id": "e"}, "E")),
+            route("/a/f", link({"to": "../default", "id": "f"}, "F")),
+            route("{default:any}", html.h1({"id": "default"}, "Default")),
         )
 
     await display.show(sample)
 
-    for link_selector in ["#root", "#a", "#b", "#c", "#d", "#e"]:
-        lnk = await display.page.wait_for_selector(link_selector)
-        await lnk.click()
+    for link_selector in ["#root", "#a", "#b", "#c", "#d", "#e", "#f"]:
+        _link = await display.page.wait_for_selector(link_selector)
+        await _link.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
+
+    await display.page.go_back()
+    await display.page.wait_for_selector("#f")
 
     await display.page.go_back()
     await display.page.wait_for_selector("#e")
@@ -224,3 +234,46 @@ async def test_relative_links(display: DisplayFixture):
 
     await display.page.go_back()
     await display.page.wait_for_selector("#root")
+
+
+async def test_link_with_query_string(display: DisplayFixture):
+    @component
+    def check_search_params():
+        query = use_search_params()
+        assert query == {"a": ["1"], "b": ["2"]}
+        return html.h1({"id": "success"}, "success")
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", link({"to": "/a?a=1&b=2", "id": "root"}, "Root")),
+            route("/a", check_search_params()),
+        )
+
+    await display.show(sample)
+    await display.page.wait_for_selector("#root")
+    _link = await display.page.wait_for_selector("#root")
+    await _link.click(delay=CLICK_DELAY)
+    await display.page.wait_for_selector("#success")
+
+
+async def test_link_class_name(display: DisplayFixture):
+    @component
+    def sample():
+        return browser_router(route("/", link({"to": "/a", "id": "root", "className": "class1"}, "Root")))
+
+    await display.show(sample)
+
+    _link = await display.page.wait_for_selector("#root")
+    assert "class1" in await _link.get_attribute("class")
+
+
+async def test_link_href(display: DisplayFixture):
+    @component
+    def sample():
+        return browser_router(route("/", link({"href": "/a", "id": "root"}, "Root")))
+
+    await display.show(sample)
+
+    _link = await display.page.wait_for_selector("#root")
+    assert "/a" in await _link.get_attribute("href")

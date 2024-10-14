@@ -1,147 +1,137 @@
 ---
 nav:
-    - Get Started: 
-        - Add ReactPy-Router to Your Project: index.md
-        - Your First Routed Application: learn/simple-application.md
-        - Advanced Topics:
-            - Routers, Routes, and Links: learn/routers-routes-and-links.md
-            - Hooks: learn/hooks.md
-            - Creating a Custom Router 🚧: learn/custom-router.md
-    - Reference:
-        - Core: reference/core.md
-        - Router: reference/router.md
-        - Types: reference/types.md
-    - About:
-        - Changelog: about/changelog.md
-        - Contributor Guide:
-            - Code: about/code.md
-            - Docs: about/docs.md
-        - Community:
-            - GitHub Discussions: https://github.com/reactive-python/reactpy-router/discussions
-            - Discord: https://discord.gg/uNb5P4hA9X
-            - Reddit: https://www.reddit.com/r/ReactPy/
-        - License: about/license.md
+  - Get Started:
+      - Add ReactPy-Router to Your Project: index.md
+      - Your First Routed Application: learn/your-first-app.md
+      - Advanced Topics:
+          - Routers, Routes, and Links: learn/routers-routes-and-links.md
+          - Hooks: learn/hooks.md
+          - Creating a Custom Router 🚧: learn/custom-router.md
+  - Reference:
+      - Router Components: reference/router.md
+      - Components: reference/components.md
+      - Hooks: reference/hooks.md
+      - Types: reference/types.md
+  - About:
+      - Changelog: about/changelog.md
+      - Contributor Guide:
+          - Code: about/code.md
+          - Docs: about/docs.md
+      - Community:
+          - GitHub Discussions: https://github.com/reactive-python/reactpy-router/discussions
+          - Discord: https://discord.gg/uNb5P4hA9X
+          - Reddit: https://www.reddit.com/r/ReactPy/
+      - License: about/license.md
 
 theme:
-    name: material
-    custom_dir: overrides
-    palette:
-        - media: "(prefers-color-scheme: dark)"
-          scheme: slate
-          toggle:
-              icon: material/white-balance-sunny
-              name: Switch to light mode
-          primary: red # We use red to indicate that something is unthemed
-          accent: red
-        - media: "(prefers-color-scheme: light)"
-          scheme: default
-          toggle:
-              icon: material/weather-night
-              name: Switch to dark mode
-          primary: white
-          accent: red
-    features:
-        - navigation.instant
-        - navigation.tabs
-        - navigation.tabs.sticky
-        - navigation.top
-        - content.code.copy
-        - search.highlight
-    icon:
-        repo: fontawesome/brands/github
-        admonition:
-            note: fontawesome/solid/note-sticky
-    logo: https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg
-    favicon: https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg
+  name: material
+  custom_dir: overrides
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/white-balance-sunny
+        name: Switch to light mode
+      primary: red # We use red to indicate that something is unthemed
+      accent: red
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+      primary: white
+      accent: red
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+  icon:
+    repo: fontawesome/brands/github
+    admonition:
+      note: fontawesome/solid/note-sticky
+  logo: https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg
+  favicon: https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg
 
 markdown_extensions:
-    - toc:
-          permalink: true
-    - pymdownx.emoji:
-          emoji_index: !!python/name:material.extensions.emoji.twemoji
-          emoji_generator: !!python/name:material.extensions.emoji.to_svg
-    - pymdownx.tabbed:
-          alternate_style: true
-    - pymdownx.highlight:
-          linenums: true
-    - pymdownx.superfences
-    - pymdownx.details
-    - pymdownx.inlinehilite
-    - admonition
-    - attr_list
-    - md_in_html
-    - pymdownx.keys
+  - toc:
+      permalink: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      linenums: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.keys
 
 plugins:
-    - search
-    - include-markdown
-    - git-authors
-    - minify:
-          minify_html: true
-          minify_js: true
-          minify_css: true
-          cache_safe: true
-    - git-revision-date-localized:
-          fallback_to_build_date: true
-    - spellcheck:
-          known_words: dictionary.txt
-          allow_unicode: no
-          ignore_code: yes
-          skip_files:
-            - "index.md"
-            - "reference\\core.md"
-            - "reference/core.md"
-            - "reference\\types.md"
-            - "reference/types.md"
-    - mkdocstrings:
-          default_handler: python
-          handlers:
-              python:
-                  paths: ["../"]
-                  import:
-                      - https://reactpy.dev/docs/objects.inv
-                      - https://installer.readthedocs.io/en/stable/objects.inv
-
+  - search
+  - include-markdown
+  - git-authors
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      cache_safe: true
+  - git-revision-date-localized:
+      fallback_to_build_date: true
+  - spellcheck:
+      known_words: dictionary.txt
+      allow_unicode: no
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: ["../"]
+          import:
+            - https://reactpy.dev/docs/objects.inv
+            - https://installer.readthedocs.io/en/stable/objects.inv
+          options:
+            show_bases: false
+            show_root_members_full_path: true
 extra:
-    generator: false
-    version:
-        provider: mike
-    analytics:
-        provider: google
-        property: G-XRLQYZBG00
+  generator: false
+  version:
+    provider: mike
+  analytics:
+    provider: google
+    property: G-XRLQYZBG00
 
 extra_javascript:
-    - assets/js/main.js
+  - assets/js/main.js
 
 extra_css:
-    - assets/css/main.css
-    - assets/css/button.css
-    - assets/css/admonition.css
-    - assets/css/banner.css
-    - assets/css/sidebar.css
-    - assets/css/navbar.css
-    - assets/css/table-of-contents.css
-    - assets/css/code.css
-    - assets/css/footer.css
-    - assets/css/home.css
+  - assets/css/main.css
+  - assets/css/button.css
+  - assets/css/admonition.css
+  - assets/css/banner.css
+  - assets/css/sidebar.css
+  - assets/css/navbar.css
+  - assets/css/table-of-contents.css
+  - assets/css/code.css
+  - assets/css/footer.css
+  - assets/css/home.css
 
 watch:
-    - "../docs"
-    - ../README.md
-    - ../CHANGELOG.md
-    - ../LICENSE.md
-    - "../src"
+  - "../docs"
+  - ../README.md
+  - ../CHANGELOG.md
+  - ../LICENSE.md
+  - "../src"
 
 site_name: ReactPy Router
 site_author: Archmonger
 site_description: It's React-Router, but in Python.
-copyright: '&copy;
-<div id="year"></div>
-<script> document.getElementById("year").innerHTML = new Date().getFullYear(); </script>
-Reactive Python and affiliates.
-<div class="legal-footer-right">
-This project has no affiliation to ReactJS or Meta Platforms, Inc.
-</div>'
+copyright: '&copy;<div id="year"> </div> <script> document.getElementById("year").innerHTML = new Date().getFullYear(); </script>Reactive Python and affiliates.<div class="legal-footer-right">This project has no affiliation to ReactJS or Meta Platforms, Inc.</div>'
 repo_url: https://github.com/reactive-python/reactpy-router
 site_url: https://reactive-python.github.io/reactpy-router
 repo_name: ReactPy Router (GitHub)

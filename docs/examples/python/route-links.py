@@ -1,14 +1,14 @@
 from reactpy import component, html, run
 
-from reactpy_router import link, route, simple
+from reactpy_router import browser_router, link, route
 
 
 @component
 def root():
-    return simple.router(
+    return browser_router(
         route("/", home()),
         route("/messages", html.h1("Messages 💬")),
-        route("*", html.h1("Missing Link 🔗‍💥")),
+        route("{404:any}", html.h1("Missing Link 🔗‍💥")),
     )
 
 
@@ -16,7 +16,7 @@ def root():
 def home():
     return html.div(
         html.h1("Home Page 🏠"),
-        link("Messages", to="/messages"),
+        link({"to": "/messages"}, "Messages"),
     )
 
 

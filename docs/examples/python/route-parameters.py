@@ -1,8 +1,8 @@
 from typing import TypedDict
 
 from reactpy import component, html, run
-from reactpy_router import link, route, simple
-from reactpy_router.core import use_params
+
+from reactpy_router import browser_router, link, route, use_params
 
 message_data: list["MessageDataType"] = [
     {"id": 1, "with": ["Alice"], "from": None, "message": "Hello!"},
@@ -18,14 +18,14 @@ message_data: list["MessageDataType"] = [
 
 @component
 def root():
-    return simple.router(
+    return browser_router(
         route("/", home()),
         route(
             "/messages",
             all_messages(),
             route("/with/{names}", messages_with()),  # note the path param
         ),
-        route("*", html.h1("Missing Link 🔗‍💥")),
+        route("{404:any}", html.h1("Missing Link 🔗‍💥")),
     )
 
 
@@ -33,40 +33,32 @@ def root():
 def home():
     return html.div(
         html.h1("Home Page 🏠"),
-        link("Messages", to="/messages"),
+        link({"to": "/messages"}, "Messages"),
     )
 
 
 @component
 def all_messages():
-    last_messages = {
-        ", ".join(msg["with"]): msg
-        for msg in sorted(message_data, key=lambda m: m["id"])
-    }
+    last_messages = {", ".join(msg["with"]): msg for msg in sorted(message_data, key=lambda m: m["id"])}
+    messages = []
+    for msg in last_messages.values():
+        msg_hyperlink = link(
+            {"to": f"/messages/with/{'-'.join(msg['with'])}"},
+            f"Conversation with: {', '.join(msg['with'])}",
+        )
+        msg_from = f"{'' if msg['from'] is None else '🔴'} {msg['message']}"
+        messages.append(html.li({"key": msg["id"]}, html.p(msg_hyperlink), msg_from))
+
     return html.div(
         html.h1("All Messages 💬"),
-        html.ul(
-            [
-                html.li(
-                    {"key": msg["id"]},
-                    html.p(
-                        link(
-                            f"Conversation with: {', '.join(msg['with'])}",
-                            to=f"/messages/with/{'-'.join(msg['with'])}",
-                        ),
-                    ),
-                    f"{'' if msg['from'] is None else '🔴'} {msg['message']}",
-                )
-                for msg in last_messages.values()
-            ]
-        ),
+        html.ul(messages),
     )
 
 
 @component
 def messages_with():
-    names = set(use_params()["names"].split("-"))  # and here we use the path param
-    messages = [msg for msg in message_data if set(msg["with"]) == names]
+    names = tuple(use_params()["names"].split("-"))  # and here we use the path param
+    messages = [msg for msg in message_data if tuple(msg["with"]) == names]
     return html.div(
         html.h1(f"Messages with {', '.join(names)} 💬"),
         html.ul(

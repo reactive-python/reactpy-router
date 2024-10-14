@@ -1,6 +1,6 @@
 <p class="intro" markdown>
 
-Here you'll learn the various features of `reactpy-router` and how to use them. These examples will utilize the [`reactpy_router.simple.router`][src.reactpy_router.simple.router].
+Here you'll learn the various features of `reactpy-router` and how to use them. These examples will utilize the [`reactpy_router.browser_router`][reactpy_router.browser_router].
 
 </p>
 
@@ -39,7 +39,7 @@ The first step is to create a basic router that will display the home page when 
     {% include "../../examples/python/basic-routing.py" %}
     ```
 
-When navigating to [`http://127.0.0.1:8000``](http://127.0.0.1:8000) you should see `Home Page 🏠`. However, if you go to any other route you will instead see `Missing Link 🔗‍💥`.
+When navigating to [`http://127.0.0.1:8000`](http://127.0.0.1:8000) you should see `Home Page 🏠`. However, if you go to any other route you will instead see `Missing Link 🔗‍💥`.
 
 With this foundation you can start adding more routes.
 

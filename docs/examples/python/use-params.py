@@ -1,23 +1,26 @@
-from reactpy import component, html
+from reactpy import component, html, run
 
-from reactpy_router import link, route, simple, use_params
+from reactpy_router import browser_router, link, route, use_params
 
 
 @component
 def user():
     params = use_params()
-    return html.h1(f"User {params['id']} 👤")
+    return html._(html.h1(f"User {params['id']} 👤"), html.p("Nothing (yet)."))
 
 
 @component
 def root():
-    return simple.router(
+    return browser_router(
         route(
             "/",
             html.div(
                 html.h1("Home Page 🏠"),
-                link("User 123", to="/user/123"),
+                link({"to": "/user/123"}, "User 123"),
             ),
         ),
         route("/user/{id:int}", user()),
     )
+
+
+run(root)

@@ -1,1 +1,1 @@
-::: src.reactpy_router.types
+::: reactpy_router.types
