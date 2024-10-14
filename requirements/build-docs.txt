@@ -9,3 +9,4 @@ mkdocs-minify-plugin
 mkdocs-section-index
 mike
 mkdocstrings[python]
+.
