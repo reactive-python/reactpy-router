@@ -6,12 +6,7 @@ from dataclasses import replace
 from logging import getLogger
 from typing import Any, Iterator, Literal, Sequence
 
-from reactpy import (
-    component,
-    html,
-    use_memo,
-    use_state,
-)
+from reactpy import component, use_memo, use_state
 from reactpy.backend.hooks import ConnectionContext, use_connection
 from reactpy.backend.types import Connection, Location
 from reactpy.core.types import VdomDict

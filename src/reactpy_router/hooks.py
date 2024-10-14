@@ -4,11 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Callable
 from urllib.parse import parse_qs
 
-from reactpy import (
-    create_context,
-    use_context,
-    use_location,
-)
+from reactpy import create_context, use_context, use_location
 from reactpy.backend.types import Location
 from reactpy.types import Context
 
