@@ -57,12 +57,14 @@ def use_search_params(
     for the current location.
 
     See `urllib.parse.parse_qs` for info on this hook's parameters."""
+    location = use_location()
+    query_string = location.search[1:] if len(location.search) > 1 else ""
 
     # TODO: In order to match `react-router`, this will need to return a tuple of the search params \
     # and a function to update them. This is currently not possible without reactpy core having a \
     # communication layer.
     return parse_qs(
-        use_location().search[1:],
+        query_string,
         keep_blank_values=keep_blank_values,
         strict_parsing=strict_parsing,
         errors=errors,
