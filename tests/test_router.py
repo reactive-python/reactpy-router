@@ -8,7 +8,7 @@ from reactpy.testing import DisplayFixture
 from reactpy_router import browser_router, link, navigate, route, use_params, use_search_params
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
-CLICK_DELAY = 400 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
+CLICK_DELAY = 350 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
 
 
 async def test_simple_router(display: DisplayFixture):
@@ -209,32 +209,18 @@ async def test_relative_links(display: DisplayFixture):
 
     await display.show(sample)
 
-    for link_selector in ["#root", "#a", "#b", "#c", "#d", "#e", "#f"]:
+    selectors = ["#root", "#a", "#b", "#c", "#d", "#e", "#f"]
+
+    for link_selector in selectors:
         _link = await display.page.wait_for_selector(link_selector)
         await _link.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
 
-    await display.page.go_back()
-    await display.page.wait_for_selector("#f")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#e")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#d")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#c")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#b")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#a")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#root")
+    selectors.reverse()
+    for link_selector in selectors:
+        await display.page.go_back()
+        await display.page.wait_for_selector(link_selector)
 
 
 async def test_link_with_query_string(display: DisplayFixture):

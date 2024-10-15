@@ -5,7 +5,12 @@ document.querySelector(".UUID").addEventListener(
     if (!event.ctrlKey) {
       event.preventDefault();
       let to = event.target.getAttribute("href");
-      window.history.pushState({}, to, new URL(to, window.location));
+      let new_url = new URL(to, window.location);
+
+      // Deduplication needed due to ReactPy rendering bug
+      if (new_url.href !== window.location.href) {
+        window.history.pushState({}, to, new URL(to, window.location));
+      }
     }
   },
   { once: true },

@@ -74,7 +74,7 @@ def router(
             """Callback function used within the JavaScript `FirstLoad` component."""
             if first_load:
                 set_first_load(False)
-            on_history_change(event)
+                on_history_change(event)
 
         return ConnectionContext(
             History({"onHistoryChangeCallback": on_history_change}),  # type: ignore[return-value]
