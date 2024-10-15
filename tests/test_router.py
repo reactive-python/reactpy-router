@@ -1,6 +1,7 @@
 import os
 from typing import Any
 
+import pytest
 from playwright.async_api._generated import Browser, Page
 from reactpy import Ref, component, html, use_location, use_state
 from reactpy.testing import DisplayFixture
@@ -9,6 +10,7 @@ from reactpy_router import browser_router, link, navigate, route, use_params, us
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
 CLICK_DELAY = 500 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
+pytestmark = pytest.mark.anyio
 
 
 async def test_simple_router(display: DisplayFixture):
