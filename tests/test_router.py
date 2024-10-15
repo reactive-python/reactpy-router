@@ -2,10 +2,10 @@ import os
 from typing import Any
 
 from playwright.async_api._generated import Browser, Page
-from reactpy import Ref, component, html, use_location
+from reactpy import Ref, component, html, use_location, use_state
 from reactpy.testing import DisplayFixture
 
-from reactpy_router import browser_router, link, route, use_params, use_search_params
+from reactpy_router import browser_router, link, navigate, route, use_params, use_search_params
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
 CLICK_DELAY = 350 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
@@ -295,3 +295,56 @@ async def test_ctrl_click(display: DisplayFixture, browser: Browser):
     browser_context = browser.contexts[0]
     new_page: Page = await browser_context.wait_for_event("page")
     await new_page.wait_for_selector("#a")
+
+
+async def test_navigate_component(display: DisplayFixture):
+    @component
+    def navigate_btn():
+        nav_url, set_nav_url = use_state("")
+
+        return html.button(
+            {"onClick": lambda _: set_nav_url("/a")},
+            navigate(nav_url) if nav_url else "Click to navigate",
+        )
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", navigate_btn()),
+            route("/a", html.h1({"id": "a"}, "A")),
+        )
+
+    await display.show(sample)
+    _button = await display.page.wait_for_selector("button")
+    await _button.click(delay=CLICK_DELAY)
+    await display.page.wait_for_selector("#a")
+    await display.page.go_back()
+    await display.page.wait_for_selector("button")
+
+
+async def test_navigate_component_replace(display: DisplayFixture):
+    @component
+    def navigate_btn(to: str, replace: bool = False):
+        nav_url, set_nav_url = use_state("")
+
+        return html.button(
+            {"onClick": lambda _: set_nav_url(to), "id": f"nav-{to.replace('/', '')}"},
+            navigate(nav_url, replace) if nav_url else f"Navigate to {to}",
+        )
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", navigate_btn("/a")),
+            route("/a", navigate_btn("/b", replace=True)),
+            route("/b", html.h1({"id": "b"}, "B")),
+        )
+
+    await display.show(sample)
+    _button = await display.page.wait_for_selector("#nav-a")
+    await _button.click(delay=CLICK_DELAY)
+    _button = await display.page.wait_for_selector("#nav-b")
+    await _button.click(delay=CLICK_DELAY)
+    await display.page.wait_for_selector("#b")
+    await display.page.go_back()
+    await display.page.wait_for_selector("#nav-a")
