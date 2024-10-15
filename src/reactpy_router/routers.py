@@ -122,7 +122,7 @@ def _match_route(
             # matches via the `Route` component. However, it's kept here to support future changes
             # or third-party routers.
             # TODO: The `resolver.key` value has edge cases where it is not unique enough to use as
-            # a key here, unless we begin throwing errors for duplicate routes.
+            # a key here. We can potentially fix this by throwing errors for duplicate identical routes.
             matches.append(_add_route_key(match, resolver.key))  # pragma: no cover
 
     if not matches:
