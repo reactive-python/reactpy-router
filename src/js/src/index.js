@@ -57,29 +57,6 @@ export function History({ onHistoryChangeCallback }) {
 }
 
 /**
- * FirstLoad component that captures the URL during the initial page load and notifies the server.
- *
- * @param {Object} props - The properties object.
- * @param {Function} props.onFirstLoadCallback - Callback function to notify the server about the first load.
- * @returns {null} This component does not render any visible output.
- * @description
- * This component sends the current URL to the server during the initial page load.
- * @see https://github.com/reactive-python/reactpy/pull/1224
- */
-export function FirstLoad({ onFirstLoadCallback }) {
-  // FIXME: This component only exists because of a ReactPy core rendering bug, and should be removed when the bug
-  // is fixed. Ideally all this logic would be handled by the `History` component.
-  React.useEffect(() => {
-    onFirstLoadCallback({
-      pathname: window.location.pathname,
-      search: window.location.search,
-    });
-    return () => {};
-  }, []);
-  return null;
-}
-
-/**
  * Link component that captures clicks on anchor links and notifies the server.
  *
  * @param {Object} props - The properties object.
@@ -146,5 +123,28 @@ export function Navigate({ onNavigateCallback, to, replace }) {
     return () => {};
   }, []);
 
+  return null;
+}
+
+/**
+ * FirstLoad component that captures the URL during the initial page load and notifies the server.
+ *
+ * @param {Object} props - The properties object.
+ * @param {Function} props.onFirstLoadCallback - Callback function to notify the server about the first load.
+ * @returns {null} This component does not render any visible output.
+ * @description
+ * This component sends the current URL to the server during the initial page load.
+ * @see https://github.com/reactive-python/reactpy/pull/1224
+ */
+export function FirstLoad({ onFirstLoadCallback }) {
+  // FIXME: This component only exists because of a ReactPy core rendering bug, and should be removed when the bug
+  // is fixed. Ideally all this logic would be handled by the `History` component.
+  React.useEffect(() => {
+    onFirstLoadCallback({
+      pathname: window.location.pathname,
+      search: window.location.search,
+    });
+    return () => {};
+  }, []);
   return null;
 }
