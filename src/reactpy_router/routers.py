@@ -4,13 +4,12 @@ from __future__ import annotations
 
 from dataclasses import replace
 from logging import getLogger
-from typing import Any, Iterator, Literal, Sequence
+from typing import Any, Iterator, Literal, Sequence, cast
 
 from reactpy import component, use_memo, use_state
 from reactpy.backend.hooks import ConnectionContext, use_connection
 from reactpy.backend.types import Connection, Location
-from reactpy.core.types import VdomDict
-from reactpy.types import ComponentType
+from reactpy.types import ComponentType, VdomDict
 
 from reactpy_router.components import History
 from reactpy_router.hooks import _route_state_context, _RouteState
@@ -86,6 +85,18 @@ def _iter_routes(routes: Sequence[RouteType]) -> Iterator[RouteType]:
         yield parent
 
 
+def _add_route_key(match: tuple[Any, dict[str, Any]], key: str | int) -> Any:
+    """Add a key to the VDOM or component on the current route, if it doesn't already have one."""
+    element, _params = match
+    if hasattr(element, "render") and not element.key:
+        element = cast(ComponentType, element)
+        element.key = key
+    elif isinstance(element, dict) and not element.get("key", None):
+        element = cast(VdomDict, element)
+        element["key"] = key
+    return match
+
+
 def _match_route(
     compiled_routes: Sequence[CompiledRoute],
     location: Location,
@@ -97,12 +108,14 @@ def _match_route(
         match = resolver.resolve(location.pathname)
         if match is not None:
             if select == "first":
-                return [match]
+                return [_add_route_key(match, resolver.key)]
 
             # Matching multiple routes is disabled since `react-router` no longer supports multiple
             # matches via the `Route` component. However, it's kept here to support future changes
             # or third-party routers.
-            matches.append(match)  # pragma: no cover
+            # TODO: The `resolver.key` value has edge cases where it is not unique enough to use as
+            # a key here, unless we begin throwing errors for duplicate routes.
+            matches.append(_add_route_key(match, resolver.key))  # pragma: no cover
 
     if not matches:
         _logger.debug("No matching route found for %s", location.pathname)
