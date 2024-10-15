@@ -8,7 +8,7 @@ from reactpy.testing import DisplayFixture
 from reactpy_router import browser_router, link, navigate, route, use_params, use_search_params
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
-CLICK_DELAY = 350 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
+CLICK_DELAY = 400 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
 
 
 async def test_simple_router(display: DisplayFixture):
@@ -334,3 +334,30 @@ async def test_navigate_component_replace(display: DisplayFixture):
     await display.page.wait_for_selector("#b")
     await display.page.go_back()
     await display.page.wait_for_selector("#nav-a")
+
+
+async def test_navigate_component_to_current_url(display: DisplayFixture):
+    @component
+    def navigate_btn(to: str, html_id: str, replace: bool = False):
+        nav_url, set_nav_url = use_state("")
+
+        return html.button(
+            {"onClick": lambda _: set_nav_url(to), "id": html_id},
+            navigate(nav_url, replace) if nav_url else f"Navigate to {to}",
+        )
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", navigate_btn("/a", "root-a")),
+            route("/a", navigate_btn("/a", "nav-a")),
+        )
+
+    await display.show(sample)
+    _button = await display.page.wait_for_selector("#root-a")
+    await _button.click(delay=CLICK_DELAY)
+    _button = await display.page.wait_for_selector("#nav-a")
+    await _button.click(delay=CLICK_DELAY)
+    await display.page.wait_for_selector("#nav-a")
+    await display.page.go_back()
+    await display.page.wait_for_selector("#root-a")
