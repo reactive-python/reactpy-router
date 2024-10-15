@@ -32,6 +32,11 @@ Navigate = export(
 )
 """Client-side portion of the navigate component"""
 
+FirstLoad = export(
+    module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
+    ("FirstLoad"),
+)
+
 link_js_content = (Path(__file__).parent / "static" / "link.js").read_text(encoding="utf-8")
 
 

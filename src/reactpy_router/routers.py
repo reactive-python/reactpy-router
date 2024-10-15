@@ -11,7 +11,7 @@ from reactpy.backend.hooks import ConnectionContext, use_connection
 from reactpy.backend.types import Connection, Location
 from reactpy.types import ComponentType, VdomDict
 
-from reactpy_router.components import History
+from reactpy_router.components import FirstLoad, History
 from reactpy_router.hooks import _route_state_context, _RouteState
 from reactpy_router.resolvers import StarletteResolver
 from reactpy_router.types import CompiledRoute, Resolver, Router, RouteType
@@ -46,6 +46,7 @@ def router(
 
     old_conn = use_connection()
     location, set_location = use_state(old_conn.location)
+    first_load, set_first_load = use_state(True)
 
     resolvers = use_memo(
         lambda: tuple(map(resolver, _iter_routes(routes))),
@@ -69,8 +70,15 @@ def router(
             if location != new_location:
                 set_location(new_location)
 
+        def on_first_load(event: dict[str, Any]) -> None:
+            """Callback function used within the JavaScript `FirstLoad` component."""
+            if first_load:
+                set_first_load(False)
+            on_history_change(event)
+
         return ConnectionContext(
             History({"onHistoryChangeCallback": on_history_change}),  # type: ignore[return-value]
+            FirstLoad({"onFirstLoadCallback": on_first_load}) if first_load else "",
             *route_elements,
             value=Connection(old_conn.scope, location, old_conn.carrier),
         )
