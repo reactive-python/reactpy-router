@@ -176,23 +176,18 @@ async def test_browser_popstate(display: DisplayFixture):
 
     await display.show(sample)
 
-    for link_selector in ["#root", "#a", "#b", "#c"]:
+    link_selectors = ["#root", "#a", "#b", "#c"]
+
+    for link_selector in link_selectors:
         _link = await display.page.wait_for_selector(link_selector)
         await _link.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
 
-    await display.page.go_back()
-    await display.page.wait_for_selector("#c")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#b")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#a")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#root")
+    link_selectors.reverse()
+    for link_selector in link_selectors:
+        await display.page.go_back()
+        await display.page.wait_for_selector(link_selector)
 
 
 async def test_relative_links(display: DisplayFixture):
