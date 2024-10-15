@@ -2,7 +2,7 @@
 __version__ = "0.1.1"
 
 
-from .components import link, route
+from .components import link, navigate, route
 from .hooks import use_params, use_search_params
 from .routers import browser_router, create_router
 
@@ -13,4 +13,5 @@ __all__ = (
     "browser_router",
     "use_params",
     "use_search_params",
+    "navigate",
 )

@@ -26,6 +26,12 @@ Link = export(
 )
 """Client-side portion of link handling"""
 
+Navigate = export(
+    module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
+    ("Navigate"),
+)
+"""Client-side portion of the navigate component"""
+
 link_js_content = (Path(__file__).parent / "static" / "link.js").read_text(encoding="utf-8")
 
 
@@ -93,11 +99,32 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
 
     return html._(html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid_string)))
 
-    # def on_click(_event: dict[str, Any]) -> None:
+    # def on_click_callback(_event: dict[str, Any]) -> None:
     #     set_location(Location(**_event))
-    # return html._(html.a(attrs, *children), Link({"onClick": on_click, "linkClass": uuid_string}))
+    # return html._(html.a(attrs, *children), Link({"onClickCallback": on_click_callback, "linkClass": uuid_string}))
 
 
 def route(path: str, element: Any | None, *routes: Route) -> Route:
     """Create a route with the given path, element, and child routes."""
     return Route(path, element, routes)
+
+
+def navigate(to: str, replace: bool = False) -> Component:
+    """A `navigate` element changes the current location when it is rendered."""
+    return _navigate(to, replace)
+
+
+@component
+def _navigate(to: str, replace: bool = False) -> VdomDict | None:
+    """A `navigate` element changes the current location when it is rendered."""
+    location = use_connection().location
+    set_location = _use_route_state().set_location
+    pathname = to.split("?", 1)[0]
+
+    def on_navigate_callback(_event: dict[str, Any]) -> None:
+        set_location(Location(**_event))
+
+    if location.pathname != pathname:
+        return Navigate({"onNavigateCallback": on_navigate_callback, "to": to, "replace": replace})
+
+    return None

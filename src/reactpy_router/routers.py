@@ -71,7 +71,7 @@ def router(
                 set_location(new_location)
 
         return ConnectionContext(
-            History({"onHistoryChange": on_history_change}),  # type: ignore[return-value]
+            History({"onHistoryChangeCallback": on_history_change}),  # type: ignore[return-value]
             *route_elements,
             value=Connection(old_conn.scope, location, old_conn.carrier),
         )
