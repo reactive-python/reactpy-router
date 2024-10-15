@@ -8,7 +8,7 @@ from reactpy.testing import DisplayFixture
 from reactpy_router import browser_router, link, navigate, route, use_params, use_search_params
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
-CLICK_DELAY = 350 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
+CLICK_DELAY = 400 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
 
 
 async def test_simple_router(display: DisplayFixture):
