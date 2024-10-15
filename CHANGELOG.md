@@ -42,14 +42,15 @@ Using the following categories, list your changes in this order:
 -   Rename `CONVERSION_TYPES` to `CONVERTERS`.
 -   Change "Match Any" syntax from a star `*` to `{name:any}`.
 -   Rewrite `reactpy_router.link` to be a server-side component.
--   Simplified top-level exports within `reactpy_router`.
+-   Simplified top-level exports that are available within `reactpy_router.*`.
 
 ### Added
 
--   New error for ReactPy router elements being used outside router context.
--   Configurable/inheritable `Resolver` base class.
 -   Add debug log message for when there are no router matches.
 -   Add slug as a supported type.
+-   Add `reactpy_router.navigate` component that will force the client to navigate to a new URL (when rendered).
+-   New error for ReactPy router elements being used outside router context.
+-   Configurable/inheritable `Resolver` base class.
 
 ### Fixed
 
