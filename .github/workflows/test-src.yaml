@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - name: Use Python ${{ matrix.python-version }}
@@ -33,7 +33,7 @@ jobs:
       - name: Use Latest Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.x"
       - name: Install Python Dependencies
         run: pip install -r requirements/test-run.txt
       - name: Run Tests
