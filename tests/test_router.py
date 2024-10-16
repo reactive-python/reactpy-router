@@ -10,7 +10,7 @@ from reactpy.testing import DisplayFixture
 from reactpy_router import browser_router, link, navigate, route, use_params, use_search_params
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
-CLICK_DELAY = 500 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
+CLICK_DELAY = 350 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
 pytestmark = pytest.mark.anyio
 
 
@@ -279,7 +279,10 @@ async def test_ctrl_click(display: DisplayFixture, browser: Browser):
     _link = await display.page.wait_for_selector("#root")
     await _link.click(delay=CLICK_DELAY, modifiers=["Control"])
     browser_context = browser.contexts[0]
-    new_page: Page = await browser_context.wait_for_event("page")
+    if len(browser_context.pages) == 1:
+        new_page: Page = await browser_context.wait_for_event("page")
+    else:
+        new_page: Page = browser_context.pages[-1]  # type: ignore[no-redef]
     await new_page.wait_for_selector("#a")
 
 
