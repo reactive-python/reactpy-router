@@ -1,3 +1,4 @@
+import asyncio
 import os
 from typing import Any
 
@@ -186,6 +187,7 @@ async def test_browser_popstate(display: DisplayFixture):
 
     link_selectors.reverse()
     for link_selector in link_selectors:
+        await asyncio.sleep(CLICK_DELAY / 1000)
         await display.page.go_back()
         await display.page.wait_for_selector(link_selector)
 
@@ -216,6 +218,7 @@ async def test_relative_links(display: DisplayFixture):
 
     selectors.reverse()
     for link_selector in selectors:
+        await asyncio.sleep(CLICK_DELAY / 1000)
         await display.page.go_back()
         await display.page.wait_for_selector(link_selector)
 
@@ -301,6 +304,7 @@ async def test_navigate_component(display: DisplayFixture):
     _button = await display.page.wait_for_selector("button")
     await _button.click(delay=CLICK_DELAY)
     await display.page.wait_for_selector("#a")
+    await asyncio.sleep(CLICK_DELAY / 1000)
     await display.page.go_back()
     await display.page.wait_for_selector("button")
 
@@ -329,6 +333,7 @@ async def test_navigate_component_replace(display: DisplayFixture):
     _button = await display.page.wait_for_selector("#nav-b")
     await _button.click(delay=CLICK_DELAY)
     await display.page.wait_for_selector("#b")
+    await asyncio.sleep(CLICK_DELAY / 1000)
     await display.page.go_back()
     await display.page.wait_for_selector("#nav-a")
 
@@ -356,5 +361,6 @@ async def test_navigate_component_to_current_url(display: DisplayFixture):
     _button = await display.page.wait_for_selector("#nav-a")
     await _button.click(delay=CLICK_DELAY)
     await display.page.wait_for_selector("#nav-a")
+    await asyncio.sleep(CLICK_DELAY / 1000)
     await display.page.go_back()
     await display.page.wait_for_selector("#root-a")
