@@ -43,7 +43,7 @@ export function History({ onHistoryChangeCallback }) {
 
   // Tell the server about the URL during the initial page load
   // FIXME: This code is commented out since it currently runs every time any component
-  // is mounted due to a ReactPy core rendering bug.
+  // is mounted due to a ReactPy core rendering bug. `FirstLoad` component is used instead.
   // https://github.com/reactive-python/reactpy/pull/1224
 
   // React.useEffect(() => {
