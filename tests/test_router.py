@@ -343,12 +343,12 @@ async def test_navigate_component_replace(display: DisplayFixture):
 
 async def test_navigate_component_to_current_url(display: DisplayFixture):
     @component
-    def navigate_btn(to: str, html_id: str, replace: bool = False):
+    def navigate_btn(to: str, html_id: str):
         nav_url, set_nav_url = use_state("")
 
         return html.button(
             {"onClick": lambda _: set_nav_url(to), "id": html_id},
-            navigate(nav_url, replace) if nav_url else f"Navigate to {to}",
+            navigate(nav_url) if nav_url else f"Navigate to {to}",
         )
 
     @component
@@ -363,6 +363,7 @@ async def test_navigate_component_to_current_url(display: DisplayFixture):
     await _button.click(delay=CLICK_DELAY)
     _button = await display.page.wait_for_selector("#nav-a")
     await _button.click(delay=CLICK_DELAY)
+    await asyncio.sleep(CLICK_DELAY / 1000)
     await display.page.wait_for_selector("#nav-a")
     await asyncio.sleep(CLICK_DELAY / 1000)
     await display.page.go_back()
