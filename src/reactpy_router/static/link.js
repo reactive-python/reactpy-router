@@ -9,7 +9,7 @@ document.querySelector(".UUID").addEventListener(
 
       // Deduplication needed due to ReactPy rendering bug
       if (new_url.href !== window.location.href) {
-        window.history.pushState({}, to, new URL(to, window.location));
+        window.history.pushState(null, "", new URL(to, window.location));
       }
     }
   },
