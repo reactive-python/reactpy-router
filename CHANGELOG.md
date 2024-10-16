@@ -59,6 +59,7 @@ Using the following categories, list your changes in this order:
 -   Fix bug where `link` elements could not have `@component` type children.
 -   Fix bug where the ReactPy would not detect the current URL after a reconnection.
 -   Fix bug where `ctrl` + `click` on a `link` element would not open in a new tab.
+-   Fix test suite on Windows machines.
 
 ## [0.1.1] - 2023-12-13
 
