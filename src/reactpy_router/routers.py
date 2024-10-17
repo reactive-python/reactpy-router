@@ -9,10 +9,11 @@ from typing import Any, Iterator, Literal, Sequence, cast
 from reactpy import component, use_memo, use_state
 from reactpy.backend.hooks import ConnectionContext, use_connection
 from reactpy.backend.types import Connection, Location
+from reactpy.core.component import Component
 from reactpy.types import ComponentType, VdomDict
 
 from reactpy_router.components import FirstLoad, History
-from reactpy_router.hooks import _route_state_context, _RouteState
+from reactpy_router.hooks import RouteState, _route_state_context
 from reactpy_router.resolvers import StarletteResolver
 from reactpy_router.types import CompiledRoute, Resolver, Router, RouteType
 
@@ -23,15 +24,27 @@ _logger = getLogger(__name__)
 def create_router(resolver: Resolver[RouteType]) -> Router[RouteType]:
     """A decorator that turns a resolver into a router"""
 
-    def wrapper(*routes: RouteType) -> ComponentType:
+    def wrapper(*routes: RouteType) -> Component:
         return router(*routes, resolver=resolver)
 
     return wrapper
 
 
-browser_router = create_router(StarletteResolver)
-"""This is the recommended router for all ReactPy Router web projects.
-It uses the JavaScript DOM History API to manage the history stack."""
+_starlette_router = create_router(StarletteResolver)
+
+
+def browser_router(*routes: RouteType) -> Component:
+    """This is the recommended router for all ReactPy-Router web projects.
+    It uses the JavaScript [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API)
+    to manage the history stack.
+
+    Args:
+        *routes (RouteType): A list of routes to be rendered by the router.
+
+    Returns:
+        A router component that renders the given routes.
+    """
+    return _starlette_router(*routes)
 
 
 @component
@@ -59,7 +72,7 @@ def router(
         route_elements = [
             _route_state_context(
                 element,
-                value=_RouteState(set_location, params),
+                value=RouteState(set_location, params),
             )
             for element, params in match
         ]

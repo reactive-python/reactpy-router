@@ -9,4 +9,5 @@ mkdocs-minify-plugin
 mkdocs-section-index
 mike
 mkdocstrings[python]
+black  # for mkdocstrings automatic code formatting
 .
