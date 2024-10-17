@@ -1,4 +1,4 @@
 ::: reactpy_router
 
     options:
-        members: ["route", "link"]
+        members: ["route", "link", "navigate"]

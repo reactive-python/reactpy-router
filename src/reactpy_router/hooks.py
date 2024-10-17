@@ -1,21 +1,17 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 from urllib.parse import parse_qs
 
 from reactpy import create_context, use_context, use_location
-from reactpy.backend.types import Location
 from reactpy.types import Context
 
+from reactpy_router.types import RouteState
 
-@dataclass
-class _RouteState:
-    set_location: Callable[[Location], None]
-    params: dict[str, Any]
+_route_state_context: Context[RouteState | None] = create_context(None)
 
 
-def _use_route_state() -> _RouteState:
+def _use_route_state() -> RouteState:
     route_state = use_context(_route_state_context)
     if route_state is None:  # pragma: no cover
         raise RuntimeError(
@@ -26,16 +22,17 @@ def _use_route_state() -> _RouteState:
     return route_state
 
 
-_route_state_context: Context[_RouteState | None] = create_context(None)
-
-
 def use_params() -> dict[str, Any]:
-    """The `use_params` hook returns an object of key/value pairs of the dynamic parameters \
+    """This hook returns an object of key/value pairs of the dynamic parameters \
     from the current URL that were matched by the `Route`. Child routes inherit all parameters \
     from their parent routes.
 
     For example, if you have a `URL_PARAM` defined in the route `/example/<URL_PARAM>/`,
-    this hook will return the URL_PARAM value that was matched."""
+    this hook will return the `URL_PARAM` value that was matched.
+
+    Returns:
+        A dictionary of the current URL's parameters.
+    """
 
     # TODO: Check if this returns all parent params
     return _use_route_state().params
@@ -49,10 +46,14 @@ def use_search_params(
     separator: str = "&",
 ) -> dict[str, list[str]]:
     """
-    The `use_search_params` hook is used to read the query string in the URL \
-    for the current location.
+    This hook is used to read the query string in the URL for the current location.
 
-    See `urllib.parse.parse_qs` for info on this hook's parameters."""
+    See [`urllib.parse.parse_qs`](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.parse_qs) \
+        for info on this hook's parameters.
+
+    Returns:
+        A dictionary of the current URL's query string parameters.
+    """
     location = use_location()
     query_string = location.search[1:] if len(location.search) > 1 else ""
 

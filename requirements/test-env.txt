@@ -1,6 +1,6 @@
 twine
 pytest
-pytest-asyncio
+anyio
 pytest-cov
 reactpy[testing,starlette]
 nodejs-bin==18.4.0a4

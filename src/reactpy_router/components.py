@@ -26,17 +26,36 @@ Link = export(
 )
 """Client-side portion of link handling"""
 
+Navigate = export(
+    module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
+    ("Navigate"),
+)
+"""Client-side portion of the navigate component"""
+
+FirstLoad = export(
+    module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
+    ("FirstLoad"),
+)
+
 link_js_content = (Path(__file__).parent / "static" / "link.js").read_text(encoding="utf-8")
 
 
 def link(attributes: dict[str, Any], *children: Any) -> Component:
-    """Create a link with the given attributes and children."""
+    """
+    Create a link with the given attributes and children.
+
+    Args:
+        attributes: A dictionary of attributes for the link.
+        *children: Child elements to be included within the link.
+
+    Returns:
+        A link component with the specified attributes and children.
+    """
     return _link(attributes, *children)
 
 
 @component
 def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
-    """A component that renders a link to the given path."""
     attributes = attributes.copy()
     uuid_string = f"link-{uuid4().hex}"
     class_name = f"{uuid_string}"
@@ -93,11 +112,53 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
 
     return html._(html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid_string)))
 
-    # def on_click(_event: dict[str, Any]) -> None:
+    # def on_click_callback(_event: dict[str, Any]) -> None:
     #     set_location(Location(**_event))
-    # return html._(html.a(attrs, *children), Link({"onClick": on_click, "linkClass": uuid_string}))
+    # return html._(html.a(attrs, *children), Link({"onClickCallback": on_click_callback, "linkClass": uuid_string}))
 
 
 def route(path: str, element: Any | None, *routes: Route) -> Route:
-    """Create a route with the given path, element, and child routes."""
+    """
+    Create a route with the given path, element, and child routes.
+
+    Args:
+        path: The path for the route.
+        element: The element to render for this route. Can be None.
+        routes: Additional child routes.
+
+    Returns:
+        The created route object.
+    """
     return Route(path, element, routes)
+
+
+def navigate(to: str, replace: bool = False) -> Component:
+    """
+    Navigate to a specified URL.
+
+    This function changes the browser's current URL when it is rendered.
+
+    Args:
+        to: The target URL to navigate to.
+        replace: If True, the current history entry will be replaced \
+            with the new URL. Defaults to False.
+
+    Returns:
+        The component responsible for navigation.
+    """
+    return _navigate(to, replace)
+
+
+@component
+def _navigate(to: str, replace: bool = False) -> VdomDict | None:
+    location = use_connection().location
+    set_location = _use_route_state().set_location
+    pathname = to.split("?", 1)[0]
+
+    def on_navigate_callback(_event: dict[str, Any]) -> None:
+        set_location(Location(**_event))
+
+    if location.pathname != pathname:
+        return Navigate({"onNavigateCallback": on_navigate_callback, "to": to, "replace": replace})
+
+    return None

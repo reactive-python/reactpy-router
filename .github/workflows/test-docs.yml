@@ -25,7 +25,6 @@ jobs:
           pip install -r requirements/build-docs.txt
           pip install -r requirements/check-types.txt
           pip install -r requirements/check-style.txt
-          pip install -e .
       - name: Check docs build
         run: |
           linkcheckMarkdown docs/ -v -r

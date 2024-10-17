@@ -1,14 +1,17 @@
+import asyncio
 import os
 from typing import Any
 
+import pytest
 from playwright.async_api._generated import Browser, Page
-from reactpy import Ref, component, html, use_location
+from reactpy import Ref, component, html, use_location, use_state
 from reactpy.testing import DisplayFixture
 
-from reactpy_router import browser_router, link, route, use_params, use_search_params
+from reactpy_router import browser_router, link, navigate, route, use_params, use_search_params
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
-CLICK_DELAY = 350 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
+CLICK_DELAY = 250 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
+pytestmark = pytest.mark.anyio
 
 
 async def test_simple_router(display: DisplayFixture):
@@ -174,23 +177,19 @@ async def test_browser_popstate(display: DisplayFixture):
 
     await display.show(sample)
 
-    for link_selector in ["#root", "#a", "#b", "#c"]:
+    link_selectors = ["#root", "#a", "#b", "#c"]
+
+    for link_selector in link_selectors:
         _link = await display.page.wait_for_selector(link_selector)
         await _link.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
 
-    await display.page.go_back()
-    await display.page.wait_for_selector("#c")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#b")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#a")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#root")
+    link_selectors.reverse()
+    for link_selector in link_selectors:
+        await asyncio.sleep(CLICK_DELAY / 1000)
+        await display.page.go_back()
+        await display.page.wait_for_selector(link_selector)
 
 
 async def test_relative_links(display: DisplayFixture):
@@ -209,32 +208,19 @@ async def test_relative_links(display: DisplayFixture):
 
     await display.show(sample)
 
-    for link_selector in ["#root", "#a", "#b", "#c", "#d", "#e", "#f"]:
+    selectors = ["#root", "#a", "#b", "#c", "#d", "#e", "#f"]
+
+    for link_selector in selectors:
         _link = await display.page.wait_for_selector(link_selector)
         await _link.click(delay=CLICK_DELAY)
 
     await display.page.wait_for_selector("#default")
 
-    await display.page.go_back()
-    await display.page.wait_for_selector("#f")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#e")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#d")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#c")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#b")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#a")
-
-    await display.page.go_back()
-    await display.page.wait_for_selector("#root")
+    selectors.reverse()
+    for link_selector in selectors:
+        await asyncio.sleep(CLICK_DELAY / 1000)
+        await display.page.go_back()
+        await display.page.wait_for_selector(link_selector)
 
 
 async def test_link_with_query_string(display: DisplayFixture):
@@ -293,5 +279,92 @@ async def test_ctrl_click(display: DisplayFixture, browser: Browser):
     _link = await display.page.wait_for_selector("#root")
     await _link.click(delay=CLICK_DELAY, modifiers=["Control"])
     browser_context = browser.contexts[0]
-    new_page: Page = await browser_context.wait_for_event("page")
+    if len(browser_context.pages) == 1:
+        new_page: Page = await browser_context.wait_for_event("page")
+    else:
+        new_page: Page = browser_context.pages[-1]  # type: ignore[no-redef]
     await new_page.wait_for_selector("#a")
+
+
+async def test_navigate_component(display: DisplayFixture):
+    @component
+    def navigate_btn():
+        nav_url, set_nav_url = use_state("")
+
+        return html.button(
+            {"onClick": lambda _: set_nav_url("/a")},
+            navigate(nav_url) if nav_url else "Click to navigate",
+        )
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", navigate_btn()),
+            route("/a", html.h1({"id": "a"}, "A")),
+        )
+
+    await display.show(sample)
+    _button = await display.page.wait_for_selector("button")
+    await _button.click(delay=CLICK_DELAY)
+    await display.page.wait_for_selector("#a")
+    await asyncio.sleep(CLICK_DELAY / 1000)
+    await display.page.go_back()
+    await display.page.wait_for_selector("button")
+
+
+async def test_navigate_component_replace(display: DisplayFixture):
+    @component
+    def navigate_btn(to: str, replace: bool = False):
+        nav_url, set_nav_url = use_state("")
+
+        return html.button(
+            {"onClick": lambda _: set_nav_url(to), "id": f"nav-{to.replace('/', '')}"},
+            navigate(nav_url, replace) if nav_url else f"Navigate to {to}",
+        )
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", navigate_btn("/a")),
+            route("/a", navigate_btn("/b", replace=True)),
+            route("/b", html.h1({"id": "b"}, "B")),
+        )
+
+    await display.show(sample)
+    _button = await display.page.wait_for_selector("#nav-a")
+    await _button.click(delay=CLICK_DELAY)
+    _button = await display.page.wait_for_selector("#nav-b")
+    await _button.click(delay=CLICK_DELAY)
+    await display.page.wait_for_selector("#b")
+    await asyncio.sleep(CLICK_DELAY / 1000)
+    await display.page.go_back()
+    await display.page.wait_for_selector("#nav-a")
+
+
+async def test_navigate_component_to_current_url(display: DisplayFixture):
+    @component
+    def navigate_btn(to: str, html_id: str):
+        nav_url, set_nav_url = use_state("")
+
+        return html.button(
+            {"onClick": lambda _: set_nav_url(to), "id": html_id},
+            navigate(nav_url) if nav_url else f"Navigate to {to}",
+        )
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", navigate_btn("/a", "root-a")),
+            route("/a", navigate_btn("/a", "nav-a")),
+        )
+
+    await display.show(sample)
+    _button = await display.page.wait_for_selector("#root-a")
+    await _button.click(delay=CLICK_DELAY)
+    _button = await display.page.wait_for_selector("#nav-a")
+    await _button.click(delay=CLICK_DELAY)
+    await asyncio.sleep(CLICK_DELAY / 1000)
+    await display.page.wait_for_selector("#nav-a")
+    await asyncio.sleep(CLICK_DELAY / 1000)
+    await display.page.go_back()
+    await display.page.wait_for_selector("#root-a")
