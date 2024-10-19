@@ -6,3 +6,11 @@ export function createLocationObject(): ReactPyLocation {
     search: window.location.search,
   };
 }
+
+export function pushState(to: string): void {
+  window.history.pushState(null, "", new URL(to, window.location.href));
+}
+
+export function replaceState(to: string): void {
+  window.history.replaceState(null, "", new URL(to, window.location.href));
+}

@@ -1,6 +1,6 @@
 import React from "preact/compat";
 import ReactDOM from "preact/compat";
-import { createLocationObject } from "./utils";
+import { createLocationObject, pushState, replaceState } from "./utils";
 import {
   HistoryProps,
   LinkProps,
@@ -43,7 +43,6 @@ export function History({ onHistoryChangeCallback }: HistoryProps): null {
   // FIXME: This code is commented out since it currently runs every time any component
   // is mounted due to a ReactPy core rendering bug. `FirstLoad` component is used instead.
   // https://github.com/reactive-python/reactpy/pull/1224
-
   // React.useEffect(() => {
   //   onHistoryChange({
   //     pathname: window.location.pathname,
@@ -69,7 +68,7 @@ export function Link({ onClickCallback, linkClass }: LinkProps): null {
     const handleClick = (event: MouseEvent) => {
       event.preventDefault();
       let to = (event.target as HTMLElement).getAttribute("href");
-      window.history.pushState(null, "", new URL(to, window.location.href));
+      pushState(to);
       onClickCallback(createLocationObject());
     };
 
@@ -78,7 +77,7 @@ export function Link({ onClickCallback, linkClass }: LinkProps): null {
     if (link) {
       link.addEventListener("click", handleClick);
     } else {
-      console.warn(`Link component with class name ${link} not found.`);
+      console.warn(`Link component with class name ${linkClass} not found.`);
     }
 
     // Delete the event listener when the component is unmounted
@@ -102,13 +101,13 @@ export function Navigate({
 }: NavigateProps): null {
   React.useEffect(() => {
     if (replace) {
-      window.history.replaceState(null, "", new URL(to, window.location.href));
+      replaceState(to);
     } else {
-      window.history.pushState(null, "", new URL(to, window.location.href));
+      pushState(to);
     }
     onNavigateCallback(createLocationObject());
     return () => {};
-  }, [onNavigateCallback, to, replace]);
+  }, []);
 
   return null;
 }
@@ -123,7 +122,7 @@ export function FirstLoad({ onFirstLoadCallback }: FirstLoadProps): null {
   React.useEffect(() => {
     onFirstLoadCallback(createLocationObject());
     return () => {};
-  }, [onFirstLoadCallback]);
+  }, []);
 
   return null;
 }
