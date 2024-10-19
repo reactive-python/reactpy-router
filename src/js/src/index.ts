@@ -114,11 +114,12 @@ export function Navigate({
 
 /**
  * FirstLoad component that captures the URL during the initial page load and notifies the server.
+ *
+ * FIXME: This component only exists because of a ReactPy core rendering bug, and should be removed when the bug
+ * is fixed. In the future, all this logic should be handled by the `History` component.
+ * https://github.com/reactive-python/reactpy/pull/1224
  */
 export function FirstLoad({ onFirstLoadCallback }: FirstLoadProps): null {
-  // FIXME: This component only exists because of a ReactPy core rendering bug, and should be removed when the bug
-  // is fixed. Ideally all this logic would be handled by the `History` component.
-  // https://github.com/reactive-python/reactpy/pull/1224
   React.useEffect(() => {
     onFirstLoadCallback(createLocationObject());
     return () => {};
