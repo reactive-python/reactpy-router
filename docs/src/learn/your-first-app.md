@@ -6,7 +6,7 @@ Here you'll learn the various features of `reactpy-router` and how to use them. 
 
 !!! abstract "Note"
 
-    These docs assume you already know the basics of [ReacPy](https://reactpy.dev).
+    These docs assume you already know the basics of [ReactPy](https://reactpy.dev).
 
 ---
 
