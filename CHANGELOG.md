@@ -98,7 +98,8 @@ Using the following categories, list your changes in this order:
 -   Rename `configure` to `create_router`.
 -   Rename from `idom-router` to `reactpy-router`.
 
-[Unreleased]: https://github.com/reactive-python/reactpy-router/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-router/compare/1.0.1...HEAD
+[1.0.1]: https://github.com/reactive-python/reactpy-router/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/reactive-python/reactpy-router/compare/0.1.1...1.0.0
 [0.1.1]: https://github.com/reactive-python/reactpy-router/compare/0.1.0...0.1.1
 [0.1.0]: https://github.com/reactive-python/reactpy-router/compare/0.0.1...0.1.0
