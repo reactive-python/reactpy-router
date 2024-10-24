@@ -1,19 +1,130 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "nodejs-bin==18.4.0a4"]
-build-backend = "setuptools.build_meta"
+build-backend = "hatchling.build"
+requires = ["hatchling"]
 
-[tool.mypy]
-ignore_missing_imports = true
-warn_unused_configs = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-check_untyped_defs = true
+[project]
+name = "reactpy_router"
+description = "A URL router for ReactPy."
+readme = "README.md"
+keywords = ["React", "ReactJS", "ReactPy", "components"]
+license = "MIT"
+authors = [{ name = "Mark Bakhit", email = "archiethemonger@gmail.com" }]
+requires-python = ">=3.9"
+classifiers = [
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Software Development :: Widget Sets",
+  "Topic :: Software Development :: User Interfaces",
+  "Environment :: Web Environment",
+  "Typing :: Typed",
+]
+dependencies = ["reactpy>=1.0.0", "typing_extensions"]
+dynamic = ["version"]
+urls.Changelog = "https://reactive-python.github.io/reactpy-router/latest/about/changelog/"
+urls.Documentation = "https://reactive-python.github.io/reactpy-router/latest/"
+urls.Source = "https://github.com/reactive-python/reactpy-router"
+
+[tool.hatch.version]
+path = "src/reactpy_router/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["/src"]
+
+[tool.hatch.metadata]
+license-files = { paths = ["LICENSE.md"] }
+
+[tool.hatch.envs.default]
+installer = "uv"
+
+# >>> Hatch Tests <<<
+
+[tool.hatch.envs.hatch-test]
+extra-dependencies = [
+  "pytest-sugar",
+  "pytest-cov",
+  "anyio",
+  "reactpy[testing,starlette]",
+]
+randomize = true
+matrix-name-format = "{variable}-{value}"
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.9", "3.10", "3.11", "3.12"]
+
+# >>> Hatch Documentation Scripts <<<
+
+[tool.hatch.envs.docs]
+template = "docs"
+detached = true
+dependencies = [
+  "mkdocs",
+  "mkdocs-git-revision-date-localized-plugin",
+  "mkdocs-material==9.4.0",
+  "mkdocs-include-markdown-plugin",
+  "linkcheckmd",
+  "mkdocs-spellcheck[all]",
+  "mkdocs-git-authors-plugin",
+  "mkdocs-minify-plugin",
+  "mike",
+  "mkdocstrings[python]",
+  "black",
+  "reactpy_router @ {root:uri}",
+]
+
+[tool.hatch.envs.docs.scripts]
+serve = ["cd docs && mkdocs serve"]
+build = ["cd docs && mkdocs build --strict"]
+linkcheck = [
+  "linkcheckMarkdown docs/ -v -r",
+  "linkcheckMarkdown README.md -v -r",
+  "linkcheckMarkdown CHANGELOG.md -v -r",
+]
+deploy_latest = ["cd docs && mike deploy --push --update-aliases {args} latest"]
+deploy_develop = ["cd docs && mike deploy --push develop"]
+
+
+# >>> Generic Tools <<<
 
 [tool.ruff]
-lint.ignore = ["E501"]
-lint.isort.known-first-party = ["src", "tests"]
-extend-exclude = [".venv/*", ".eggs/*", ".nox/*", "build/*"]
 line-length = 120
+format.preview = true
+lint.extend-ignore = [
+  "ARG001",  # Unused function argument
+  "ARG002",  # Unused method argument
+  "ARG004",  # Unused static method argument
+  "FBT001",  # Boolean-typed positional argument in function definition
+  "FBT002",  # Boolean default positional argument in function definition
+  "PLR2004", # Magic value used in comparison
+  "SIM115",  # Use context handler for opening files
+  "SLF001",  # Private member accessed
+]
+lint.preview = true
+lint.isort.known-first-party = ["src", "tests"]
+extend-exclude = [".venv/*", ".eggs/*", "build/*"]
 
 [tool.pytest.ini_options]
-testpaths = "tests"
+addopts = """\
+    --strict-config
+    --strict-markers
+    """
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["src/", "tests/"]
+
+[tool.coverage.paths]
+source = ["src/"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+skip_covered = true
+sort = "Miss"
+exclude_lines = ["pragma: no cover", "...", "raise NotImplementedError"]
