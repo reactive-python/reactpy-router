@@ -1,4 +1,4 @@
-name: Test
+name: Test Style
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  source:
+  test-style:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
