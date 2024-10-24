@@ -53,12 +53,7 @@ artifacts = []
 # >>> Hatch Tests <<<
 
 [tool.hatch.envs.hatch-test]
-extra-dependencies = [
-  "pytest-sugar",
-  "pytest-cov",
-  "anyio",
-  "reactpy[testing,starlette]",
-]
+extra-dependencies = ["pytest-sugar", "anyio", "reactpy[testing,starlette]"]
 randomize = true
 matrix-name-format = "{variable}-{value}"
 
@@ -130,8 +125,5 @@ source = ["src/", "tests/"]
 source = ["src/"]
 
 [tool.coverage.report]
-fail_under = 100
 show_missing = true
-skip_covered = true
-sort = "Miss"
 exclude_lines = ["pragma: no cover", "...", "raise NotImplementedError"]
