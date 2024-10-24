@@ -1,8 +1,8 @@
-name: Publish Develop Docs
+name: Publish Latest Docs
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -23,6 +23,6 @@ jobs:
           git config user.email github-actions@github.com
       - name: Publish Develop Docs
         run: |
-          hatch run docs:deploy_develop
+          hatch run docs:deploy_latest ${{ github.ref_name }}
     concurrency:
       group: publish-docs
