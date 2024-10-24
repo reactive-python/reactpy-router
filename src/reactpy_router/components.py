@@ -8,7 +8,7 @@ from uuid import uuid4
 from reactpy import component, html, use_connection
 from reactpy.backend.types import Location
 from reactpy.core.component import Component
-from reactpy.core.types import VdomDict
+from reactpy.core.types import Key, VdomDict
 from reactpy.web.module import export, module_from_file
 
 from reactpy_router.hooks import _use_route_state
@@ -40,7 +40,7 @@ FirstLoad = export(
 link_js_content = (Path(__file__).parent / "static" / "link.js").read_text(encoding="utf-8")
 
 
-def link(attributes: dict[str, Any], *children: Any) -> Component:
+def link(attributes: dict[str, Any], *children: Any, key: Key | None = None) -> Component:
     """
     Create a link with the given attributes and children.
 
@@ -51,7 +51,7 @@ def link(attributes: dict[str, Any], *children: Any) -> Component:
     Returns:
         A link component with the specified attributes and children.
     """
-    return _link(attributes, *children)
+    return _link(attributes, *children, key=key)
 
 
 @component
@@ -132,7 +132,7 @@ def route(path: str, element: Any | None, *routes: Route) -> Route:
     return Route(path, element, routes)
 
 
-def navigate(to: str, replace: bool = False) -> Component:
+def navigate(to: str, replace: bool = False, key: Key | None = None) -> Component:
     """
     Navigate to a specified URL.
 
@@ -146,7 +146,7 @@ def navigate(to: str, replace: bool = False) -> Component:
     Returns:
         The component responsible for navigation.
     """
-    return _navigate(to, replace)
+    return _navigate(to, replace, key=key)
 
 
 @component
