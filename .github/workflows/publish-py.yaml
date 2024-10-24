@@ -22,7 +22,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 --quiet install --upgrade hatch uv twine
-          pip install -r requirements/build-pkg.txt
       - name: Build Package
         run: |
           hatch build --clean

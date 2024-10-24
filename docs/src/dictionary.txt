@@ -38,3 +38,7 @@ misconfigurations
 backhaul
 sublicense
 contravariant
+formatters
+linters
+linting
+pytest
