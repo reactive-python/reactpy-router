@@ -20,6 +20,7 @@ def pytest_addoption(parser) -> None:
 def pytest_sessionstart(session):
     """Rebuild the project before running the tests to get the latest JavaScript"""
     subprocess.run(["hatch", "build", "--clean"], check=True)
+    subprocess.run(["playwright", "install", "chromium"], check=True)
 
 
 @pytest.fixture(scope="session")
