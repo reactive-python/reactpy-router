@@ -36,12 +36,18 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)!
 
+## [1.0.2] - 2024-10-24
+
+### Fixed
+
+-   Fix python `wheel` missing `bundle.js` file.
+
 ## [1.0.1] - 2024-10-24
 
 ### Changed
 
--   JavaScript bundle is now created using [`Bun`](https://bun.sh/)
--   Python package is now built using [`Hatch`](https://hatch.pypa.io/)
+-   JavaScript bundle is now created using [`Bun`](https://bun.sh/).
+-   Python package is now built using [`Hatch`](https://hatch.pypa.io/).
 
 ## [1.0.0] - 2024-10-18
 
@@ -98,7 +104,8 @@ Using the following categories, list your changes in this order:
 -   Rename `configure` to `create_router`.
 -   Rename from `idom-router` to `reactpy-router`.
 
-[Unreleased]: https://github.com/reactive-python/reactpy-router/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-router/compare/1.0.2...HEAD
+[1.0.2]: https://github.com/reactive-python/reactpy-router/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/reactive-python/reactpy-router/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/reactive-python/reactpy-router/compare/0.1.1...1.0.0
 [0.1.1]: https://github.com/reactive-python/reactpy-router/compare/0.1.0...0.1.1

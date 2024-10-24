@@ -37,6 +37,9 @@ path = "src/reactpy_router/__init__.py"
 include = ["/src"]
 artifacts = ["/src/reactpy_router/static/bundle.js"]
 
+[tool.hatch.build.targets.wheel]
+artifacts = ["/src/reactpy_router/static/bundle.js"]
+
 [tool.hatch.metadata]
 license-files = { paths = ["LICENSE.md"] }
 
