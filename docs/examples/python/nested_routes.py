@@ -64,15 +64,13 @@ def messages_with(*names):
     messages = [msg for msg in message_data if tuple(msg["with"]) == names]
     return html.div(
         html.h1(f"Messages with {', '.join(names)} 💬"),
-        html.ul(
-            [
-                html.li(
-                    {"key": msg["id"]},
-                    f"{msg['from'] or 'You'}: {msg['message']}",
-                )
-                for msg in messages
-            ]
-        ),
+        html.ul([
+            html.li(
+                {"key": msg["id"]},
+                f"{msg['from'] or 'You'}: {msg['message']}",
+            )
+            for msg in messages
+        ]),
     )
 
 

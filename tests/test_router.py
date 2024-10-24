@@ -141,6 +141,7 @@ async def test_use_params(display: DisplayFixture):
         ("/first/1/second/2", {"first": "1", "second": "2"}),
         ("/first/1/second/2/third/3", {"first": "1", "second": "2", "third": "3"}),
     ]:
+        expected_params = _expected_params
         await display.goto(path)
         await display.page.wait_for_selector("#success")
 
