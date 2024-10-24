@@ -22,7 +22,7 @@ jobs:
           pip install -r requirements/build-pkg.txt
       - name: Build Package
         run: |
-          hatch build
+          hatch build --clean
       - name: Publish to PyPI
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}

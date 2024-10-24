@@ -1,18 +1,20 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin
 from uuid import uuid4
 
 from reactpy import component, html, use_connection
 from reactpy.backend.types import Location
-from reactpy.core.component import Component
-from reactpy.core.types import Key, VdomDict
 from reactpy.web.module import export, module_from_file
 
 from reactpy_router.hooks import _use_route_state
 from reactpy_router.types import Route
+
+if TYPE_CHECKING:
+    from reactpy.core.component import Component
+    from reactpy.core.types import Key, VdomDict
 
 History = export(
     module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
@@ -68,7 +70,8 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
     if "href" in attributes and "to" not in attributes:
         attributes["to"] = attributes.pop("href")
     if "to" not in attributes:  # pragma: no cover
-        raise ValueError("The `to` attribute is required for the `Link` component.")
+        msg = "The `to` attribute is required for the `Link` component."
+        raise ValueError(msg)
     to = attributes.pop("to")
 
     attrs = {

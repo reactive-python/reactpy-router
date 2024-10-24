@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.parse import parse_qs
 
 from reactpy import create_context, use_context, use_location
-from reactpy.types import Context
 
-from reactpy_router.types import RouteState
+from reactpy_router.types import RouteState  # noqa: TCH001
+
+if TYPE_CHECKING:
+    from reactpy.types import Context
+
 
 _route_state_context: Context[RouteState | None] = create_context(None)
 
@@ -14,10 +17,11 @@ _route_state_context: Context[RouteState | None] = create_context(None)
 def _use_route_state() -> RouteState:
     route_state = use_context(_route_state_context)
     if route_state is None:  # pragma: no cover
-        raise RuntimeError(
+        msg = (
             "ReactPy-Router was unable to find a route context. Are you "
             "sure this hook/component is being called within a router?"
         )
+        raise RuntimeError(msg)
 
     return route_state
 

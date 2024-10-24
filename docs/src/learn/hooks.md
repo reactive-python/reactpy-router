@@ -13,7 +13,7 @@ The [`use_search_params`][reactpy_router.use_search_params] hook can be used to 
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-search-params.py" %}
+    {% include "../../examples/python/use_search_params.py" %}
     ```
 
 ## Use Parameters
@@ -23,5 +23,5 @@ The [`use_params`][reactpy_router.use_params] hook can be used to access route p
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-params.py" %}
+    {% include "../../examples/python/use_params.py" %}
     ```

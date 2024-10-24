@@ -1,3 +1,4 @@
+import operator
 from typing import TypedDict
 
 from reactpy import component, html, run
@@ -41,7 +42,7 @@ def home():
 
 @component
 def all_messages():
-    last_messages = {", ".join(msg["with"]): msg for msg in sorted(message_data, key=lambda m: m["id"])}
+    last_messages = {", ".join(msg["with"]): msg for msg in sorted(message_data, key=operator.itemgetter("id"))}
 
     messages = []
     for msg in last_messages.values():

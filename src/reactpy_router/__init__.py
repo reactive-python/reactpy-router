@@ -2,16 +2,16 @@
 __version__ = "1.0.0"
 
 
-from .components import link, navigate, route
-from .hooks import use_params, use_search_params
-from .routers import browser_router, create_router
+from reactpy_router.components import link, navigate, route
+from reactpy_router.hooks import use_params, use_search_params
+from reactpy_router.routers import browser_router, create_router
 
 __all__ = (
+    "browser_router",
     "create_router",
     "link",
+    "navigate",
     "route",
-    "browser_router",
     "use_params",
     "use_search_params",
-    "navigate",
 )

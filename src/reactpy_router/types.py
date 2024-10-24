@@ -3,13 +3,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, Sequence, TypedDict, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, TypedDict, TypeVar
 
-from reactpy.backend.types import Location
-from reactpy.core.component import Component
 from reactpy.core.vdom import is_vdom
-from reactpy.types import Key
 from typing_extensions import Protocol, Self, TypeAlias
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from reactpy.backend.types import Location
+    from reactpy.core.component import Component
+    from reactpy.types import Key
 
 ConversionFunc: TypeAlias = Callable[[str], Any]
 """A function that converts a string to a specific type."""

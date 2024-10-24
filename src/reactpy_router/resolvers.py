@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from reactpy_router.converters import CONVERTERS
-from reactpy_router.types import ConversionInfo, ConverterMapping, Route
+
+if TYPE_CHECKING:
+    from reactpy_router.types import ConversionInfo, ConverterMapping, Route
 
 __all__ = ["StarletteResolver"]
 
@@ -48,7 +50,8 @@ class StarletteResolver:
             try:
                 conversion_info = self.registered_converters[param_type]
             except KeyError as e:
-                raise ValueError(f"Unknown conversion type {param_type!r} in {path!r}") from e
+                msg = f"Unknown conversion type {param_type!r} in {path!r}"
+                raise ValueError(msg) from e
 
             # Add the string before the match to the pattern
             pattern += re.escape(path[last_match_end : match.start()])

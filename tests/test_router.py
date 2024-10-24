@@ -136,7 +136,7 @@ async def test_use_params(display: DisplayFixture):
 
     await display.show(sample)
 
-    for path, expected_params in [
+    for path, _expected_params in [
         ("/first/1", {"first": "1"}),
         ("/first/1/second/2", {"first": "1", "second": "2"}),
         ("/first/1/second/2/third/3", {"first": "1", "second": "2", "third": "3"}),

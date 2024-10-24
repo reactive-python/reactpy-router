@@ -46,7 +46,7 @@ def test_parse_path():
 
 def test_parse_path_unkown_conversion():
     resolver = StarletteResolver(route("/", None))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Unknown conversion type 'unknown' in '/a/{b:unknown}/c'"):
         resolver.parse_path("/a/{b:unknown}/c")
 
 

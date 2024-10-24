@@ -113,7 +113,6 @@ lint.extend-ignore = [
   "SLF001",  # Private member accessed
 ]
 lint.preview = true
-lint.isort.known-first-party = ["src", "tests"]
 extend-exclude = [".venv/*", ".eggs/*", "build/*"]
 
 [tool.pytest.ini_options]

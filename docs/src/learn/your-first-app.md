@@ -36,7 +36,7 @@ The first step is to create a basic router that will display the home page when 
 === "components.py"
 
     ```python
-    {% include "../../examples/python/basic-routing.py" %}
+    {% include "../../examples/python/basic_routing.py" %}
     ```
 
 When navigating to [`http://127.0.0.1:8000`](http://127.0.0.1:8000) you should see `Home Page 🏠`. However, if you go to any other route you will instead see `Missing Link 🔗‍💥`.
@@ -46,7 +46,7 @@ With this foundation you can start adding more routes.
 === "components.py"
 
     ```python
-    {% include "../../examples/python/basic-routing-more-routes.py" %}
+    {% include "../../examples/python/basic_routing_more_routes.py" %}
     ```
 
 With this change you can now also go to [`/messages`](http://127.0.0.1:8000/messages) to see `Messages 💬`.
@@ -58,7 +58,7 @@ Instead of using the standard `#!python reactpy.html.a` element to create links 
 === "components.py"
 
     ```python
-    {% include "../../examples/python/route-links.py" %}
+    {% include "../../examples/python/route_links.py" %}
     ```
 
 Now, when you go to the home page, you can click `Messages` link to go to [`/messages`](http://127.0.0.1:8000/messages).
@@ -70,7 +70,7 @@ Routes can be nested in order to construct more complicated application structur
 === "components.py"
 
     ```python
-    {% include "../../examples/python/nested-routes.py" %}
+    {% include "../../examples/python/nested_routes.py" %}
     ```
 
 ## Adding Route Parameters
@@ -84,5 +84,5 @@ If we take this information and apply it to our growing example application we'd
 === "components.py"
 
     ```python
-    {% include "../../examples/python/route-parameters.py" %}
+    {% include "../../examples/python/route_parameters.py" %}
     ```

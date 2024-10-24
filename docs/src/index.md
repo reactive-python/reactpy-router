@@ -13,5 +13,5 @@ You're now ready to start building your own ReactPy applications with URL routin
 === "components.py"
 
     ```python
-    {% include "../examples/python/basic-routing.py" %}
+    {% include "../examples/python/basic_routing.py" %}
     ```

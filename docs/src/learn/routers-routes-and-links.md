@@ -16,7 +16,7 @@ Here's a basic example showing how to use `#!python browser_router` with two rou
 === "components.py"
 
     ```python
-    {% include "../../examples/python/basic-routing.py" %}
+    {% include "../../examples/python/basic_routing.py" %}
     ```
 
 Here we'll note some special syntax in the route path for the second route. The `#!python "any"` type is a wildcard that will match any path. This is useful for creating a default page or error page such as "404 NOT FOUND".
@@ -65,5 +65,5 @@ Links between routes should be created using the [link][reactpy_router.link] com
 === "components.py"
 
     ```python
-    {% include "../../examples/python/route-links.py" %}
+    {% include "../../examples/python/route_links.py" %}
     ```

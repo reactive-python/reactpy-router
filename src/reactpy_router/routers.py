@@ -4,18 +4,23 @@ from __future__ import annotations
 
 from dataclasses import replace
 from logging import getLogger
-from typing import Any, Iterator, Literal, Sequence, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
 
 from reactpy import component, use_memo, use_state
 from reactpy.backend.hooks import ConnectionContext, use_connection
 from reactpy.backend.types import Connection, Location
-from reactpy.core.component import Component
 from reactpy.types import ComponentType, VdomDict
 
 from reactpy_router.components import FirstLoad, History
 from reactpy_router.hooks import RouteState, _route_state_context
 from reactpy_router.resolvers import StarletteResolver
-from reactpy_router.types import CompiledRoute, Resolver, Router, RouteType
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator, Sequence
+
+    from reactpy.core.component import Component
+
+    from reactpy_router.types import CompiledRoute, Resolver, Router, RouteType
 
 __all__ = ["browser_router", "create_router"]
 _logger = getLogger(__name__)
