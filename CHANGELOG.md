@@ -34,6 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [1.0.1] - 2024-10-24
+
 ### Changed
 
 -   JavaScript bundle is now created using [`Bun`](https://bun.sh/)

@@ -16,8 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - run: pip install -r requirements/build-docs.txt
-      - name: Install dependecies
+      - name: Install dependencies
         run: |
           pip install --upgrade hatch uv
       - name: Configure Git
