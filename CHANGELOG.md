@@ -34,7 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+-   JavaScript bundle is now created using [`Bun`](https://bun.sh/)
+-   Python package is now built using [`Hatch`](https://hatch.pypa.io/)
 
 ## [1.0.0] - 2024-10-18
 

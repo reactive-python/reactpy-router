@@ -1,5 +1,0 @@
-twine
-pytest
-anyio
-pytest-cov
-reactpy[testing,starlette]

@@ -1,8 +1,9 @@
+import operator
 from typing import TypedDict
 
 from reactpy import component, html, run
 
-from reactpy_router import browser_router, link, route
+from reactpy_router import browser_router, link, route, use_params
 
 message_data: list["MessageDataType"] = [
     {"id": 1, "with": ["Alice"], "from": None, "message": "Hello!"},
@@ -23,9 +24,7 @@ def root():
         route(
             "/messages",
             all_messages(),
-            # we'll improve upon these manually created routes in the next section...
-            route("/with/Alice", messages_with("Alice")),
-            route("/with/Alice-Bob", messages_with("Alice", "Bob")),
+            route("/with/{names}", messages_with()),  # note the path param
         ),
         route("{404:any}", html.h1("Missing Link 🔗‍💥")),
     )
@@ -41,16 +40,15 @@ def home():
 
 @component
 def all_messages():
-    last_messages = {", ".join(msg["with"]): msg for msg in sorted(message_data, key=lambda m: m["id"])}
-
+    last_messages = {", ".join(msg["with"]): msg for msg in sorted(message_data, key=operator.itemgetter("id"))}
     messages = []
     for msg in last_messages.values():
-        _link = link(
+        msg_hyperlink = link(
             {"to": f"/messages/with/{'-'.join(msg['with'])}"},
             f"Conversation with: {', '.join(msg['with'])}",
         )
         msg_from = f"{'' if msg['from'] is None else '🔴'} {msg['message']}"
-        messages.append(html.li({"key": msg["id"]}, html.p(_link), msg_from))
+        messages.append(html.li({"key": msg["id"]}, html.p(msg_hyperlink), msg_from))
 
     return html.div(
         html.h1("All Messages 💬"),
@@ -59,19 +57,18 @@ def all_messages():
 
 
 @component
-def messages_with(*names):
+def messages_with():
+    names = tuple(use_params()["names"].split("-"))  # and here we use the path param
     messages = [msg for msg in message_data if tuple(msg["with"]) == names]
     return html.div(
         html.h1(f"Messages with {', '.join(names)} 💬"),
-        html.ul(
-            [
-                html.li(
-                    {"key": msg["id"]},
-                    f"{msg['from'] or 'You'}: {msg['message']}",
-                )
-                for msg in messages
-            ]
-        ),
+        html.ul([
+            html.li(
+                {"key": msg["id"]},
+                f"{msg['from'] or 'You'}: {msg['message']}",
+            )
+            for msg in messages
+        ]),
     )
 
 

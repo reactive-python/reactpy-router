@@ -1,4 +1,0 @@
-twine
-wheel
-setuptools
-nodejs-bin==18.4.0a4

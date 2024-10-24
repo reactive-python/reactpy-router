@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 import pytest
 from playwright.async_api import async_playwright
@@ -14,6 +15,12 @@ def pytest_addoption(parser) -> None:
         action="store_true",
         help="Hide the browser window when running web-based tests",
     )
+
+
+def pytest_sessionstart(session):
+    """Rebuild the project before running the tests to get the latest JavaScript"""
+    subprocess.run(["hatch", "build", "--clean"], check=True)
+    subprocess.run(["playwright", "install", "chromium"], check=True)
 
 
 @pytest.fixture(scope="session")

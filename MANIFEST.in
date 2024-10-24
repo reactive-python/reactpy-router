@@ -1,2 +1,0 @@
-recursive-include src/reactpy_router/static *
-include src/reactpy_router/py.typed
