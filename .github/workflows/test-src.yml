@@ -11,7 +11,7 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  test-python:
+  source:
     name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
@@ -41,9 +41,9 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
           retention-days: 7
-  coverage-python:
+  coverage:
     needs:
-      - test-python
+      - source
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
