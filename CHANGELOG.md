@@ -36,12 +36,18 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)!
 
+## [1.0.2] - 2024-10-24
+
+### Fixed
+
+-   Fix python `wheel` missing `bundle.js` file.
+
 ## [1.0.1] - 2024-10-24
 
 ### Changed
 
--   JavaScript bundle is now created using [`Bun`](https://bun.sh/)
--   Python package is now built using [`Hatch`](https://hatch.pypa.io/)
+-   JavaScript bundle is now created using [`Bun`](https://bun.sh/).
+-   Python package is now built using [`Hatch`](https://hatch.pypa.io/).
 
 ## [1.0.0] - 2024-10-18
 
