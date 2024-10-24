@@ -1,5 +1,5 @@
 # the version is statically loaded by setup.py
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 
 from reactpy_router.components import link, navigate, route
