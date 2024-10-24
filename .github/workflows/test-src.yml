@@ -12,7 +12,6 @@ on:
 
 jobs:
   source:
-    name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
