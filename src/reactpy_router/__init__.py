@@ -1,4 +1,3 @@
-# the version is statically loaded by setup.py
 __version__ = "1.0.2"
 
 
