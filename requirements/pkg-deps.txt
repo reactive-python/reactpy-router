@@ -1,2 +1,0 @@
-reactpy >=1
-typing_extensions

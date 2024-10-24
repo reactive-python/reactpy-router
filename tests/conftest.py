@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 import pytest
 from playwright.async_api import async_playwright
@@ -18,6 +19,7 @@ def pytest_addoption(parser) -> None:
 
 @pytest.fixture(scope="session")
 async def display(backend, browser):
+    subprocess.run(["hatch", "build"], check=True)
     async with DisplayFixture(backend, browser) as display_fixture:
         display_fixture.page.set_default_timeout(10000)
         yield display_fixture
