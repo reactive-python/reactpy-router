@@ -74,13 +74,20 @@ def router(
     match = use_memo(lambda: _match_route(resolvers, location, select="first"))
 
     if match:
-        route_elements = [
-            _route_state_context(
-                element,
-                value=RouteState(set_location, params),
-            )
-            for element, params in match
-        ]
+        # We need skip rendering the application on 'first_load' to avoid
+        # rendering it twice. The second render occurs following
+        # the impending on_history_change event
+
+        if first_load:
+            route_elements = []
+        else:
+            route_elements = [
+                _route_state_context(
+                    element,
+                    value=RouteState(set_location, params),
+                )
+                for element, params in match
+            ]
 
         def on_history_change(event: dict[str, Any]) -> None:
             """Callback function used within the JavaScript `History` component."""
