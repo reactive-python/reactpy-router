@@ -34,7 +34,7 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+-   Fix double rendering issue on initial page load
 
 ## [1.0.2] - 2024-10-24
 
