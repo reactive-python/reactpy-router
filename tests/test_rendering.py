@@ -4,7 +4,7 @@ from reactpy.testing import DisplayFixture
 
 from reactpy_router import browser_router, route
 
-from .tooling.page import page_stable
+from .utils import page_stable
 
 
 @pytest.mark.anyio
@@ -18,8 +18,6 @@ async def test_router_simple(display: DisplayFixture):
     def root():
         nonlocal root_render_count
         root_render_count += 1
-
-        # https://reactive-python.github.io/reactpy-router/latest/#quick-start
 
         @component
         def home_page():
