@@ -4,7 +4,7 @@ from reactpy.testing import DisplayFixture
 
 from reactpy_router import browser_router, route
 
-from .utils import page_stable
+from .utils import page_load_complete
 
 
 @pytest.mark.anyio
@@ -37,21 +37,21 @@ async def test_router_simple(display: DisplayFixture):
         )
 
     await display.show(root)
-    await page_stable(display.page)
+    await page_load_complete(display.page)
 
     assert root_render_count == 1
     assert home_page_render_count == 1
     assert not_found_render_count == 0
 
     await display.goto("/xxx")
-    await page_stable(display.page)
+    await page_load_complete(display.page)
 
     assert root_render_count == 2
     assert home_page_render_count == 1
     assert not_found_render_count == 1
 
     await display.goto("/yyy")
-    await page_stable(display.page)
+    await page_load_complete(display.page)
 
     assert root_render_count == 3
     assert home_page_render_count == 1
