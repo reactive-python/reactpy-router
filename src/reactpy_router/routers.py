@@ -74,13 +74,10 @@ def router(
     match = use_memo(lambda: _match_route(resolvers, location, select="first"))
 
     if match:
-
         if first_load:
-
             # We need skip rendering the application on 'first_load' to avoid
             # rendering it twice. The second render occurs following
             # the impending on_history_change event
-
             route_elements = []
         else:
             route_elements = [
