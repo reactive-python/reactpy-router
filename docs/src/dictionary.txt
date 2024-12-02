@@ -39,6 +39,7 @@ backhaul
 sublicense
 contravariant
 formatters
+linter
 linters
 linting
 pytest

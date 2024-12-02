@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+-   Set upper limit on ReactPy version to `<2.0.0`.
 
 ## [1.0.3] - 2024-11-21
 

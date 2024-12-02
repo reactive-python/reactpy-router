@@ -5,6 +5,7 @@ If you plan to make code changes to this repository, you will need to install th
 -   [Git](https://git-scm.com/downloads)
 -   [Python 3.9+](https://www.python.org/downloads/)
 -   [Hatch](https://hatch.pypa.io/latest/)
+-   [Bun](https://bun.sh/)
 
 Once you finish installing these dependencies, you can clone this repository:
 
@@ -40,6 +41,8 @@ By utilizing `hatch`, the following commands are available to manage the develop
 | `hatch fmt --check` | Run all linters and formatters, but do not save fixes to the disk |
 | `hatch fmt --linter` | Run only linters |
 | `hatch fmt --formatter` | Run only formatters |
+| `hatch run javascript:check` | Run the JavaScript linter/formatter |
+| `hatch run javascript:fix` | Run the JavaScript linter/formatter and write fixes to disk |
 
 ??? tip "Configure your IDE for linting"
 
@@ -54,6 +57,7 @@ By utilizing `hatch`, the following commands are available to manage the develop
 | `hatch run docs:serve` | Start the [`mkdocs`](https://www.mkdocs.org/) server to view documentation locally |
 | `hatch run docs:build` | Build the documentation |
 | `hatch run docs:linkcheck` | Check for broken links in the documentation |
+| `hatch fmt docs --check` | Run linter on code examples in the documentation |
 
 ### Environment Management
 
