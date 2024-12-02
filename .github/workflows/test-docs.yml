@@ -24,12 +24,10 @@ jobs:
         with:
           python-version: 3.x
       - name: Install Python Dependencies
-        run: |
-          pip3 --quiet install --upgrade hatch uv ruff
+        run: pip install --upgrade pip hatch uv
+      - name: Check documentation links
+        run: hatch run docs:linkcheck
       - name: Check docs build
-        run: |
-          hatch run docs:build
-          hatch run docs:linkcheck
+        run: hatch run docs:build
       - name: Check docs examples
-        run: |
-          ruff check docs/examples/python/
+        run: hatch fmt docs --check
