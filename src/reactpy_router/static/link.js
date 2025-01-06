@@ -4,7 +4,7 @@ document.querySelector(".UUID").addEventListener(
     // Prevent default if ctrl isn't pressed
     if (!event.ctrlKey) {
       event.preventDefault();
-      let to = event.target.getAttribute("href");
+      let to = event.currentTarget.getAttribute("href");
       let new_url = new URL(to, window.location);
 
       // Deduplication needed due to ReactPy rendering bug
