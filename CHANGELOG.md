@@ -38,6 +38,10 @@ Using the following categories, list your changes in this order:
 
 -   Set upper limit on ReactPy version to `<2.0.0`.
 
+### Fixed
+
+-   Fixed bug where `link` element sometimes would sometimes not retrieve the correct `href` attribute.
+
 ## [1.0.3] - 2024-11-21
 
 ### Fixed
