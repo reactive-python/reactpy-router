@@ -2,6 +2,10 @@
 build-backend = "hatchling.build"
 requires = ["hatchling", "hatch-build-scripts"]
 
+##############################
+# >>> Hatch Build Config <<< #
+##############################
+
 [project]
 name = "reactpy_router"
 description = "A URL router for ReactPy."
@@ -24,7 +28,7 @@ classifiers = [
   "Environment :: Web Environment",
   "Typing :: Typed",
 ]
-dependencies = ["reactpy>=1.0.0", "typing_extensions"]
+dependencies = ["reactpy>=1.0.0, <2.0.0", "typing_extensions"]
 dynamic = ["version"]
 urls.Changelog = "https://reactive-python.github.io/reactpy-router/latest/about/changelog/"
 urls.Documentation = "https://reactive-python.github.io/reactpy-router/latest/"
@@ -35,10 +39,10 @@ path = "src/reactpy_router/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 include = ["/src"]
-artifacts = ["/src/reactpy_router/static/bundle.js"]
+artifacts = ["/src/reactpy_router/static/"]
 
 [tool.hatch.build.targets.wheel]
-artifacts = ["/src/reactpy_router/static/bundle.js"]
+artifacts = ["/src/reactpy_router/static/"]
 
 [tool.hatch.metadata]
 license-files = { paths = ["LICENSE.md"] }
@@ -53,7 +57,9 @@ commands = [
 ]
 artifacts = []
 
-# >>> Hatch Tests <<<
+#############################
+# >>> Hatch Test Runner <<< #
+#############################
 
 [tool.hatch.envs.hatch-test]
 extra-dependencies = ["pytest-sugar", "anyio", "reactpy[testing,starlette]"]
@@ -63,24 +69,30 @@ matrix-name-format = "{variable}-{value}"
 [[tool.hatch.envs.hatch-test.matrix]]
 python = ["3.9", "3.10", "3.11", "3.12"]
 
-# >>> Hatch Documentation Scripts <<<
+[tool.pytest.ini_options]
+addopts = """\
+    --strict-config
+    --strict-markers
+    """
+
+#######################################
+# >>> Hatch Documentation Scripts <<< #
+#######################################
 
 [tool.hatch.envs.docs]
 template = "docs"
-detached = true
 dependencies = [
   "mkdocs",
   "mkdocs-git-revision-date-localized-plugin",
   "mkdocs-material==9.4.0",
   "mkdocs-include-markdown-plugin",
-  "linkcheckmd",
   "mkdocs-spellcheck[all]",
   "mkdocs-git-authors-plugin",
   "mkdocs-minify-plugin",
   "mike",
   "mkdocstrings[python]",
-  "black",
-  "reactpy_router @ {root:uri}",
+  "black",                                     # Used by mkdocstrings for auto formatting
+  "linkcheckmd",
 ]
 
 [tool.hatch.envs.docs.scripts]
@@ -94,10 +106,23 @@ linkcheck = [
 deploy_latest = ["cd docs && mike deploy --push --update-aliases {args} latest"]
 deploy_develop = ["cd docs && mike deploy --push develop"]
 
+############################
+# >>> Hatch JS Scripts <<< #
+############################
 
-# >>> Generic Tools <<<
+[tool.hatch.envs.javascript]
+detached = true
+
+[tool.hatch.envs.javascript.scripts]
+check = ["cd src/js && bun install", "cd src/js && bun run check"]
+fix = ["cd src/js && bun install", "cd src/js && bun run format"]
+
+#########################
+# >>> Generic Tools <<< #
+#########################
 
 [tool.ruff]
+extend-exclude = [".venv/*", ".eggs/*", "build/*"]
 line-length = 120
 format.preview = true
 lint.extend-ignore = [
@@ -111,13 +136,6 @@ lint.extend-ignore = [
   "SLF001",  # Private member accessed
 ]
 lint.preview = true
-extend-exclude = [".venv/*", ".eggs/*", "build/*"]
-
-[tool.pytest.ini_options]
-addopts = """\
-    --strict-config
-    --strict-markers
-    """
 
 [tool.coverage.run]
 branch = true

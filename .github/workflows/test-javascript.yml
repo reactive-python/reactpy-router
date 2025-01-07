@@ -1,4 +1,4 @@
-name: Test Style
+name: Test
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  test-style:
+  javascript:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,10 +18,8 @@ jobs:
           bun-version: latest
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: 3.x
       - name: Install Python Dependencies
-        run: |
-          pip3 install hatch uv
+        run: pip install --upgrade pip hatch uv
       - name: Run Tests
-        run: |
-          hatch fmt --check
+        run: hatch run javascript:check
