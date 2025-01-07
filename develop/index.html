@@ -12,13 +12,13 @@
 <span class=normal>11</span>
 <span class=normal>12</span>
 <span class=normal>13</span>
-<span class=normal>14</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
+<span class=normal>14</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_router</span> <span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>route</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_router</span><span class=w> </span><span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>route</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>browser_router</span><span class=p>(</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/&quot;</span><span class=p>,</span> <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Home Page 🏠&quot;</span><span class=p>)),</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;{404:any}&quot;</span><span class=p>,</span> <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Missing Link 🔗‍💥&quot;</span><span class=p>)),</span>

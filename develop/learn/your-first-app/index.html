@@ -21,13 +21,13 @@
 <span class=normal>11</span>
 <span class=normal>12</span>
 <span class=normal>13</span>
-<span class=normal>14</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
+<span class=normal>14</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_router</span> <span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>route</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_router</span><span class=w> </span><span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>route</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>browser_router</span><span class=p>(</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/&quot;</span><span class=p>,</span> <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Home Page 🏠&quot;</span><span class=p>)),</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;{404:any}&quot;</span><span class=p>,</span> <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Missing Link 🔗‍💥&quot;</span><span class=p>)),</span>
@@ -49,13 +49,13 @@
 <span class=normal>12</span>
 <span class=normal>13</span>
 <span class=normal>14</span>
-<span class=normal>15</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
+<span class=normal>15</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_router</span> <span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>route</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_router</span><span class=w> </span><span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>route</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>browser_router</span><span class=p>(</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/&quot;</span><span class=p>,</span> <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Home Page 🏠&quot;</span><span class=p>)),</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/messages&quot;</span><span class=p>,</span> <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Messages 💬&quot;</span><span class=p>)),</span>
@@ -86,13 +86,13 @@
 <span class=normal>20</span>
 <span class=normal>21</span>
 <span class=normal>22</span>
-<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
+<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_router</span> <span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>link</span><span class=p>,</span> <span class=n>route</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_router</span><span class=w> </span><span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>link</span><span class=p>,</span> <span class=n>route</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>browser_router</span><span class=p>(</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/&quot;</span><span class=p>,</span> <span class=n>home</span><span class=p>()),</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/messages&quot;</span><span class=p>,</span> <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Messages 💬&quot;</span><span class=p>)),</span>
@@ -101,7 +101,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>home</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>home</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span>
         <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Home Page 🏠&quot;</span><span class=p>),</span>
         <span class=n>link</span><span class=p>({</span><span class=s2>&quot;to&quot;</span><span class=p>:</span> <span class=s2>&quot;/messages&quot;</span><span class=p>},</span> <span class=s2>&quot;Messages&quot;</span><span class=p>),</span>
@@ -190,12 +190,12 @@
 <span class=normal>79</span>
 <span class=normal>80</span>
 <span class=normal>81</span>
-<span class=normal>82</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span> <span class=nn>operator</span>
-<span class=kn>from</span> <span class=nn>typing</span> <span class=kn>import</span> <span class=n>TypedDict</span>
+<span class=normal>82</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>operator</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>typing</span><span class=w> </span><span class=kn>import</span> <span class=n>TypedDict</span>
 
-<span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_router</span> <span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>link</span><span class=p>,</span> <span class=n>route</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_router</span><span class=w> </span><span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>link</span><span class=p>,</span> <span class=n>route</span>
 
 <span class=n>message_data</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=s2>&quot;MessageDataType&quot;</span><span class=p>]</span> <span class=o>=</span> <span class=p>[</span>
     <span class=p>{</span><span class=s2>&quot;id&quot;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span> <span class=s2>&quot;with&quot;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&quot;Alice&quot;</span><span class=p>],</span> <span class=s2>&quot;from&quot;</span><span class=p>:</span> <span class=kc>None</span><span class=p>,</span> <span class=s2>&quot;message&quot;</span><span class=p>:</span> <span class=s2>&quot;Hello!&quot;</span><span class=p>},</span>
@@ -210,7 +210,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>browser_router</span><span class=p>(</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/&quot;</span><span class=p>,</span> <span class=n>home</span><span class=p>()),</span>
         <span class=n>route</span><span class=p>(</span>
@@ -225,7 +225,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>home</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>home</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span>
         <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Home Page 🏠&quot;</span><span class=p>),</span>
         <span class=n>link</span><span class=p>({</span><span class=s2>&quot;to&quot;</span><span class=p>:</span> <span class=s2>&quot;/messages&quot;</span><span class=p>},</span> <span class=s2>&quot;Messages&quot;</span><span class=p>),</span>
@@ -233,7 +233,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>all_messages</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>all_messages</span><span class=p>():</span>
     <span class=n>last_messages</span> <span class=o>=</span> <span class=p>{</span><span class=s2>&quot;, &quot;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>msg</span><span class=p>[</span><span class=s2>&quot;with&quot;</span><span class=p>]):</span> <span class=n>msg</span> <span class=k>for</span> <span class=n>msg</span> <span class=ow>in</span> <span class=nb>sorted</span><span class=p>(</span><span class=n>message_data</span><span class=p>,</span> <span class=n>key</span><span class=o>=</span><span class=n>operator</span><span class=o>.</span><span class=n>itemgetter</span><span class=p>(</span><span class=s2>&quot;id&quot;</span><span class=p>))}</span>
 
     <span class=n>messages</span> <span class=o>=</span> <span class=p>[]</span>
@@ -252,7 +252,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>messages_with</span><span class=p>(</span><span class=o>*</span><span class=n>names</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>messages_with</span><span class=p>(</span><span class=o>*</span><span class=n>names</span><span class=p>):</span>
     <span class=n>messages</span> <span class=o>=</span> <span class=p>[</span><span class=n>msg</span> <span class=k>for</span> <span class=n>msg</span> <span class=ow>in</span> <span class=n>message_data</span> <span class=k>if</span> <span class=nb>tuple</span><span class=p>(</span><span class=n>msg</span><span class=p>[</span><span class=s2>&quot;with&quot;</span><span class=p>])</span> <span class=o>==</span> <span class=n>names</span><span class=p>]</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span>
         <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Messages with </span><span class=si>{</span><span class=s1>&#39;, &#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>names</span><span class=p>)</span><span class=si>}</span><span class=s2> 💬&quot;</span><span class=p>),</span>
@@ -351,12 +351,12 @@
 <span class=normal>77</span>
 <span class=normal>78</span>
 <span class=normal>79</span>
-<span class=normal>80</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span> <span class=nn>operator</span>
-<span class=kn>from</span> <span class=nn>typing</span> <span class=kn>import</span> <span class=n>TypedDict</span>
+<span class=normal>80</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>operator</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>typing</span><span class=w> </span><span class=kn>import</span> <span class=n>TypedDict</span>
 
-<span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span><span class=p>,</span> <span class=n>run</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_router</span> <span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>link</span><span class=p>,</span> <span class=n>route</span><span class=p>,</span> <span class=n>use_params</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_router</span><span class=w> </span><span class=kn>import</span> <span class=n>browser_router</span><span class=p>,</span> <span class=n>link</span><span class=p>,</span> <span class=n>route</span><span class=p>,</span> <span class=n>use_params</span>
 
 <span class=n>message_data</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=s2>&quot;MessageDataType&quot;</span><span class=p>]</span> <span class=o>=</span> <span class=p>[</span>
     <span class=p>{</span><span class=s2>&quot;id&quot;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span> <span class=s2>&quot;with&quot;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&quot;Alice&quot;</span><span class=p>],</span> <span class=s2>&quot;from&quot;</span><span class=p>:</span> <span class=kc>None</span><span class=p>,</span> <span class=s2>&quot;message&quot;</span><span class=p>:</span> <span class=s2>&quot;Hello!&quot;</span><span class=p>},</span>
@@ -371,7 +371,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>browser_router</span><span class=p>(</span>
         <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/&quot;</span><span class=p>,</span> <span class=n>home</span><span class=p>()),</span>
         <span class=n>route</span><span class=p>(</span>
@@ -384,7 +384,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>home</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>home</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span>
         <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Home Page 🏠&quot;</span><span class=p>),</span>
         <span class=n>link</span><span class=p>({</span><span class=s2>&quot;to&quot;</span><span class=p>:</span> <span class=s2>&quot;/messages&quot;</span><span class=p>},</span> <span class=s2>&quot;Messages&quot;</span><span class=p>),</span>
@@ -392,7 +392,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>all_messages</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>all_messages</span><span class=p>():</span>
     <span class=n>last_messages</span> <span class=o>=</span> <span class=p>{</span><span class=s2>&quot;, &quot;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>msg</span><span class=p>[</span><span class=s2>&quot;with&quot;</span><span class=p>]):</span> <span class=n>msg</span> <span class=k>for</span> <span class=n>msg</span> <span class=ow>in</span> <span class=nb>sorted</span><span class=p>(</span><span class=n>message_data</span><span class=p>,</span> <span class=n>key</span><span class=o>=</span><span class=n>operator</span><span class=o>.</span><span class=n>itemgetter</span><span class=p>(</span><span class=s2>&quot;id&quot;</span><span class=p>))}</span>
     <span class=n>messages</span> <span class=o>=</span> <span class=p>[]</span>
     <span class=k>for</span> <span class=n>msg</span> <span class=ow>in</span> <span class=n>last_messages</span><span class=o>.</span><span class=n>values</span><span class=p>():</span>
@@ -410,7 +410,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>messages_with</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>messages_with</span><span class=p>():</span>
     <span class=n>names</span> <span class=o>=</span> <span class=nb>tuple</span><span class=p>(</span><span class=n>use_params</span><span class=p>()[</span><span class=s2>&quot;names&quot;</span><span class=p>]</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&quot;-&quot;</span><span class=p>))</span>  <span class=c1># and here we use the path param</span>
     <span class=n>messages</span> <span class=o>=</span> <span class=p>[</span><span class=n>msg</span> <span class=k>for</span> <span class=n>msg</span> <span class=ow>in</span> <span class=n>message_data</span> <span class=k>if</span> <span class=nb>tuple</span><span class=p>(</span><span class=n>msg</span><span class=p>[</span><span class=s2>&quot;with&quot;</span><span class=p>])</span> <span class=o>==</span> <span class=n>names</span><span class=p>]</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span>
