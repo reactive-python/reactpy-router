@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
-from urllib.parse import urljoin
 from uuid import uuid4
 
-from reactpy import component, html, use_connection
+from reactpy import component, html, use_connection, use_ref
 from reactpy.backend.types import Location
 from reactpy.web.module import export, module_from_file
 
@@ -34,13 +33,6 @@ Navigate = export(
 )
 """Client-side portion of the navigate component"""
 
-FirstLoad = export(
-    module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
-    ("FirstLoad"),
-)
-
-link_js_content = (Path(__file__).parent / "static" / "link.js").read_text(encoding="utf-8")
-
 
 def link(attributes: dict[str, Any], *children: Any, key: Key | None = None) -> Component:
     """
@@ -59,8 +51,7 @@ def link(attributes: dict[str, Any], *children: Any, key: Key | None = None) -> 
 @component
 def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
     attributes = attributes.copy()
-    uuid_string = f"link-{uuid4().hex}"
-    class_name = f"{uuid_string}"
+    class_name = use_ref(f"link-{uuid4().hex}").current
     set_location = _use_route_state().set_location
     if "className" in attributes:
         class_name = " ".join([attributes.pop("className"), class_name])
@@ -80,44 +71,10 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
         "className": class_name,
     }
 
-    # FIXME: This component currently works in a "dumb" way by trusting that ReactPy's script tag \
-    # properly sets the location due to bugs in ReactPy rendering.
-    # https://github.com/reactive-python/reactpy/pull/1224
-    current_path = use_connection().location.pathname
+    def on_click_callback(_event: dict[str, Any]) -> None:
+        set_location(Location(**_event))
 
-    def on_click(_event: dict[str, Any]) -> None:
-        if _event.get("ctrlKey", False):
-            return
-
-        pathname, search = to.split("?", 1) if "?" in to else (to, "")
-        if search:
-            search = f"?{search}"
-
-        # Resolve relative paths that match `../foo`
-        if pathname.startswith("../"):
-            pathname = urljoin(current_path, pathname)
-
-        # Resolve relative paths that match `foo`
-        if not pathname.startswith("/"):
-            pathname = urljoin(current_path, pathname)
-
-        # Resolve relative paths that match `/foo/../bar`
-        while "/../" in pathname:
-            part_1, part_2 = pathname.split("/../", 1)
-            pathname = urljoin(f"{part_1}/", f"../{part_2}")
-
-        # Resolve relative paths that match `foo/./bar`
-        pathname = pathname.replace("/./", "/")
-
-        set_location(Location(pathname, search))
-
-    attrs["onClick"] = on_click
-
-    return html._(html.a(attrs, *children), html.script(link_js_content.replace("UUID", uuid_string)))
-
-    # def on_click_callback(_event: dict[str, Any]) -> None:
-    #     set_location(Location(**_event))
-    # return html._(html.a(attrs, *children), Link({"onClickCallback": on_click_callback, "linkClass": uuid_string}))
+    return html._(Link({"onClickCallback": on_click_callback, "linkClass": class_name}), html.a(attrs, *children))
 
 
 def route(path: str, element: Any | None, *routes: Route) -> Route:

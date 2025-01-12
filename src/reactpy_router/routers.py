@@ -11,7 +11,7 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.hooks import ConnectionContext, use_connection
 from reactpy.types import ComponentType, VdomDict
 
-from reactpy_router.components import FirstLoad, History
+from reactpy_router.components import History
 from reactpy_router.hooks import RouteState, _route_state_context
 from reactpy_router.resolvers import StarletteResolver
 
@@ -76,9 +76,9 @@ def router(
     if match:
         if first_load:
             # We need skip rendering the application on 'first_load' to avoid
-            # rendering it twice. The second render occurs following
-            # the impending on_history_change event
+            # rendering it twice. The second render follows the on_history_change event
             route_elements = []
+            set_first_load(False)
         else:
             route_elements = [
                 _route_state_context(
@@ -94,15 +94,8 @@ def router(
             if location != new_location:
                 set_location(new_location)
 
-        def on_first_load(event: dict[str, Any]) -> None:
-            """Callback function used within the JavaScript `FirstLoad` component."""
-            if first_load:
-                set_first_load(False)
-                on_history_change(event)
-
         return ConnectionContext(
             History({"onHistoryChangeCallback": on_history_change}),  # type: ignore[return-value]
-            FirstLoad({"onFirstLoadCallback": on_first_load}) if first_load else "",
             *route_elements,
             value=Connection(old_conn.scope, location, old_conn.carrier),
         )

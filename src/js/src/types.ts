@@ -17,7 +17,3 @@ export interface NavigateProps {
   to: string;
   replace?: boolean;
 }
-
-export interface FirstLoadProps {
-  onFirstLoadCallback: (location: ReactPyLocation) => void;
-}
