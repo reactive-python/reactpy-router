@@ -53,7 +53,7 @@ installer = "uv"
 [[tool.hatch.build.hooks.build-scripts.scripts]]
 commands = [
   "bun install --cwd src/js",
-  "bun build src/js/src/index.js --outfile src/reactpy_router/static/bundle.js --minify",
+  "bun build src/js/src/index.ts --outfile src/reactpy_router/static/bundle.js --minify",
 ]
 artifacts = []
 
