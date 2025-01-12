@@ -1,8 +1,8 @@
 # <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg" align="left" height="45"/> ReactPy Router
 
 <p>
-    <a href="https://github.com/reactive-python/reactpy-router/actions/workflows/test-src.yml">
-        <img src="https://github.com/reactive-python/reactpy-router/actions/workflows/test-src.yml/badge.svg">
+    <a href="https://github.com/reactive-python/reactpy-router/actions/workflows/test-python.yml">
+        <img src="https://github.com/reactive-python/reactpy-router/actions/workflows/test-python.yml/badge.svg">
     </a>
     <a href="https://pypi.python.org/pypi/reactpy-router">
         <img src="https://img.shields.io/pypi/v/reactpy-router.svg?label=PyPI">
