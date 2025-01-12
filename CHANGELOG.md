@@ -10,25 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!--
 Using the following categories, list your changes in this order:
+[Added, Changed, Deprecated, Removed, Fixed, Security]
 
-### Added
--   for new features.
-
-### Changed
--   for changes in existing functionality.
-
-### Deprecated
--   for soon-to-be removed features.
-
-### Removed
--   for removed features.
-
-### Fixed
--   for bug fixes.
-
-### Security
--   for vulnerability fixes.
- -->
+Don't forget to remove deprecated code on each major release!
+-->
 
 <!--changelog-start-->
 
@@ -36,7 +21,8 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
--   Set upper limit on ReactPy version to `<2.0.0`.
+-   Set maximum ReactPy version to `<2.0.0`.
+-   Set minimum ReactPy version to `1.1.0`.
 
 ### Fixed
 
