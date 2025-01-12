@@ -28,9 +28,9 @@ class Route:
     A class representing a route that can be matched against a path.
 
     Attributes:
-        path (str): The path to match against.
-        element (Any): The element to render if the path matches.
-        routes (Sequence[Self]): Child routes.
+        path: The path to match against.
+        element: The element to render if the path matches.
+        routes: Child routes.
 
     Methods:
         __hash__() -> int: Returns a hash value for the route based on its path, element, and child routes.
@@ -67,11 +67,11 @@ class Router(Protocol[RouteType_contra]):
 
 
 class Resolver(Protocol[RouteType_contra]):
-    """Compile a route into a resolver that can be matched against a given path."""
+    """A class, that when instantiated, can match routes against a given path."""
 
     def __call__(self, route: RouteType_contra) -> CompiledRoute:
         """
-        Compile a route into a resolver that can be matched against a given path.
+        Compile a route into a resolver that can be match routes against a given path.
 
         Args:
             route: The route to compile.
@@ -87,18 +87,18 @@ class CompiledRoute(Protocol):
     A protocol for a compiled route that can be matched against a path.
 
     Attributes:
-        key (Key): A property that uniquely identifies this resolver.
+        key: A property that uniquely identifies this resolver.
     """
 
     @property
     def key(self) -> Key: ...
 
-    def resolve(self, path: str) -> tuple[Any, dict[str, Any]] | None:
+    def resolve(self, path: str) -> MatchedRoute | None:
         """
         Return the path's associated element and path parameters or None.
 
         Args:
-            path (str): The path to resolve.
+            path: The path to resolve.
 
         Returns:
             A tuple containing the associated element and a dictionary of path parameters, or None if the path cannot be resolved.
@@ -106,13 +106,29 @@ class CompiledRoute(Protocol):
         ...
 
 
+@dataclass(frozen=True)
+class MatchedRoute:
+    """
+    Represents a matched route.
+
+    Attributes:
+        element: The element to render.
+        params: The parameters extracted from the path.
+        path: The path that was matched.
+    """
+
+    element: Any
+    params: dict[str, Any]
+    path: str
+
+
 class ConversionInfo(TypedDict):
     """
     A TypedDict that holds information about a conversion type.
 
     Attributes:
-        regex (str): The regex to match the conversion type.
-        func (ConversionFunc): The function to convert the matched string to the expected type.
+        regex: The regex to match the conversion type.
+        func: The function to convert the matched string to the expected type.
     """
 
     regex: str

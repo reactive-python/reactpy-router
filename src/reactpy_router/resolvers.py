@@ -1,31 +1,29 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, ClassVar
 
 from reactpy_router.converters import CONVERTERS
+from reactpy_router.types import MatchedRoute
 
 if TYPE_CHECKING:
     from reactpy_router.types import ConversionInfo, ConverterMapping, Route
 
-__all__ = ["StarletteResolver"]
+__all__ = ["ReactPyResolver"]
 
 
-class StarletteResolver:
-    """URL resolver that matches routes using starlette's URL routing syntax.
+class ReactPyResolver:
+    """URL resolver that can match a path against any given routes.
 
-    However, this resolver adds a few additional parameter types on top of Starlette's syntax."""
+    URL routing syntax for this resolver is based on Starlette, and supports a mixture of Starlette and Django parameter types."""
 
-    def __init__(
-        self,
-        route: Route,
-        param_pattern=r"{(?P<name>\w+)(?P<type>:\w+)?}",
-        converters: dict[str, ConversionInfo] | None = None,
-    ) -> None:
+    param_pattern: str = r"{(?P<name>\w+)(?P<type>:\w+)?}"
+    converters: ClassVar[dict[str, ConversionInfo]] = CONVERTERS
+
+    def __init__(self, route: Route) -> None:
         self.element = route.element
-        self.registered_converters = converters or CONVERTERS
         self.converter_mapping: ConverterMapping = {}
-        self.param_regex = re.compile(param_pattern)
+        self.param_regex = re.compile(self.param_pattern)
         self.pattern = self.parse_path(route.path)
         self.key = self.pattern.pattern  # Unique identifier for ReactPy rendering
 
@@ -48,7 +46,7 @@ class StarletteResolver:
 
             # Check if a converter exists for the type
             try:
-                conversion_info = self.registered_converters[param_type]
+                conversion_info = self.converters[param_type]
             except KeyError as e:
                 msg = f"Unknown conversion type {param_type!r} in {path!r}"
                 raise ValueError(msg) from e
@@ -70,7 +68,7 @@ class StarletteResolver:
 
         return re.compile(pattern)
 
-    def resolve(self, path: str) -> tuple[Any, dict[str, Any]] | None:
+    def resolve(self, path: str) -> MatchedRoute | None:
         match = self.pattern.match(path)
         if match:
             # Convert the matched groups to the correct types
@@ -80,5 +78,5 @@ class StarletteResolver:
                 else parameter_name: self.converter_mapping[parameter_name](value)
                 for parameter_name, value in match.groupdict().items()
             }
-            return (self.element, params)
+            return MatchedRoute(self.element, params, path)
         return None

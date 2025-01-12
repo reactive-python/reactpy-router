@@ -4,18 +4,33 @@ import uuid
 import pytest
 
 from reactpy_router import route
-from reactpy_router.resolvers import StarletteResolver
+from reactpy_router.resolvers import ReactPyResolver
+from reactpy_router.types import MatchedRoute
 
 
 def test_resolve_any():
-    resolver = StarletteResolver(route("{404:any}", "Hello World"))
+    resolver = ReactPyResolver(route("{404:any}", "Hello World"))
     assert resolver.parse_path("{404:any}") == re.compile("^(?P<_numeric_404>.*)$")
     assert resolver.converter_mapping == {"_numeric_404": str}
-    assert resolver.resolve("/hello/world") == ("Hello World", {"404": "/hello/world"})
+    assert resolver.resolve("/hello/world") == MatchedRoute(
+        element="Hello World", params={"404": "/hello/world"}, path="/hello/world"
+    )
+
+
+def test_custom_resolver():
+    class CustomResolver(ReactPyResolver):
+        param_pattern = r"<(?P<name>\w+)(?P<type>:\w+)?>"
+
+    resolver = CustomResolver(route("<404:any>", "Hello World"))
+    assert resolver.parse_path("<404:any>") == re.compile("^(?P<_numeric_404>.*)$")
+    assert resolver.converter_mapping == {"_numeric_404": str}
+    assert resolver.resolve("/hello/world") == MatchedRoute(
+        element="Hello World", params={"404": "/hello/world"}, path="/hello/world"
+    )
 
 
 def test_parse_path():
-    resolver = StarletteResolver(route("/", None))
+    resolver = ReactPyResolver(route("/", None))
     assert resolver.parse_path("/a/b/c") == re.compile("^/a/b/c$")
     assert resolver.converter_mapping == {}
 
@@ -45,13 +60,13 @@ def test_parse_path():
 
 
 def test_parse_path_unkown_conversion():
-    resolver = StarletteResolver(route("/", None))
+    resolver = ReactPyResolver(route("/", None))
     with pytest.raises(ValueError, match="Unknown conversion type 'unknown' in '/a/{b:unknown}/c'"):
         resolver.parse_path("/a/{b:unknown}/c")
 
 
 def test_parse_path_re_escape():
     """Check that we escape regex characters in the path"""
-    resolver = StarletteResolver(route("/", None))
+    resolver = ReactPyResolver(route("/", None))
     assert resolver.parse_path("/a/{b:int}/c.d") == re.compile(r"^/a/(?P<b>\d+)/c\.d$")
     assert resolver.converter_mapping == {"b": int}
