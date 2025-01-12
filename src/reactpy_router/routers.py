@@ -13,7 +13,7 @@ from reactpy.types import ComponentType, VdomDict
 
 from reactpy_router.components import History
 from reactpy_router.hooks import RouteState, _route_state_context
-from reactpy_router.resolvers import StarletteResolver
+from reactpy_router.resolvers import ReactPyResolver
 from reactpy_router.types import MatchedRoute
 
 if TYPE_CHECKING:
@@ -36,7 +36,7 @@ def create_router(resolver: Resolver[Route]) -> Router[Route]:
     return wrapper
 
 
-_starlette_router = create_router(StarletteResolver)
+_router = create_router(ReactPyResolver)
 
 
 def browser_router(*routes: Route) -> Component:
@@ -50,7 +50,7 @@ def browser_router(*routes: Route) -> Component:
     Returns:
         A router component that renders the given routes.
     """
-    return _starlette_router(*routes)
+    return _router(*routes)
 
 
 @component

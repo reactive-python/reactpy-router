@@ -9,13 +9,13 @@ from reactpy_router.types import MatchedRoute
 if TYPE_CHECKING:
     from reactpy_router.types import ConversionInfo, ConverterMapping, Route
 
-__all__ = ["StarletteResolver"]
+__all__ = ["ReactPyResolver"]
 
 
-class StarletteResolver:
-    """URL resolver that matches routes using starlette's URL routing syntax.
+class ReactPyResolver:
+    """URL resolver that can match a path against any given routes.
 
-    However, this resolver adds a few additional parameter types on top of Starlette's syntax."""
+    URL routing syntax for this resolver is based on Starlette, and supports a mixture of Starlette and Django parameter types."""
 
     def __init__(
         self,
