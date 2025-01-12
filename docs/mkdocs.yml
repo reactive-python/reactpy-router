@@ -6,7 +6,7 @@ nav:
       - Advanced Topics:
           - Routers, Routes, and Links: learn/routers-routes-and-links.md
           - Hooks: learn/hooks.md
-          - Creating a Custom Router 🚧: learn/custom-router.md
+          - Creating a Custom Router: learn/custom-router.md
   - Reference:
       - Routers: reference/routers.md
       - Components: reference/components.md

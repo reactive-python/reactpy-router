@@ -20,7 +20,7 @@ class ReactPyResolver:
     def __init__(
         self,
         route: Route,
-        param_pattern=r"{(?P<name>\w+)(?P<type>:\w+)?}",
+        param_pattern: str = r"{(?P<name>\w+)(?P<type>:\w+)?}",
         converters: dict[str, ConversionInfo] | None = None,
     ) -> None:
         self.element = route.element

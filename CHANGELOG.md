@@ -19,6 +19,10 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
+### Added
+
+-   Support for custom routers.
+
 ### Changed
 
 -   Set maximum ReactPy version to `<2.0.0`.
