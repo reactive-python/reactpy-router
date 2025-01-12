@@ -67,11 +67,11 @@ class Router(Protocol[RouteType_contra]):
 
 
 class Resolver(Protocol[RouteType_contra]):
-    """Compile a route into a resolver that can be matched against a given path."""
+    """A class, that when instantiated, can match routes against a given path."""
 
     def __call__(self, route: RouteType_contra) -> CompiledRoute:
         """
-        Compile a route into a resolver that can be matched against a given path.
+        Compile a route into a resolver that can be match routes against a given path.
 
         Args:
             route: The route to compile.
@@ -87,13 +87,13 @@ class CompiledRoute(Protocol):
     A protocol for a compiled route that can be matched against a path.
 
     Attributes:
-        key (Key): A property that uniquely identifies this resolver.
+        key: A property that uniquely identifies this resolver.
     """
 
     @property
     def key(self) -> Key: ...
 
-    def resolve(self, path: str) -> tuple[Any, dict[str, Any]] | None:
+    def resolve(self, path: str) -> MatchedRoute | None:
         """
         Return the path's associated element and path parameters or None.
 
@@ -104,6 +104,22 @@ class CompiledRoute(Protocol):
             A tuple containing the associated element and a dictionary of path parameters, or None if the path cannot be resolved.
         """
         ...
+
+
+@dataclass(frozen=True)
+class MatchedRoute:
+    """
+    Represents a matched route.
+
+    Attributes:
+        element (Any): The element to render.
+        params (dict[str, Any]): The parameters extracted from the path.
+        path (str): The path that was matched.
+    """
+
+    element: Any
+    params: dict[str, Any]
+    path: str
 
 
 class ConversionInfo(TypedDict):

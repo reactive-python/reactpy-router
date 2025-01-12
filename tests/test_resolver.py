@@ -5,13 +5,16 @@ import pytest
 
 from reactpy_router import route
 from reactpy_router.resolvers import StarletteResolver
+from reactpy_router.types import MatchedRoute
 
 
 def test_resolve_any():
     resolver = StarletteResolver(route("{404:any}", "Hello World"))
     assert resolver.parse_path("{404:any}") == re.compile("^(?P<_numeric_404>.*)$")
     assert resolver.converter_mapping == {"_numeric_404": str}
-    assert resolver.resolve("/hello/world") == ("Hello World", {"404": "/hello/world"})
+    assert resolver.resolve("/hello/world") == MatchedRoute(
+        element="Hello World", params={"404": "/hello/world"}, path="/hello/world"
+    )
 
 
 def test_parse_path():

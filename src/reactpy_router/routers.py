@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Literal, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from reactpy import component, use_memo, use_state
 from reactpy.backend.types import Connection, Location
@@ -14,6 +14,7 @@ from reactpy.types import ComponentType, VdomDict
 from reactpy_router.components import History
 from reactpy_router.hooks import RouteState, _route_state_context
 from reactpy_router.resolvers import StarletteResolver
+from reactpy_router.types import MatchedRoute
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
@@ -57,36 +58,27 @@ def router(
     *routes: Route,
     resolver: Resolver[Route],
 ) -> VdomDict | None:
-    """A component that renders matching route(s) using the given resolver.
+    """A component that renders matching route using the given resolver.
 
-    This typically should never be used by a user. Instead, use `create_router` if creating
+    User notice: This component typically should never be used. Instead, use `create_router` if creating
     a custom routing engine."""
 
-    old_conn = use_connection()
-    location, set_location = use_state(old_conn.location)
-    first_load, set_first_load = use_state(True)
-
+    old_connection = use_connection()
+    location, set_location = use_state(cast(Location | None, None))
     resolvers = use_memo(
         lambda: tuple(map(resolver, _iter_routes(routes))),
         dependencies=(resolver, hash(routes)),
     )
-
-    match = use_memo(lambda: _match_route(resolvers, location, select="first"))
+    route_element = None
+    match = use_memo(lambda: _match_route(resolvers, location or old_connection.location))
 
     if match:
-        if first_load:
-            # We need skip rendering the application on 'first_load' to avoid
-            # rendering it twice. The second render follows the on_history_change event
-            route_elements = []
-            set_first_load(False)
-        else:
-            route_elements = [
-                _route_state_context(
-                    element,
-                    value=RouteState(set_location, params),
-                )
-                for element, params in match
-            ]
+        # Skip rendering until ReactPy-Router knows what URL the page is on.
+        if location:
+            route_element = _route_state_context(
+                match.element,
+                value=RouteState(set_location, match.params),
+            )
 
         def on_history_change(event: dict[str, Any]) -> None:
             """Callback function used within the JavaScript `History` component."""
@@ -96,8 +88,8 @@ def router(
 
         return ConnectionContext(
             History({"onHistoryChangeCallback": on_history_change}),  # type: ignore[return-value]
-            *route_elements,
-            value=Connection(old_conn.scope, location, old_conn.carrier),
+            route_element,
+            value=Connection(old_connection.scope, location or old_connection.location, old_connection.carrier),
         )
 
     return None
@@ -110,9 +102,9 @@ def _iter_routes(routes: Sequence[Route]) -> Iterator[Route]:
         yield parent
 
 
-def _add_route_key(match: tuple[Any, dict[str, Any]], key: str | int) -> Any:
+def _add_route_key(match: MatchedRoute, key: str | int) -> Any:
     """Add a key to the VDOM or component on the current route, if it doesn't already have one."""
-    element, _params = match
+    element = match.element
     if hasattr(element, "render") and not element.key:
         element = cast(ComponentType, element)
         element.key = key
@@ -125,24 +117,12 @@ def _add_route_key(match: tuple[Any, dict[str, Any]], key: str | int) -> Any:
 def _match_route(
     compiled_routes: Sequence[CompiledRoute],
     location: Location,
-    select: Literal["first", "all"],
-) -> list[tuple[Any, dict[str, Any]]]:
-    matches = []
-
+) -> MatchedRoute | None:
     for resolver in compiled_routes:
         match = resolver.resolve(location.pathname)
         if match is not None:
-            if select == "first":
-                return [_add_route_key(match, resolver.key)]
+            return _add_route_key(match, resolver.key)
 
-            # Matching multiple routes is disabled since `react-router` no longer supports multiple
-            # matches via the `Route` component. However, it's kept here to support future changes
-            # or third-party routers.
-            # TODO: The `resolver.key` value has edge cases where it is not unique enough to use as
-            # a key here. We can potentially fix this by throwing errors for duplicate identical routes.
-            matches.append(_add_route_key(match, resolver.key))  # pragma: no cover
+    _logger.debug("No matching route found for %s", location.pathname)
 
-    if not matches:
-        _logger.debug("No matching route found for %s", location.pathname)
-
-    return matches
+    return None

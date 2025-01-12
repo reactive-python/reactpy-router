@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from reactpy_router.converters import CONVERTERS
+from reactpy_router.types import MatchedRoute
 
 if TYPE_CHECKING:
     from reactpy_router.types import ConversionInfo, ConverterMapping, Route
@@ -70,7 +71,7 @@ class StarletteResolver:
 
         return re.compile(pattern)
 
-    def resolve(self, path: str) -> tuple[Any, dict[str, Any]] | None:
+    def resolve(self, path: str) -> MatchedRoute | None:
         match = self.pattern.match(path)
         if match:
             # Convert the matched groups to the correct types
@@ -80,5 +81,5 @@ class StarletteResolver:
                 else parameter_name: self.converter_mapping[parameter_name](value)
                 for parameter_name, value in match.groupdict().items()
             }
-            return (self.element, params)
+            return MatchedRoute(self.element, params, path)
         return None

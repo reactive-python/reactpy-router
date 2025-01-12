@@ -25,6 +25,7 @@ Don't forget to remove deprecated code on each major release!
 -   Set minimum ReactPy version to `1.1.0`.
 -   `link` element now calculates URL changes using the client.
 -   Refactoring related to `reactpy>=1.1.0` changes.
+-   Determination of the browser's initial URL is now deterministic.
 
 ### Fixed
 
