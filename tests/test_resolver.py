@@ -17,6 +17,18 @@ def test_resolve_any():
     )
 
 
+def test_custom_resolver():
+    class CustomResolver(ReactPyResolver):
+        param_pattern = r"<(?P<name>\w+)(?P<type>:\w+)?>"
+
+    resolver = CustomResolver(route("<404:any>", "Hello World"))
+    assert resolver.parse_path("<404:any>") == re.compile("^(?P<_numeric_404>.*)$")
+    assert resolver.converter_mapping == {"_numeric_404": str}
+    assert resolver.resolve("/hello/world") == MatchedRoute(
+        element="Hello World", params={"404": "/hello/world"}, path="/hello/world"
+    )
+
+
 def test_parse_path():
     resolver = ReactPyResolver(route("/", None))
     assert resolver.parse_path("/a/b/c") == re.compile("^/a/b/c$")
