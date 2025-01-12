@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Union, cast
 
 from reactpy import component, use_memo, use_state
 from reactpy.backend.types import Connection, Location
@@ -14,14 +14,13 @@ from reactpy.types import ComponentType, VdomDict
 from reactpy_router.components import History
 from reactpy_router.hooks import RouteState, _route_state_context
 from reactpy_router.resolvers import ReactPyResolver
-from reactpy_router.types import MatchedRoute
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
 
     from reactpy.core.component import Component
 
-    from reactpy_router.types import CompiledRoute, Resolver, Route, Router
+    from reactpy_router.types import CompiledRoute, MatchedRoute, Resolver, Route, Router
 
 __all__ = ["browser_router", "create_router"]
 _logger = getLogger(__name__)
@@ -64,7 +63,7 @@ def router(
     a custom routing engine."""
 
     old_connection = use_connection()
-    location, set_location = use_state(cast(Location | None, None))
+    location, set_location = use_state(cast(Union[Location, None], None))
     resolvers = use_memo(
         lambda: tuple(map(resolver, _iter_routes(routes))),
         dependencies=(resolver, hash(routes)),
