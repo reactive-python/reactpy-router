@@ -28,9 +28,9 @@ class Route:
     A class representing a route that can be matched against a path.
 
     Attributes:
-        path (str): The path to match against.
-        element (Any): The element to render if the path matches.
-        routes (Sequence[Self]): Child routes.
+        path: The path to match against.
+        element: The element to render if the path matches.
+        routes: Child routes.
 
     Methods:
         __hash__() -> int: Returns a hash value for the route based on its path, element, and child routes.
@@ -98,7 +98,7 @@ class CompiledRoute(Protocol):
         Return the path's associated element and path parameters or None.
 
         Args:
-            path (str): The path to resolve.
+            path: The path to resolve.
 
         Returns:
             A tuple containing the associated element and a dictionary of path parameters, or None if the path cannot be resolved.
@@ -112,9 +112,9 @@ class MatchedRoute:
     Represents a matched route.
 
     Attributes:
-        element (Any): The element to render.
-        params (dict[str, Any]): The parameters extracted from the path.
-        path (str): The path that was matched.
+        element: The element to render.
+        params: The parameters extracted from the path.
+        path: The path that was matched.
     """
 
     element: Any
@@ -127,8 +127,8 @@ class ConversionInfo(TypedDict):
     A TypedDict that holds information about a conversion type.
 
     Attributes:
-        regex (str): The regex to match the conversion type.
-        func (ConversionFunc): The function to convert the matched string to the expected type.
+        regex: The regex to match the conversion type.
+        func: The function to convert the matched string to the expected type.
     """
 
     regex: str
