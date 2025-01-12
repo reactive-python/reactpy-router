@@ -7,11 +7,11 @@ from logging import getLogger
 from typing import TYPE_CHECKING, Any, Literal, cast
 
 from reactpy import component, use_memo, use_state
-from reactpy.backend.hooks import ConnectionContext, use_connection
 from reactpy.backend.types import Connection, Location
+from reactpy.core.hooks import ConnectionContext, use_connection
 from reactpy.types import ComponentType, VdomDict
 
-from reactpy_router.components import FirstLoad, History
+from reactpy_router.components import History
 from reactpy_router.hooks import RouteState, _route_state_context
 from reactpy_router.resolvers import StarletteResolver
 
@@ -20,16 +20,16 @@ if TYPE_CHECKING:
 
     from reactpy.core.component import Component
 
-    from reactpy_router.types import CompiledRoute, Resolver, Router, RouteType
+    from reactpy_router.types import CompiledRoute, Resolver, Route, Router
 
 __all__ = ["browser_router", "create_router"]
 _logger = getLogger(__name__)
 
 
-def create_router(resolver: Resolver[RouteType]) -> Router[RouteType]:
+def create_router(resolver: Resolver[Route]) -> Router[Route]:
     """A decorator that turns a resolver into a router"""
 
-    def wrapper(*routes: RouteType) -> Component:
+    def wrapper(*routes: Route) -> Component:
         return router(*routes, resolver=resolver)
 
     return wrapper
@@ -38,13 +38,13 @@ def create_router(resolver: Resolver[RouteType]) -> Router[RouteType]:
 _starlette_router = create_router(StarletteResolver)
 
 
-def browser_router(*routes: RouteType) -> Component:
+def browser_router(*routes: Route) -> Component:
     """This is the recommended router for all ReactPy-Router web projects.
     It uses the JavaScript [History API](https://developer.mozilla.org/en-US/docs/Web/API/History_API)
     to manage the history stack.
 
     Args:
-        *routes (RouteType): A list of routes to be rendered by the router.
+        *routes (Route): A list of routes to be rendered by the router.
 
     Returns:
         A router component that renders the given routes.
@@ -54,8 +54,8 @@ def browser_router(*routes: RouteType) -> Component:
 
 @component
 def router(
-    *routes: RouteType,
-    resolver: Resolver[RouteType],
+    *routes: Route,
+    resolver: Resolver[Route],
 ) -> VdomDict | None:
     """A component that renders matching route(s) using the given resolver.
 
@@ -76,9 +76,9 @@ def router(
     if match:
         if first_load:
             # We need skip rendering the application on 'first_load' to avoid
-            # rendering it twice. The second render occurs following
-            # the impending on_history_change event
+            # rendering it twice. The second render follows the on_history_change event
             route_elements = []
+            set_first_load(False)
         else:
             route_elements = [
                 _route_state_context(
@@ -94,15 +94,8 @@ def router(
             if location != new_location:
                 set_location(new_location)
 
-        def on_first_load(event: dict[str, Any]) -> None:
-            """Callback function used within the JavaScript `FirstLoad` component."""
-            if first_load:
-                set_first_load(False)
-                on_history_change(event)
-
         return ConnectionContext(
             History({"onHistoryChangeCallback": on_history_change}),  # type: ignore[return-value]
-            FirstLoad({"onFirstLoadCallback": on_first_load}) if first_load else "",
             *route_elements,
             value=Connection(old_conn.scope, location, old_conn.carrier),
         )
@@ -110,7 +103,7 @@ def router(
     return None
 
 
-def _iter_routes(routes: Sequence[RouteType]) -> Iterator[RouteType]:
+def _iter_routes(routes: Sequence[Route]) -> Iterator[Route]:
     for parent in routes:
         for child in _iter_routes(parent.routes):
             yield replace(child, path=parent.path + child.path)  # type: ignore[misc]

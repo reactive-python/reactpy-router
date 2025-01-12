@@ -7,10 +7,18 @@ export function createLocationObject(): ReactPyLocation {
   };
 }
 
-export function pushState(to: string): void {
+export function pushState(to: any): void {
+  if (typeof to !== "string") {
+    console.error("pushState() requires a string argument.");
+    return;
+  }
   window.history.pushState(null, "", new URL(to, window.location.href));
 }
 
-export function replaceState(to: string): void {
+export function replaceState(to: any): void {
+  if (typeof to !== "string") {
+    console.error("replaceState() requires a string argument.");
+    return;
+  }
   window.history.replaceState(null, "", new URL(to, window.location.href));
 }

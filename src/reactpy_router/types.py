@@ -46,9 +46,6 @@ class Route:
         return hash((self.path, key, self.routes))
 
 
-RouteType = TypeVar("RouteType", bound=Route)
-"""A type variable for `Route`."""
-
 RouteType_contra = TypeVar("RouteType_contra", bound=Route, contravariant=True)
 """A contravariant type variable for `Route`."""
 
@@ -66,6 +63,7 @@ class Router(Protocol[RouteType_contra]):
         Returns:
             The resulting component after processing the routes.
         """
+        ...
 
 
 class Resolver(Protocol[RouteType_contra]):
@@ -81,6 +79,7 @@ class Resolver(Protocol[RouteType_contra]):
         Returns:
             The compiled route.
         """
+        ...
 
 
 class CompiledRoute(Protocol):
@@ -104,6 +103,7 @@ class CompiledRoute(Protocol):
         Returns:
             A tuple containing the associated element and a dictionary of path parameters, or None if the path cannot be resolved.
         """
+        ...
 
 
 class ConversionInfo(TypedDict):

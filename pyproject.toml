@@ -28,7 +28,7 @@ classifiers = [
   "Environment :: Web Environment",
   "Typing :: Typed",
 ]
-dependencies = ["reactpy>=1.0.0, <2.0.0", "typing_extensions"]
+dependencies = ["reactpy>=1.1.0, <2.0.0", "typing_extensions"]
 dynamic = ["version"]
 urls.Changelog = "https://reactive-python.github.io/reactpy-router/latest/about/changelog/"
 urls.Documentation = "https://reactive-python.github.io/reactpy-router/latest/"
@@ -53,7 +53,7 @@ installer = "uv"
 [[tool.hatch.build.hooks.build-scripts.scripts]]
 commands = [
   "bun install --cwd src/js",
-  "bun build src/js/src/index.js --outfile src/reactpy_router/static/bundle.js --minify",
+  "bun build src/js/src/index.ts --outfile src/reactpy_router/static/bundle.js --minify",
 ]
 artifacts = []
 
@@ -105,6 +105,16 @@ linkcheck = [
 ]
 deploy_latest = ["cd docs && mike deploy --push --update-aliases {args} latest"]
 deploy_develop = ["cd docs && mike deploy --push develop"]
+
+################################
+# >>> Hatch Python Scripts <<< #
+################################
+
+[tool.hatch.envs.python]
+extra-dependencies = ["pyright"]
+
+[tool.hatch.envs.python.scripts]
+type_check = ["pyright src"]
 
 ############################
 # >>> Hatch JS Scripts <<< #
