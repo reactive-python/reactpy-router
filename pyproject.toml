@@ -124,8 +124,8 @@ type_check = ["pyright src"]
 detached = true
 
 [tool.hatch.envs.javascript.scripts]
-check = ["cd src/js && bun install", "cd src/js && bun run check"]
-fix = ["cd src/js && bun install", "cd src/js && bun run format"]
+check = ['bun install --cwd "src/js"', 'bun run --cwd "src/js" check']
+fix = ['bun install --cwd "src/js"', ' bun run --cwd "src/js" format']
 
 #########################
 # >>> Generic Tools <<< #
@@ -150,7 +150,7 @@ lint.preview = true
 [tool.coverage.run]
 branch = true
 parallel = true
-source = ["src/", "tests/"]
+source = ["src/"]
 
 [tool.coverage.paths]
 source = ["src/"]
