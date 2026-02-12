@@ -20,7 +20,7 @@ async def test_simple_router(display: DisplayFixture):
 
         @component
         def check_location():
-            assert use_location().pathname == path
+            assert use_location().path == path
             return html.h1({"id": name}, path)
 
         return route(path, check_location(), *routes)

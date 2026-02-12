@@ -1,6 +1,6 @@
 export interface ReactPyLocation {
-  pathname: string;
-  search: string;
+  path: string;
+  query_string: string;
 }
 
 export interface HistoryProps {

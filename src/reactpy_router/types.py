@@ -11,7 +11,7 @@ from typing_extensions import Protocol, Self, TypeAlias
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from reactpy.backend.types import Location
+    from reactpy.types import Location
     from reactpy.core.component import Component
     from reactpy.types import Key
 
@@ -42,7 +42,7 @@ class Route:
 
     def __hash__(self) -> int:
         el = self.element
-        key = el["key"] if is_vdom(el) and "key" in el else getattr(el, "key", id(el))
+        key = el["attributes"]["key"] if is_vdom(el) and "attributes" in el and "key" in el["attributes"] else getattr(el, "key", id(el))
         return hash((self.path, key, self.routes))
 
 

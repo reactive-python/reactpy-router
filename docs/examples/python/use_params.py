@@ -6,7 +6,7 @@ from reactpy_router import browser_router, link, route, use_params
 @component
 def user():
     params = use_params()
-    return html._(html.h1(f"User {params['id']} 👤"), html.p("Nothing (yet)."))
+    return html(html.h1(f"User {params['id']} 👤"), html.p("Nothing (yet)."))
 
 
 @component

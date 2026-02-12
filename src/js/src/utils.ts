@@ -2,8 +2,8 @@ import { ReactPyLocation } from "./types";
 
 export function createLocationObject(): ReactPyLocation {
   return {
-    pathname: window.location.pathname,
-    search: window.location.search,
+    path: window.location.pathname,
+    query_string: window.location.search,
   };
 }
 
