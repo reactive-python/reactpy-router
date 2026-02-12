@@ -11,9 +11,8 @@ from typing_extensions import Protocol, Self, TypeAlias
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from reactpy.types import Location
     from reactpy.core.component import Component
-    from reactpy.types import Key
+    from reactpy.types import Key, Location
 
 ConversionFunc: TypeAlias = Callable[[str], Any]
 """A function that converts a string to a specific type."""
@@ -42,7 +41,11 @@ class Route:
 
     def __hash__(self) -> int:
         el = self.element
-        key = el["attributes"]["key"] if is_vdom(el) and "attributes" in el and "key" in el["attributes"] else getattr(el, "key", id(el))
+        key = (
+            el["attributes"]["key"]
+            if is_vdom(el) and "attributes" in el and "key" in el["attributes"]
+            else getattr(el, "key", id(el))
+        )
         return hash((self.path, key, self.routes))
 
 

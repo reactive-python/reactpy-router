@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Union, cast
 
 from reactpy import component, use_memo, use_state
 from reactpy.core.hooks import ConnectionContext, use_connection
-from reactpy.types import Component, VdomDict, Connection, Location
+from reactpy.types import Component, Connection, Location, VdomDict
 
 from reactpy_router.components import History
 from reactpy_router.hooks import RouteState, _route_state_context
@@ -16,6 +16,7 @@ from reactpy_router.resolvers import ReactPyResolver
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
+
     from reactpy_router.types import CompiledRoute, MatchedRoute, Resolver, Route, Router
 
 __all__ = ["browser_router", "create_router"]

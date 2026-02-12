@@ -5,22 +5,26 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from reactpy import component, html, use_connection, use_ref
-from reactpy.types import Location
 from reactpy.reactjs import component_from_file
+from reactpy.types import Location
 
 from reactpy_router.hooks import _use_route_state
 from reactpy_router.types import Route
 
 if TYPE_CHECKING:
-    from reactpy.types import Key, VdomDict, Component
+    from reactpy.types import Component, Key, VdomDict
 
-History = component_from_file(Path(__file__).parent / "static" / "bundle.js", import_names="History", name="reactpy-router")
+History = component_from_file(
+    Path(__file__).parent / "static" / "bundle.js", import_names="History", name="reactpy-router"
+)
 """Client-side portion of history handling"""
 
 Link = component_from_file(Path(__file__).parent / "static" / "bundle.js", import_names="Link", name="reactpy-router")
 """Client-side portion of link handling"""
 
-Navigate = component_from_file(Path(__file__).parent / "static" / "bundle.js", import_names="Navigate", name="reactpy-router")
+Navigate = component_from_file(
+    Path(__file__).parent / "static" / "bundle.js", import_names="Navigate", name="reactpy-router"
+)
 """Client-side portion of the navigate component"""
 
 
