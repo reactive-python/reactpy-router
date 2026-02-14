@@ -45,16 +45,9 @@ async def test_simple_router(display: DisplayFixture):
 
     await display.goto("/missing")
 
-    try:
-        root_element = await display.root_element()
-    except AttributeError:
-        root_element = await display.page.wait_for_selector(
-            f"#display-{display._next_view_id}",  # type: ignore
-            state="attached",
-        )
+    root_element = await display.page.wait_for_selector("#app", state="attached")
 
     assert not await root_element.inner_html()
-
 
 async def test_nested_routes(display: DisplayFixture):
     @component
