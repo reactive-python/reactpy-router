@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Union, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from reactpy import component, use_connection, use_memo, use_state
 from reactpy.core.hooks import ConnectionContext
@@ -60,7 +60,7 @@ def router(
     a custom routing engine."""
 
     old_connection = use_connection()
-    location, set_location = use_state(cast(Union[Location, None], None))
+    location, set_location = use_state(cast("Location | None", None))
     resolvers = use_memo(
         lambda: tuple(map(resolver, _iter_routes(routes))),
         dependencies=(resolver, hash(routes)),
@@ -102,10 +102,10 @@ def _add_route_key(match: MatchedRoute, key: str | int) -> Any:
     """Add a key to the VDOM or component on the current route, if it doesn't already have one."""
     element = match.element
     if hasattr(element, "render") and not element.key:
-        element = cast(Component, element)
+        element = cast("Component", element)
         element.key = key
     elif isinstance(element, dict) and not element.get("key", None):
-        element = cast(VdomDict, element)
+        element = cast("VdomDict", element)
         element["attributes"]["key"] = key
     return match
 

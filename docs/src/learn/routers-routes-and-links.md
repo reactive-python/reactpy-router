@@ -9,7 +9,7 @@ The [`browser_router`][reactpy_router.browser_router] component is one possible 
 !!! abstract "Note"
 
     The current location is determined based on the browser's current URL and can be found
-    by checking the [`use_location`][reactpy.use_location] hook.
+    by checking the `reactpy.use_location` hook.
 
 Here's a basic example showing how to use `#!python browser_router` with two routes.
 

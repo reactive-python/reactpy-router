@@ -98,7 +98,7 @@ template = "docs"
 dependencies = [
   "mkdocs",
   "mkdocs-git-revision-date-localized-plugin",
-  "mkdocs-material==9.4.0",
+  "mkdocs-material",
   "mkdocs-include-markdown-plugin",
   "mkdocs-spellcheck[all]",
   "mkdocs-git-authors-plugin",
@@ -162,6 +162,7 @@ lint.extend-ignore = [
   "PLR2004", # Magic value used in comparison
   "SIM115",  # Use context handler for opening files
   "SLF001",  # Private member accessed
+  "DOC201",  # 'Returns:' section in docstring is missing
 ]
 lint.preview = true
 

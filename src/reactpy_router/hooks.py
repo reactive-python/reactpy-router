@@ -5,7 +5,7 @@ from urllib.parse import parse_qs
 
 from reactpy import create_context, use_context, use_location
 
-from reactpy_router.types import RouteState  # noqa: TCH001
+from reactpy_router.types import RouteState  # noqa: TC001
 
 if TYPE_CHECKING:
     from reactpy.types import Context

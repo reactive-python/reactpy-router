@@ -46,12 +46,12 @@ def all_messages():
 
     messages = []
     for msg in last_messages.values():
-        _link = link(
+        msg_link = link(
             {"to": f"/messages/with/{'-'.join(msg['with'])}"},
             f"Conversation with: {', '.join(msg['with'])}",
         )
         msg_from = f"{'' if msg['from'] is None else '🔴'} {msg['message']}"
-        messages.append(html.li({"key": msg["id"]}, html.p(_link), msg_from))
+        messages.append(html.li({"key": msg["id"]}, html.p(msg_link), msg_from))
 
     return html.div(
         html.h1("All Messages 💬"),
