@@ -19,7 +19,9 @@ def pytest_addoption(parser) -> None:
 
 def pytest_sessionstart(session):
     """Rebuild the project before running the tests to get the latest JavaScript"""
-    subprocess.run(["hatch", "build", "--clean"], check=True)
+    env = os.environ.copy()
+    env.pop("HATCH_ENV_ACTIVE", None)
+    subprocess.run(["hatch", "build", "--clean"], check=True, env=env)
     subprocess.run(["playwright", "install", "chromium"], check=True)
 
 
