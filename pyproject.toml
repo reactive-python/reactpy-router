@@ -66,7 +66,16 @@ artifacts = []
 #############################
 
 [tool.hatch.envs.hatch-test]
-extra-dependencies = ["pytest-sugar", "anyio", "reactpy[testing,starlette]"]
+extra-dependencies = [
+  "pytest-sugar",
+  "anyio",
+  "playwright",
+  "uvicorn[standard]",
+  "asgiref",
+  "asgi-tools",
+  "servestatic",
+  "orjson",
+]
 randomize = true
 matrix-name-format = "{variable}-{value}"
 
