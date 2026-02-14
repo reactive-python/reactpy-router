@@ -1,19 +1,21 @@
-import React from "preact/compat";
-import ReactDOM from "preact/compat";
+import { React } from "@reactpy/client";
 import { createLocationObject, pushState, replaceState } from "./utils";
 import { HistoryProps, LinkProps, NavigateProps } from "./types";
 
 /**
  * Interface used to bind a ReactPy node to React.
  */
-export function bind(node) {
+export function bind(node: HTMLElement | Element | Node) {
   return {
-    create: (type, props, children) =>
-      React.createElement(type, props, ...children),
-    render: (element) => {
-      ReactDOM.render(element, node);
+    create: (
+      type: string,
+      props: Record<string, unknown>,
+      children: React.ReactNode[],
+    ) => React.createElement(type, props, ...children),
+    render: (element: HTMLElement | Element | Node) => {
+      React.render(element, node);
     },
-    unmount: () => ReactDOM.unmountComponentAtNode(node),
+    unmount: () => React.render(null, node),
   };
 }
 

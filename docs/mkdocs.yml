@@ -90,7 +90,7 @@ plugins:
       handlers:
         python:
           paths: ["../"]
-          import:
+          inventories:
             - https://reactpy.dev/docs/objects.inv
             - https://installer.readthedocs.io/en/stable/objects.inv
           options:

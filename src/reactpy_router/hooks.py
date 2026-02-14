@@ -5,7 +5,7 @@ from urllib.parse import parse_qs
 
 from reactpy import create_context, use_context, use_location
 
-from reactpy_router.types import RouteState  # noqa: TCH001
+from reactpy_router.types import RouteState  # noqa: TC001
 
 if TYPE_CHECKING:
     from reactpy.types import Context
@@ -59,7 +59,7 @@ def use_search_params(
         A dictionary of the current URL's query string parameters.
     """
     location = use_location()
-    query_string = location.search[1:] if len(location.search) > 1 else ""
+    query_string = location.query_string[1:] if len(location.query_string) > 1 else ""
 
     # TODO: In order to match `react-router`, this will need to return a tuple of the search params \
     # and a function to update them. This is currently not possible without reactpy core having a \

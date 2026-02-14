@@ -4,12 +4,11 @@ from __future__ import annotations
 
 from dataclasses import replace
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Union, cast
+from typing import TYPE_CHECKING, Any, cast
 
-from reactpy import component, use_memo, use_state
-from reactpy.backend.types import Connection, Location
-from reactpy.core.hooks import ConnectionContext, use_connection
-from reactpy.types import ComponentType, VdomDict
+from reactpy import component, use_connection, use_memo, use_state
+from reactpy.core.hooks import ConnectionContext
+from reactpy.types import Component, Connection, Location, VdomDict
 
 from reactpy_router.components import History
 from reactpy_router.hooks import RouteState, _route_state_context
@@ -17,8 +16,6 @@ from reactpy_router.resolvers import ReactPyResolver
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
-
-    from reactpy.core.component import Component
 
     from reactpy_router.types import CompiledRoute, MatchedRoute, Resolver, Route, Router
 
@@ -63,7 +60,7 @@ def router(
     a custom routing engine."""
 
     old_connection = use_connection()
-    location, set_location = use_state(cast(Union[Location, None], None))
+    location, set_location = use_state(cast("Location | None", None))
     resolvers = use_memo(
         lambda: tuple(map(resolver, _iter_routes(routes))),
         dependencies=(resolver, hash(routes)),
@@ -105,11 +102,11 @@ def _add_route_key(match: MatchedRoute, key: str | int) -> Any:
     """Add a key to the VDOM or component on the current route, if it doesn't already have one."""
     element = match.element
     if hasattr(element, "render") and not element.key:
-        element = cast(ComponentType, element)
+        element = cast("Component", element)
         element.key = key
     elif isinstance(element, dict) and not element.get("key", None):
-        element = cast(VdomDict, element)
-        element["key"] = key
+        element = cast("VdomDict", element)
+        element["attributes"]["key"] = key
     return match
 
 
@@ -118,10 +115,10 @@ def _match_route(
     location: Location,
 ) -> MatchedRoute | None:
     for resolver in compiled_routes:
-        match = resolver.resolve(location.pathname)
+        match = resolver.resolve(location.path)
         if match is not None:
             return _add_route_key(match, resolver.key)
 
-    _logger.debug("No matching route found for %s", location.pathname)
+    _logger.debug("No matching route found for %s", location.path)
 
     return None

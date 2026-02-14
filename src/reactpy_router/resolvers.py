@@ -73,9 +73,7 @@ class ReactPyResolver:
         if match:
             # Convert the matched groups to the correct types
             params = {
-                parameter_name[len("_numeric_") :]
-                if parameter_name.startswith("_numeric_")
-                else parameter_name: self.converter_mapping[parameter_name](value)
+                parameter_name.removeprefix("_numeric_"): self.converter_mapping[parameter_name](value)
                 for parameter_name, value in match.groupdict().items()
             }
             return MatchedRoute(self.element, params, path)

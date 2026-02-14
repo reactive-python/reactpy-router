@@ -5,31 +5,25 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from reactpy import component, html, use_connection, use_ref
-from reactpy.backend.types import Location
-from reactpy.web.module import export, module_from_file
+from reactpy.reactjs import component_from_file
+from reactpy.types import Location
 
 from reactpy_router.hooks import _use_route_state
 from reactpy_router.types import Route
 
 if TYPE_CHECKING:
-    from reactpy.core.component import Component
-    from reactpy.core.types import Key, VdomDict
+    from reactpy.types import Component, Key, VdomDict
 
-History = export(
-    module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
-    ("History"),
+History = component_from_file(
+    Path(__file__).parent / "static" / "bundle.js", import_names="History", name="reactpy-router"
 )
 """Client-side portion of history handling"""
 
-Link = export(
-    module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
-    ("Link"),
-)
+Link = component_from_file(Path(__file__).parent / "static" / "bundle.js", import_names="Link", name="reactpy-router")
 """Client-side portion of link handling"""
 
-Navigate = export(
-    module_from_file("reactpy-router", file=Path(__file__).parent / "static" / "bundle.js"),
-    ("Navigate"),
+Navigate = component_from_file(
+    Path(__file__).parent / "static" / "bundle.js", import_names="Navigate", name="reactpy-router"
 )
 """Client-side portion of the navigate component"""
 
@@ -74,7 +68,7 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
     def on_click_callback(_event: dict[str, Any]) -> None:
         set_location(Location(**_event))
 
-    return html._(Link({"onClickCallback": on_click_callback, "linkClass": class_name}), html.a(attrs, *children))
+    return html(Link({"onClickCallback": on_click_callback, "linkClass": class_name}), html.a(attrs, *children))
 
 
 def route(path: str, element: Any | None, *routes: Route) -> Route:
@@ -113,12 +107,12 @@ def navigate(to: str, replace: bool = False, key: Key | None = None) -> Componen
 def _navigate(to: str, replace: bool = False) -> VdomDict | None:
     location = use_connection().location
     set_location = _use_route_state().set_location
-    pathname = to.split("?", 1)[0]
+    new_path = to.split("?", 1)[0]
 
     def on_navigate_callback(_event: dict[str, Any]) -> None:
         set_location(Location(**_event))
 
-    if location.pathname != pathname:
+    if location.path != new_path:
         return Navigate({"onNavigateCallback": on_navigate_callback, "to": to, "replace": replace})
 
     return None

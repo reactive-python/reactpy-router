@@ -6,7 +6,7 @@ from reactpy_router import browser_router, link, route, use_search_params
 @component
 def search():
     search_params = use_search_params()
-    return html._(html.h1(f"Search Results for {search_params['query'][0]} 🔍"), html.p("Nothing (yet)."))
+    return html(html.h1(f"Search Results for {search_params['query'][0]} 🔍"), html.p("Nothing (yet)."))
 
 
 @component
