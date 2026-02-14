@@ -107,12 +107,12 @@ def navigate(to: str, replace: bool = False, key: Key | None = None) -> Componen
 def _navigate(to: str, replace: bool = False) -> VdomDict | None:
     location = use_connection().location
     set_location = _use_route_state().set_location
-    pathname = to.split("?", 1)[0]
+    new_path = to.split("?", 1)[0]
 
     def on_navigate_callback(_event: dict[str, Any]) -> None:
         set_location(Location(**_event))
 
-    if location.path != pathname:
+    if location.path != new_path:
         return Navigate({"onNavigateCallback": on_navigate_callback, "to": to, "replace": replace})
 
     return None
