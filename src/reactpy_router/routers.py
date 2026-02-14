@@ -6,8 +6,8 @@ from dataclasses import replace
 from logging import getLogger
 from typing import TYPE_CHECKING, Any, Union, cast
 
-from reactpy import component, use_memo, use_state
-from reactpy.core.hooks import ConnectionContext, use_connection
+from reactpy import component, use_connection, use_memo, use_state
+from reactpy.core.hooks import ConnectionContext
 from reactpy.types import Component, Connection, Location, VdomDict
 
 from reactpy_router.components import History

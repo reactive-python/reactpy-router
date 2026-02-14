@@ -13,12 +13,12 @@ readme = "README.md"
 keywords = ["React", "ReactJS", "ReactPy", "components"]
 license = "MIT"
 authors = [{ name = "Mark Bakhit", email = "archiethemonger@gmail.com" }]
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 classifiers = [
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Operating System :: OS Independent",
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
@@ -29,7 +29,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "reactpy[asgi]>=2.0.0b10, <3.0.0", 
+  "reactpy[asgi]>=2.0.0b10, <3.0.0",
   "typing_extensions",
   "jsonpointer==3.*",
 ]
@@ -50,6 +50,7 @@ artifacts = ["/src/reactpy_router/static/"]
 
 [tool.hatch.metadata]
 license-files = { paths = ["LICENSE.md"] }
+allow-direct-references = true
 
 [tool.hatch.envs.default]
 installer = "uv"
@@ -77,16 +78,16 @@ extra-dependencies = [
   "orjson",
 ]
 randomize = true
-matrix-name-format = "{variable}-{value}"
 
 [[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.9", "3.10", "3.11", "3.12"]
+python = ["3.11", "3.12", "3.13", "3.14"]
 
 [tool.pytest.ini_options]
-addopts = """\
-    --strict-config
-    --strict-markers
-    """
+addopts = ["--strict-config", "--strict-markers"]
+filterwarnings = """
+  ignore::DeprecationWarning:uvicorn.*
+  ignore::DeprecationWarning:websockets.*
+"""
 
 #######################################
 # >>> Hatch Documentation Scripts <<< #
@@ -137,6 +138,10 @@ type_check = ["pyright src"]
 detached = true
 
 [tool.hatch.envs.javascript.scripts]
+build = [
+  'bun install --cwd "src/js"',
+  'bun build "src/js/src/index.ts" --outfile "src/reactpy_router/static/bundle.js" --minify',
+]
 check = ['bun install --cwd "src/js"', 'bun run --cwd "src/js" check']
 fix = ['bun install --cwd "src/js"', ' bun run --cwd "src/js" format']
 
