@@ -3,7 +3,7 @@
 If you plan to make code changes to this repository, you will need to install the following dependencies first:
 
 -   [Git](https://git-scm.com/downloads)
--   [Python 3.9+](https://www.python.org/downloads/)
+-   [Python 3.11+](https://www.python.org/downloads/)
 -   [Hatch](https://hatch.pypa.io/latest/)
 -   [Bun](https://bun.sh/)
 
@@ -41,6 +41,7 @@ By utilizing `hatch`, the following commands are available to manage the develop
 | `hatch fmt --check` | Run all linters and formatters, but do not save fixes to the disk |
 | `hatch fmt --linter` | Run only linters |
 | `hatch fmt --formatter` | Run only formatters |
+| `hatch run javascript:build` | Manually re-build the JavaScript bundle |
 | `hatch run javascript:check` | Run the JavaScript linter/formatter |
 | `hatch run javascript:fix` | Run the JavaScript linter/formatter and write fixes to disk |
 | `hatch run python:type_check` | Run the Python type checker |
