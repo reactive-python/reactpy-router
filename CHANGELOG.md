@@ -19,7 +19,9 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+-   Bump required ReactPy version to `2.x`
 
 ## [2.0.0] - 2025-06-14
 

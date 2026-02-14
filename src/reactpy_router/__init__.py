@@ -1,4 +1,4 @@
-__version__ = "3.0.0b1"
+__version__ = "2.0.0"
 
 
 from reactpy_router.components import link, navigate, route
