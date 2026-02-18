@@ -22,11 +22,11 @@ export function bind(node: HTMLElement | Element | Node) {
 /**
  * History component that captures browser "history go back" actions and notifies the server.
  */
-export function History({ onHistoryChangeCallback }: HistoryProps): null {
+export function History({ onHistoryPreviousCallback }: HistoryProps): null {
   // Tell the server about history "popstate" events
   React.useEffect(() => {
     const listener = () => {
-      onHistoryChangeCallback(createLocationObject());
+      onHistoryPreviousCallback(createLocationObject());
     };
 
     // Register the event listener
@@ -35,12 +35,6 @@ export function History({ onHistoryChangeCallback }: HistoryProps): null {
     // Delete the event listener when the component is unmounted
     return () => window.removeEventListener("popstate", listener);
   });
-
-  // Tell the server about the URL during the initial page load
-  React.useEffect(() => {
-    onHistoryChangeCallback(createLocationObject());
-    return () => {};
-  }, []);
   return null;
 }
 

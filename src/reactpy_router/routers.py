@@ -59,33 +59,32 @@ def router(
     User notice: This component typically should never be used. Instead, use `create_router` if creating
     a custom routing engine."""
 
-    old_connection = use_connection()
-    location, set_location = use_state(cast("Location | None", None))
+    initial = use_connection()
+    location, set_location = use_state(initial.location)
     resolvers = use_memo(
         lambda: tuple(map(resolver, _iter_routes(routes))),
         dependencies=(resolver, hash(routes)),
     )
-    route_element = None
-    match = use_memo(lambda: _match_route(resolvers, location or old_connection.location))
+    match = use_memo(lambda: _match_route(resolvers, location or initial.location))
 
     if match:
-        # Skip rendering until ReactPy-Router knows what URL the page is on.
-        if location:
-            route_element = _route_state_context(
-                match.element,
-                value=RouteState(set_location, match.params),
+        if not location or not location.path:
+            raise RuntimeError(
+                "ReactPy-Router was unable to determine the current URL location.\n"
+                "Are you sure you are running this within the a ConnectionContext?"
             )
 
-        def on_history_change(event: dict[str, Any]) -> None:
-            """Callback function used within the JavaScript `History` component."""
+        def on_history_previous(event: dict[str, Any]) -> None:
+            """Callback function used within the JavaScript `History` component that signifies
+            a history "go back" action."""
             new_location = Location(**event)
             if location != new_location:
                 set_location(new_location)
 
         return ConnectionContext(
-            History({"onHistoryChangeCallback": on_history_change}),  # type: ignore[return-value]
-            route_element,
-            value=Connection(old_connection.scope, location or old_connection.location, old_connection.carrier),
+            History({"onHistoryPreviousCallback": on_history_previous}),  # type: ignore[return-value]
+            _route_state_context(match.element, value=RouteState(set_location, match.params)),
+            value=Connection(initial.scope, location or initial.location, initial.carrier),
         )
 
     return None

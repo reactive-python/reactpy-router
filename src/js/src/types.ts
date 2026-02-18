@@ -4,7 +4,7 @@ export interface ReactPyLocation {
 }
 
 export interface HistoryProps {
-  onHistoryChangeCallback: (location: ReactPyLocation) => void;
+  onHistoryPreviousCallback: (location: ReactPyLocation) => void;
 }
 
 export interface LinkProps {
