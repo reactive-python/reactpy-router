@@ -162,7 +162,8 @@ lint.extend-ignore = [
   "PLR2004", # Magic value used in comparison
   "SIM115",  # Use context handler for opening files
   "SLF001",  # Private member accessed
-  "DOC201",  # 'Returns:' section in docstring is missing
+  "DOC201",  # 'Returns' section in docstring is missing
+  "DOC501",  # `Error` section in docstring is missing
 ]
 lint.preview = true
 

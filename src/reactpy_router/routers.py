@@ -69,10 +69,11 @@ def router(
 
     if match:
         if not location or not location.path:
-            raise RuntimeError(
+            msg = (
                 "ReactPy-Router was unable to determine the current URL location.\n"
                 "Are you sure you are running this within the a ConnectionContext?"
             )
+            raise RuntimeError(msg)
 
         def on_history_previous(event: dict[str, Any]) -> None:
             """Callback function used within the JavaScript `History` component that signifies
