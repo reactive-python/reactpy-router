@@ -26,8 +26,8 @@ Don't forget to remove deprecated code on each major release!
 ### Changed
 
 - **Breaking:** Bumped minimum ReactPy version to `2.0.0b12`.
-- **Breaking:** Migrated to Hatch `src/` layout — the package now lives at `src/reactpy_router/` (previously `reactpy_router/` at the repo root).
-- **Breaking:** JavaScript build pipeline switched from Rollup (CommonJS) to Bun + TypeScript. The prebuilt bundle ships at `src/reactpy_router/static/bundle.js`.
+- **Breaking:** Migrated to Hatch `src/` layout — the package now lives at `src/reactpy_router/` (previously `reactpy_router/` at the repository root).
+- **Breaking:** JavaScript build pipeline switched from `Rollup` (CommonJS) to `Bun` + `TypeScript`. The prebuilt bundle ships at `src/reactpy_router/static/bundle.js`.
 - **Breaking:** Top-level re-exports trimmed. `Route`, `MatchedRoute`, `CompiledRoute`, `RouteState`, `ConversionInfo`, `ConverterMapping`, `Resolver`, and `Router` are no longer importable from `reactpy_router`. Import them from `reactpy_router.types` instead.
 - **Breaking:** The `link` component no longer accepts the legacy underscore `class_name` attribute — use `className` only.
 - **Breaking:** The internal `History` JavaScript callback was renamed from `onHistoryChangeCallback` to `onHistoryPreviousCallback` to reflect that it now fires only on browser history navigation events.
