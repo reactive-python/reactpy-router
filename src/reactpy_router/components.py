@@ -49,13 +49,10 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
     set_location = _use_route_state().set_location
     if "className" in attributes:
         class_name = " ".join([attributes.pop("className"), class_name])
-    if "class_name" in attributes:  # pragma: no cover
-        # TODO: This can be removed when ReactPy stops supporting underscores in attribute names
-        class_name = " ".join([attributes.pop("class_name"), class_name])
     if "href" in attributes and "to" not in attributes:
         attributes["to"] = attributes.pop("href")
     if "to" not in attributes:  # pragma: no cover
-        msg = "The `to` attribute is required for the `Link` component."
+        msg = "The `to` attribute is required for the `link` component."
         raise ValueError(msg)
     to = attributes.pop("to")
 

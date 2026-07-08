@@ -22,11 +22,11 @@ export function bind(node: HTMLElement | Element | Node) {
 /**
  * History component that captures browser "history go back" actions and notifies the server.
  */
-export function History({ onHistoryChangeCallback }: HistoryProps): null {
+export function History({ onHistoryPreviousCallback }: HistoryProps): null {
   // Tell the server about history "popstate" events
   React.useEffect(() => {
     const listener = () => {
-      onHistoryChangeCallback(createLocationObject());
+      onHistoryPreviousCallback(createLocationObject());
     };
 
     // Register the event listener
@@ -35,12 +35,6 @@ export function History({ onHistoryChangeCallback }: HistoryProps): null {
     // Delete the event listener when the component is unmounted
     return () => window.removeEventListener("popstate", listener);
   });
-
-  // Tell the server about the URL during the initial page load
-  React.useEffect(() => {
-    onHistoryChangeCallback(createLocationObject());
-    return () => {};
-  }, []);
   return null;
 }
 
@@ -52,30 +46,46 @@ export function History({ onHistoryChangeCallback }: HistoryProps): null {
  */
 export function Link({ onClickCallback, linkClass }: LinkProps): null {
   React.useEffect(() => {
-    // Event function that will tell the server about clicks
+    // Event function that will tell the server about clicks.
+    // Preserve the browser's default behavior (open in new tab/window) for
+    // modifier-clicks and middle-click — only plain left-clicks are routed
+    // through the SPA history handler.
     const handleClick = (event: Event) => {
       let click_event = event as MouseEvent;
-      if (!click_event.ctrlKey) {
+      const isPlainLeftClick =
+        click_event.button === 0 &&
+        !click_event.ctrlKey &&
+        !click_event.metaKey &&
+        !click_event.shiftKey &&
+        !click_event.altKey;
+      if (isPlainLeftClick) {
         event.preventDefault();
         let to = (event.currentTarget as HTMLElement).getAttribute("href");
-        pushState(to);
-        onClickCallback(createLocationObject());
+        if (to) {
+          pushState(to);
+          onClickCallback(createLocationObject());
+        }
       }
     };
 
-    // Register the event listener
-    let link = document.querySelector(`.${linkClass}`);
-    if (link) {
-      link.addEventListener("click", handleClick);
-    } else {
+    // Register the event listener on every anchor sharing this link's class.
+    // A page may render multiple links that share the unique class (e.g. when
+    // the same `link` component is reused), so use querySelectorAll rather
+    // than querySelector to wire all of them.
+    const links = document.querySelectorAll(`.${linkClass}`);
+    if (links.length === 0) {
       console.warn(`Link component with class name ${linkClass} not found.`);
+    } else {
+      links.forEach((link) => {
+        link.addEventListener("click", handleClick);
+      });
     }
 
-    // Delete the event listener when the component is unmounted
+    // Delete the event listeners when the component is unmounted
     return () => {
-      if (link) {
+      links.forEach((link) => {
         link.removeEventListener("click", handleClick);
-      }
+      });
     };
   });
   return null;

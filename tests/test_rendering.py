@@ -56,5 +56,3 @@ async def test_router_simple(display: DisplayFixture):
     assert root_render_count == 3
     assert home_page_render_count == 1
     assert not_found_render_count == 2
-
-    assert True

@@ -38,7 +38,6 @@ def use_params() -> dict[str, Any]:
         A dictionary of the current URL's parameters.
     """
 
-    # TODO: Check if this returns all parent params
     return _use_route_state().params
 
 
@@ -64,6 +63,7 @@ def use_search_params(
     # TODO: In order to match `react-router`, this will need to return a tuple of the search params \
     # and a function to update them. This is currently not possible without reactpy core having a \
     # communication layer.
+    # https://github.com/reactive-python/reactpy/issues/975
     return parse_qs(
         query_string,
         keep_blank_values=keep_blank_values,

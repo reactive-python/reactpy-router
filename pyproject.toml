@@ -28,11 +28,7 @@ classifiers = [
   "Environment :: Web Environment",
   "Typing :: Typed",
 ]
-dependencies = [
-  "reactpy[asgi]>=2.0.0b10, <3.0.0",
-  "typing_extensions",
-  "jsonpointer==3.*",
-]
+dependencies = ["reactpy[asgi]>=2.0.0b12, <3.0.0", "typing_extensions"]
 dynamic = ["version"]
 urls.Changelog = "https://reactive-python.github.io/reactpy-router/latest/about/changelog/"
 urls.Documentation = "https://reactive-python.github.io/reactpy-router/latest/"
@@ -162,7 +158,8 @@ lint.extend-ignore = [
   "PLR2004", # Magic value used in comparison
   "SIM115",  # Use context handler for opening files
   "SLF001",  # Private member accessed
-  "DOC201",  # 'Returns:' section in docstring is missing
+  "DOC201",  # 'Returns' section in docstring is missing
+  "DOC501",  # `Error` section in docstring is missing
 ]
 lint.preview = true
 

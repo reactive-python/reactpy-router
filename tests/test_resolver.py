@@ -44,12 +44,12 @@ def test_parse_path():
     assert resolver.converter_mapping == {"b": int, "c": float}
 
     assert resolver.parse_path("/a/{b:int}/{c:float}/{d:uuid}/c") == re.compile(
-        r"^/a/(?P<b>\d+)/(?P<c>\d+(\.\d+)?)/(?P<d>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/c$"
+        r"^/a/(?P<b>\d+)/(?P<c>\d+(\.\d+)?)/(?P<d>[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/c$"
     )
     assert resolver.converter_mapping == {"b": int, "c": float, "d": uuid.UUID}
 
     assert resolver.parse_path("/a/{b:int}/{c:float}/{d:uuid}/{e:path}/c") == re.compile(
-        r"^/a/(?P<b>\d+)/(?P<c>\d+(\.\d+)?)/(?P<d>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/(?P<e>.+)/c$"
+        r"^/a/(?P<b>\d+)/(?P<c>\d+(\.\d+)?)/(?P<d>[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/(?P<e>.+)/c$"
     )
     assert resolver.converter_mapping == {
         "b": int,
