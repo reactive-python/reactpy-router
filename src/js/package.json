@@ -9,6 +9,6 @@
     "prettier": "^3.3.3"
   },
   "dependencies": {
-    "@reactpy/client": "^1.1.0"
+    "@reactpy/client": "^1.2.0"
   }
 }

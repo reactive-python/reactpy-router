@@ -29,7 +29,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "reactpy[asgi]>=2.0.0b10, <3.0.0",
+  "reactpy[asgi]>=2.0.0b12, <3.0.0",
   "typing_extensions",
   "jsonpointer==3.*",
 ]
