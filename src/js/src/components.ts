@@ -100,12 +100,19 @@ export function Navigate({
   replace = false,
 }: NavigateProps): null {
   React.useEffect(() => {
-    if (replace) {
-      replaceState(to);
+    if (typeof to === "number") {
+      // Relative history navigation (e.g. go back / go forward).
+      // The resulting popstate event is picked up by the History
+      // component, so no explicit callback is needed here.
+      window.history.go(to);
     } else {
-      pushState(to);
+      if (replace) {
+        replaceState(to);
+      } else {
+        pushState(to);
+      }
+      onNavigateCallback(createLocationObject());
     }
-    onNavigateCallback(createLocationObject());
     return () => {};
   }, []);
 

@@ -21,6 +21,7 @@ Don't forget to remove deprecated code on each major release!
 
 ### Added
 
+- The `navigate` component now accepts integers for `to`, allowing relative navigation in the browser's history stack (e.g. `navigate(-1)` to go back, `navigate(1)` to go forward).
 - Support for ReactPy v2.x (beta). The initial URL is now sourced from the ReactPy executor (`use_connection().location`) instead of a JS-side `popstate` effect, removing a redundant network round-trip on first load.
 
 ### Changed

@@ -355,3 +355,110 @@ async def test_navigate_component_to_current_url(display: DisplayFixture):
     await display.page.wait_for_selector("#nav-a")
     await display.page.go_back()
     await display.page.wait_for_selector("#root-a")
+
+
+async def test_navigate_component_go_back(display: DisplayFixture):
+    """Navigate back using navigate(-1)."""
+
+    @component
+    def nav_btn():
+        nav, set_nav = use_state("")
+
+        if nav:
+            return navigate(nav)
+
+        return html.button(
+            {"onClick": lambda _: set_nav("/a"), "id": "nav-to-a"},
+            "Go to A",
+        )
+
+    @component
+    def back_btn():
+        delta, set_delta = use_state("")
+
+        if isinstance(delta, int):
+            return navigate(delta)
+
+        return html.button(
+            {"onClick": lambda _: set_delta(-1), "id": "go-back"},
+            "Go back",
+        )
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", nav_btn()),
+            route("/a", back_btn()),
+        )
+
+    await display.show(sample)
+
+    # Navigate to /a
+    await display.page.wait_for_selector("#nav-to-a")
+    await display.page.click("#nav-to-a")
+
+    # Wait for the go-back button to appear on route /a
+    await display.page.wait_for_selector("#go-back")
+    assert await display.page.text_content("#go-back") == "Go back"
+
+    # Go back using navigate(-1)
+    await display.page.click("#go-back")
+
+    # Verify we're back at the root route
+    await display.page.wait_for_selector("#nav-to-a")
+    assert await display.page.text_content("#nav-to-a") == "Go to A"
+
+
+async def test_navigate_component_go_forward(display: DisplayFixture):
+    """Navigate forward using navigate(1)."""
+
+    @component
+    def forward_btn():
+        delta, set_delta = use_state("")
+
+        if isinstance(delta, int):
+            return navigate(delta)
+
+        return html.button(
+            {"onClick": lambda _: set_delta(1), "id": "go-forward"},
+            "Go forward",
+        )
+
+    @component
+    def back_btn():
+        delta, set_delta = use_state("")
+
+        if isinstance(delta, int):
+            return navigate(delta)
+
+        return html.button(
+            {"onClick": lambda _: set_delta(-1), "id": "go-back"},
+            "Go back",
+        )
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", forward_btn()),
+            route("/a", back_btn()),
+        )
+
+    await display.show(sample)
+
+    # Navigate to /a via full page load (builds forward history entry)
+    await display.goto("/a")
+
+    # Go back to / via navigate(-1)
+    await display.page.wait_for_selector("#go-back")
+    await display.page.click("#go-back")
+
+    # Should now be at / with the "Go forward" button
+    await display.page.wait_for_selector("#go-forward")
+    assert await display.page.text_content("#go-forward") == "Go forward"
+
+    # Go forward to /a via navigate(1)
+    await display.page.click("#go-forward")
+
+    # Verify we're back at /a
+    await display.page.wait_for_selector("#go-back")
+    assert await display.page.text_content("#go-back") == "Go back"
