@@ -148,16 +148,23 @@ export function ScrollRestoration({}: ScrollRestorationProps): null {
   const lastPathRef = React.useRef(window.location.pathname);
 
   React.useEffect(() => {
-    // Restore any saved scroll position for the current pathname on mount.
-    // The component mounts/unmounts on route changes, so this runs once
-    // per navigation. The position is consumed after restoration.
     const currentKey = window.location.pathname;
-    const savedPos = _scrollPositions[currentKey];
-    if (savedPos) {
-      delete _scrollPositions[currentKey];
-      requestAnimationFrame(() => {
+    if (currentKey in _scrollPositions) {
+      const savedPos = _scrollPositions[currentKey];
+      // Retry scroll restoration each animation frame until success.
+      // Preact may perform multiple render commits during a single
+      // navigation, and each commit can reset the scroll position.
+      // We keep retrying until the position actually sticks.
+      let remaining = 5; // max 5 retries (~80ms max)
+      const tryRestore = () => {
+        if (window.scrollY === savedPos.y && window.scrollX === savedPos.x) {
+          delete _scrollPositions[currentKey];
+          return;
+        }
         window.scrollTo(savedPos.x, savedPos.y);
-      });
+        if (--remaining > 0) requestAnimationFrame(tryRestore);
+      };
+      tryRestore();
     }
 
     window.history.scrollRestoration = "manual";
@@ -183,8 +190,6 @@ export function ScrollRestoration({}: ScrollRestorationProps): null {
     };
 
     // On popstate, save the scroll of the page we're leaving.
-    // The popstate event fires before the next render, so we use
-    // lastPathRef (the pathname before navigation) as the key.
     const handlePopState = () => {
       const leavingPath = lastPathRef.current;
       _scrollPositions[leavingPath] = { x: window.scrollX, y: window.scrollY };
