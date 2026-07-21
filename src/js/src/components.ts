@@ -119,37 +119,49 @@ export function Navigate({
   return null;
 }
 
+// Module-level scroll positions keyed by pathname. Shared across all
+// ScrollRestoration component instances so saved positions survive
+// unmount/remount during route transitions.
+const _scrollPositions: Record<string, { x: number; y: number }> = {};
+
 /**
  * ScrollRestoration component that saves and restores scroll positions across
  * client-side navigation. Uses the browser's History API to track scroll
  * positions keyed by URL pathname.
  *
- * On mount, it disables the browser's default scroll restoration and takes
- * over the responsibility of saving and restoring scroll positions.
- * Scroll positions are saved when:
- * - The user navigates via pushState/replaceState (Link or Navigate component)
- * - The user triggers a popstate event (browser back/forward)
+ * On mount, it:
+ * - Disables the browser's native scroll restoration
+ * - Patches pushState/replaceState to save scroll positions before navigation
+ * - Listens for popstate to save the leaving page's scroll
+ * - Restores any previously saved scroll position for the current pathname
  *
- * Scroll positions are restored after each render when the user returns to
- * a previously visited page via history navigation.
+ * Scroll positions are consumed on restore so subsequent re-renders on the same
+ * page do not snap the user back. The module-level store survives the
+ * component's unmount/remount cycle across route transitions.
  */
 export function ScrollRestoration({}: ScrollRestorationProps): null {
-  // Store scroll positions keyed by pathname
-  const positions = React.useRef<Record<string, { x: number; y: number }>>({});
-  // Track the last known pathname for popstate handling
   const lastPathRef = React.useRef(window.location.pathname);
 
-  // On mount, disable the browser's built-in scroll restoration so we can
-  // manage scroll positions ourselves. Also patch pushState and replaceState
-  // to save the scroll position of the page being navigated away from.
   React.useEffect(() => {
+    // Restore any saved scroll position for the current pathname on mount.
+    // The component mounts/unmounts on route changes, so this runs once
+    // per navigation. The position is consumed after restoration.
+    const currentKey = window.location.pathname;
+    const savedPos = _scrollPositions[currentKey];
+    if (savedPos) {
+      delete _scrollPositions[currentKey];
+      requestAnimationFrame(() => {
+        window.scrollTo(savedPos.x, savedPos.y);
+      });
+    }
+
     window.history.scrollRestoration = "manual";
 
     // Patch pushState to save scroll before URL changes
     const originalPushState = window.history.pushState.bind(window.history);
     window.history.pushState = (data, unused, url) => {
       const key = window.location.pathname;
-      positions.current[key] = { x: window.scrollX, y: window.scrollY };
+      _scrollPositions[key] = { x: window.scrollX, y: window.scrollY };
       originalPushState(data, unused, url);
       lastPathRef.current = window.location.pathname;
     };
@@ -158,17 +170,17 @@ export function ScrollRestoration({}: ScrollRestorationProps): null {
     const originalReplaceState = window.history.replaceState.bind(window.history);
     window.history.replaceState = (data, unused, url) => {
       const key = window.location.pathname;
-      positions.current[key] = { x: window.scrollX, y: window.scrollY };
+      _scrollPositions[key] = { x: window.scrollX, y: window.scrollY };
       originalReplaceState(data, unused, url);
       lastPathRef.current = window.location.pathname;
     };
 
-    // On popstate (browser back/forward), save the scroll of the page being
-    // left and restore the scroll of the page being returned to.
+    // On popstate, save the scroll of the page we're leaving.
+    // The popstate event fires before the next render, so we use
+    // lastPathRef (the pathname before navigation) as the key.
     const handlePopState = () => {
-      // Save scroll for the page we're leaving
       const leavingPath = lastPathRef.current;
-      positions.current[leavingPath] = { x: window.scrollX, y: window.scrollY };
+      _scrollPositions[leavingPath] = { x: window.scrollX, y: window.scrollY };
       lastPathRef.current = window.location.pathname;
     };
 
@@ -180,18 +192,6 @@ export function ScrollRestoration({}: ScrollRestorationProps): null {
       window.history.replaceState = originalReplaceState;
     };
   }, []);
-
-  // After every render, restore scroll for the current URL if we have a
-  // saved position. Uses requestAnimationFrame to let the DOM settle first.
-  React.useEffect(() => {
-    const key = window.location.pathname;
-    const pos = positions.current[key];
-    if (pos) {
-      requestAnimationFrame(() => {
-        window.scrollTo(pos.x, pos.y);
-      });
-    }
-  });
 
   return null;
 }
