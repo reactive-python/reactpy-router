@@ -544,9 +544,10 @@ async def test_scroll_restoration_preserves_scroll(display: DisplayFixture):
     await display.page.click("#back-to-scroll")
     await display.page.wait_for_selector("#scroll-page")
 
-    # Wait a tick for scroll restoration to apply
-    await display.page.wait_for_timeout(200)
-
-    # Verify scroll position was restored
-    restored_scroll_y = await display.page.evaluate("window.scrollY")
-    assert restored_scroll_y >= 450, f"Expected restored scrollY >= 450, got {restored_scroll_y}"
+    # Poll for scroll restoration to apply (it runs in useLayoutEffect which
+    # fires synchronously after DOM commit, but the browser needs at least one
+    # frame to paint when scrollTo is called during the same commit).
+    await display.page.wait_for_function(
+        "window.scrollY >= 450",
+        timeout=5000,
+    )

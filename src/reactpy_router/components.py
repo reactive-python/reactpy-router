@@ -153,7 +153,7 @@ def scroll_restoration(*children: Any, key: Key | None = None) -> Component:
 @component
 def _scroll_restoration(*children: Any) -> VdomDict:
     return html.div(
-        {"style": {"height": "100%"}},
+        {"style": {"min-height": "100vh"}},
         ScrollRestoration({}),
         *children,
     )

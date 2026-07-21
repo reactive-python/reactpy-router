@@ -131,45 +131,21 @@ const _scrollPositions: Record<string, { x: number; y: number }> = {};
 
 /**
  * ScrollRestoration component that saves and restores scroll positions across
- * client-side navigation. Uses the browser's History API to track scroll
- * positions keyed by URL pathname.
+ * client-side navigation.
  *
- * On mount, it:
- * - Disables the browser's native scroll restoration
- * - Patches pushState/replaceState to save scroll positions before navigation
- * - Listens for popstate to save the leaving page's scroll
- * - Restores any previously saved scroll position for the current pathname
- *
- * Scroll positions are consumed on restore so subsequent re-renders on the same
- * page do not snap the user back. The module-level store survives the
- * component's unmount/remount cycle across route transitions.
+ * The one-time mount effect patches pushState/replaceState to save scroll
+ * before navigation and registers a popstate listener. The post-render effect
+ * (no deps) restores scroll for the current pathname whenever a saved position
+ * exists — the position is kept alive in the module store so it remains
+ * available across Preact's render commit cycle.
  */
 export function ScrollRestoration({}: ScrollRestorationProps): null {
   const lastPathRef = React.useRef(window.location.pathname);
 
+  // One-time setup: patch history methods and register popstate listener.
   React.useEffect(() => {
-    const currentKey = window.location.pathname;
-    if (currentKey in _scrollPositions) {
-      const savedPos = _scrollPositions[currentKey];
-      // Retry scroll restoration each animation frame until success.
-      // Preact may perform multiple render commits during a single
-      // navigation, and each commit can reset the scroll position.
-      // We keep retrying until the position actually sticks.
-      let remaining = 5; // max 5 retries (~80ms max)
-      const tryRestore = () => {
-        if (window.scrollY === savedPos.y && window.scrollX === savedPos.x) {
-          delete _scrollPositions[currentKey];
-          return;
-        }
-        window.scrollTo(savedPos.x, savedPos.y);
-        if (--remaining > 0) requestAnimationFrame(tryRestore);
-      };
-      tryRestore();
-    }
-
     window.history.scrollRestoration = "manual";
 
-    // Patch pushState to save scroll before URL changes
     const originalPushState = window.history.pushState.bind(window.history);
     window.history.pushState = (data, unused, url) => {
       const key = window.location.pathname;
@@ -178,7 +154,6 @@ export function ScrollRestoration({}: ScrollRestorationProps): null {
       lastPathRef.current = window.location.pathname;
     };
 
-    // Patch replaceState to save scroll before URL changes
     const originalReplaceState = window.history.replaceState.bind(
       window.history,
     );
@@ -189,7 +164,6 @@ export function ScrollRestoration({}: ScrollRestorationProps): null {
       lastPathRef.current = window.location.pathname;
     };
 
-    // On popstate, save the scroll of the page we're leaving.
     const handlePopState = () => {
       const leavingPath = lastPathRef.current;
       _scrollPositions[leavingPath] = { x: window.scrollX, y: window.scrollY };
@@ -204,6 +178,30 @@ export function ScrollRestoration({}: ScrollRestorationProps): null {
       window.history.replaceState = originalReplaceState;
     };
   }, []);
+
+  // After every render, restore scroll if a saved position exists for
+  // the current pathname. The position is NOT deleted — it's kept alive
+  // so Preact's render commits during navigation don't lose it.
+  // It will be overwritten naturally when the user navigates away.
+  React.useEffect(() => {
+    const key = window.location.pathname;
+    const pos = _scrollPositions[key];
+    if (pos) {
+      // Retry across animation frames — Preact may perform multiple
+      // render commits that reset scroll.
+      let remaining = 10;
+      const tryRestore = () => {
+        window.scrollTo(pos.x, pos.y);
+        if (
+          (window.scrollY !== pos.y || window.scrollX !== pos.x) &&
+          --remaining > 0
+        ) {
+          requestAnimationFrame(tryRestore);
+        }
+      };
+      requestAnimationFrame(tryRestore);
+    }
+  });
 
   return null;
 }
