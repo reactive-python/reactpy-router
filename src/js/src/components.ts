@@ -1,6 +1,11 @@
 import { React } from "@reactpy/client";
 import { createLocationObject, pushState, replaceState } from "./utils";
-import { HistoryProps, LinkProps, NavigateProps, ScrollRestorationProps } from "./types";
+import {
+  HistoryProps,
+  LinkProps,
+  NavigateProps,
+  ScrollRestorationProps,
+} from "./types";
 
 /**
  * Interface used to bind a ReactPy node to React.
@@ -167,7 +172,9 @@ export function ScrollRestoration({}: ScrollRestorationProps): null {
     };
 
     // Patch replaceState to save scroll before URL changes
-    const originalReplaceState = window.history.replaceState.bind(window.history);
+    const originalReplaceState = window.history.replaceState.bind(
+      window.history,
+    );
     window.history.replaceState = (data, unused, url) => {
       const key = window.location.pathname;
       _scrollPositions[key] = { x: window.scrollX, y: window.scrollY };
