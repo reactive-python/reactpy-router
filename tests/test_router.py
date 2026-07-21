@@ -6,7 +6,7 @@ from playwright.async_api._generated import Browser, Page
 from reactpy import Ref, component, html, use_location, use_state
 from reactpy.testing import DisplayFixture
 
-from reactpy_router import browser_router, link, navigate, route, use_params, use_search_params
+from reactpy_router import browser_router, link, navigate, route, scroll_restoration, use_params, use_search_params
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
 pytestmark = pytest.mark.anyio
@@ -462,3 +462,91 @@ async def test_navigate_component_go_forward(display: DisplayFixture):
     # Verify we're back at /a
     await display.page.wait_for_selector("#go-back")
     assert await display.page.text_content("#go-back") == "Go back"
+
+
+async def test_scroll_restoration_basic_rendering(display: DisplayFixture):
+    """Verify scroll_restoration renders its children inside a router."""
+
+    @component
+    def sample():
+        return browser_router(
+            route(
+                "/",
+                scroll_restoration(
+                    link({"to": "/a", "id": "root-link"}, "Root"),
+                    html.h1({"id": "home"}, "Home"),
+                ),
+            ),
+            route(
+                "/a",
+                scroll_restoration(
+                    link({"to": "/", "id": "back-link"}, "Back"),
+                    html.h1({"id": "page-a"}, "Page A"),
+                ),
+            ),
+        )
+
+    await display.show(sample)
+    await display.page.wait_for_selector("#home")
+    assert await display.page.text_content("#home") == "Home"
+
+    await display.page.click("#root-link")
+    await display.page.wait_for_selector("#page-a")
+    assert await display.page.text_content("#page-a") == "Page A"
+
+    await display.page.click("#back-link")
+    await display.page.wait_for_selector("#home")
+    assert await display.page.text_content("#home") == "Home"
+
+
+async def test_scroll_restoration_preserves_scroll(display: DisplayFixture):
+    """Verify scroll position is preserved when navigating back."""
+
+    @component
+    def scroll_page():
+        tall_content = [html.div({"style": {"height": "1500px"}}, f"Section {i}") for i in range(10)]
+        link_list = link({"to": "/other", "id": "to-other"}, "Go to other", key="to-other")
+        return scroll_restoration(
+            html.h1({"id": "scroll-page"}, "Scroll Page"),
+            *tall_content,
+            link_list,
+        )
+
+    @component
+    def other_page():
+        return scroll_restoration(
+            html.h1({"id": "other-page"}, "Other Page"),
+            link({"to": "/", "id": "back-to-scroll"}, "Back to scroll page", key="back-to-scroll"),
+        )
+
+    @component
+    def sample():
+        return browser_router(
+            route("/", scroll_page()),
+            route("/other", other_page()),
+        )
+
+    await display.show(sample)
+
+    # Wait for the scroll page to render
+    await display.page.wait_for_selector("#scroll-page")
+
+    # Scroll down 500px
+    await display.page.evaluate("window.scrollTo(0, 500)")
+    scroll_y = await display.page.evaluate("window.scrollY")
+    assert scroll_y >= 500, f"Expected scrollY >= 500, got {scroll_y}"
+
+    # Navigate to /other via link
+    await display.page.click("#to-other")
+    await display.page.wait_for_selector("#other-page")
+
+    # Navigate back to / via link
+    await display.page.click("#back-to-scroll")
+    await display.page.wait_for_selector("#scroll-page")
+
+    # Wait a tick for scroll restoration to apply
+    await display.page.wait_for_timeout(200)
+
+    # Verify scroll position was restored
+    restored_scroll_y = await display.page.evaluate("window.scrollY")
+    assert restored_scroll_y >= 450, f"Expected restored scrollY >= 450, got {restored_scroll_y}"
