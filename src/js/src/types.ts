@@ -17,3 +17,5 @@ export interface NavigateProps {
   to: string | number;
   replace?: boolean;
 }
+
+export interface ScrollRestorationProps {}
