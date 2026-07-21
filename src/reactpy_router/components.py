@@ -83,16 +83,18 @@ def route(path: str, element: Any | None, *routes: Route) -> Route:
     return Route(path, element, routes)
 
 
-def navigate(to: str, replace: bool = False, key: Key | None = None) -> Component:
+def navigate(to: str | int, replace: bool = False, key: Key | None = None) -> Component:
     """
     Navigate to a specified URL.
 
     This function changes the browser's current URL when it is rendered.
 
     Args:
-        to: The target URL to navigate to.
+        to: The target URL to navigate to, or an integer indicating the relative
+            position in the browser's history stack (e.g., ``-1`` to go back,
+            ``1`` to go forward). See `History.go <https://developer.mozilla.org/en-US/docs/Web/API/History/go>`_.
         replace: If True, the current history entry will be replaced \
-            with the new URL. Defaults to False.
+            with the new URL. Ignored when ``to`` is an integer. Defaults to False.
 
     Returns:
         The component responsible for navigation.
@@ -101,14 +103,19 @@ def navigate(to: str, replace: bool = False, key: Key | None = None) -> Componen
 
 
 @component
-def _navigate(to: str, replace: bool = False) -> VdomDict | None:
+def _navigate(to: str | int, replace: bool = False) -> VdomDict | None:
     location = use_connection().location
     set_location = _use_route_state().set_location
-    new_path = to.split("?", 1)[0]
 
     def on_navigate_callback(_event: dict[str, Any]) -> None:
         set_location(Location(**_event))
 
+    if isinstance(to, int):
+        # Integer navigation (go back/forward) — always delegate to JS;
+        # the resulting popstate event is handled by the History component.
+        return Navigate({"onNavigateCallback": on_navigate_callback, "to": to, "replace": replace})
+
+    new_path = to.split("?", 1)[0]
     if location.path != new_path:
         return Navigate({"onNavigateCallback": on_navigate_callback, "to": to, "replace": replace})
 

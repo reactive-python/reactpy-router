@@ -14,6 +14,6 @@ export interface LinkProps {
 
 export interface NavigateProps {
   onNavigateCallback: (location: ReactPyLocation) => void;
-  to: string;
+  to: string | number;
   replace?: boolean;
 }
