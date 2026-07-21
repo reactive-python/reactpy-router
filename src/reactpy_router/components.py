@@ -110,7 +110,7 @@ def _navigate(to: str | int, replace: bool = False) -> VdomDict | None:
     def on_navigate_callback(_event: dict[str, Any]) -> None:
         set_location(Location(**_event))
 
-    if isinstance(to, int):
+    if isinstance(to, int) and not isinstance(to, bool):
         # Integer navigation (go back/forward) — always delegate to JS;
         # the resulting popstate event is handled by the History component.
         return Navigate({"onNavigateCallback": on_navigate_callback, "to": to, "replace": replace})
