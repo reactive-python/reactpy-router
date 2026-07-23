@@ -433,6 +433,65 @@ async def test_simple_form(display: DisplayFixture):
     assert await display.page.text_content("#search-result") == "Search Results"
 
 
+async def test_form_no_page_reload(display: DisplayFixture):
+    """Verify that form submission does not cause a full page reload."""
+    render_count = Ref(0)
+
+    @component
+    def sample():
+        render_count.current += 1
+        return browser_router(
+            route(
+                "/",
+                form(
+                    {"action": "/a", "id": "test-form"},
+                    html.input({"name": "q", "type": "text", "value": "hello"}),
+                    html.button({"type": "submit", "id": "submit-btn"}, "Search"),
+                ),
+            ),
+            route("/a", html.h1({"id": "a"}, "A")),
+        )
+
+    await display.show(sample)
+
+    submit = await display.page.wait_for_selector("#submit-btn")
+    await submit.click()
+
+    await display.page.wait_for_selector("#a")
+    assert render_count.current == 1
+
+
+async def test_form_action_url_with_query_string(display: DisplayFixture):
+    """Test form action URL with existing query string."""
+
+    @component
+    def check_search_params():
+        query = use_search_params()
+        assert query == {"existing": ["1"], "q": ["hello"]}
+        return html.h1({"id": "success"}, "success")
+
+    @component
+    def sample():
+        return browser_router(
+            route(
+                "/",
+                form(
+                    {"action": "/search?existing=1", "id": "test-form"},
+                    html.input({"name": "q", "type": "text", "value": "hello"}),
+                    html.button({"type": "submit", "id": "submit-btn"}, "Search"),
+                ),
+            ),
+            route("/search", check_search_params()),
+        )
+
+    await display.show(sample)
+
+    submit = await display.page.wait_for_selector("#submit-btn")
+    await submit.click()
+
+    await display.page.wait_for_selector("#success")
+
+
 async def test_form_use_form_data(display: DisplayFixture):
     captured: dict[str, Any] = {}
 
