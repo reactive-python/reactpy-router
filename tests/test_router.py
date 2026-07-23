@@ -6,7 +6,7 @@ from playwright.async_api._generated import Browser, Page
 from reactpy import Ref, component, html, use_location, use_state
 from reactpy.testing import DisplayFixture
 
-from reactpy_router import browser_router, link, navigate, route, use_params, use_search_params
+from reactpy_router import browser_router, form, link, navigate, route, use_form_data, use_params, use_search_params
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "").lower() == "true"
 pytestmark = pytest.mark.anyio
@@ -407,6 +407,121 @@ async def test_navigate_component_go_back(display: DisplayFixture):
     # Verify we're back at the root route
     await display.page.wait_for_selector("#nav-to-a")
     assert await display.page.text_content("#nav-to-a") == "Go to A"
+
+
+async def test_simple_form(display: DisplayFixture):
+    @component
+    def sample():
+        return browser_router(
+            route(
+                "/",
+                form(
+                    {"action": "/search", "id": "search-form"},
+                    html.input({"name": "q", "type": "text", "value": "hello"}),
+                    html.button({"type": "submit", "id": "submit-btn"}, "Search"),
+                ),
+            ),
+            route("/search", html.h1({"id": "search-result"}, "Search Results")),
+        )
+
+    await display.show(sample)
+
+    submit = await display.page.wait_for_selector("#submit-btn")
+    await submit.click()
+
+    await display.page.wait_for_selector("#search-result")
+    assert await display.page.text_content("#search-result") == "Search Results"
+
+
+async def test_form_use_form_data(display: DisplayFixture):
+    captured: dict[str, Any] = {}
+
+    @component
+    def show_form_data():
+        captured.update(use_form_data())
+        return html.h1({"id": "form-data-result"}, str(captured))
+
+    @component
+    def sample():
+        return browser_router(
+            route(
+                "/",
+                form(
+                    {"action": "/result", "id": "test-form"},
+                    html.input({"name": "username", "type": "text", "value": "testuser"}),
+                    html.input({"name": "role", "type": "text", "value": "admin"}),
+                    html.button({"type": "submit", "id": "form-submit"}, "Submit"),
+                ),
+            ),
+            route("/result", show_form_data()),
+        )
+
+    await display.show(sample)
+
+    submit = await display.page.wait_for_selector("#form-submit")
+    await submit.click()
+
+    await display.page.wait_for_selector("#form-data-result")
+    assert captured == {"username": ["testuser"], "role": ["admin"]}
+
+
+async def test_form_with_multiple_values(display: DisplayFixture):
+    """Test form submission with multiple values for the same field (e.g. checkboxes)."""
+    captured: dict[str, Any] = {}
+
+    @component
+    def show_form_data():
+        captured.update(use_form_data())
+        return html.h1({"id": "form-data-result"}, str(captured))
+
+    @component
+    def sample():
+        return browser_router(
+            route(
+                "/",
+                form(
+                    {"action": "/result", "id": "multi-form"},
+                    html.input({"name": "color", "type": "checkbox", "value": "red", "checked": True}),
+                    html.input({"name": "color", "type": "checkbox", "value": "blue", "checked": True}),
+                    html.button({"type": "submit", "id": "multi-submit"}, "Submit"),
+                ),
+            ),
+            route("/result", show_form_data()),
+        )
+
+    await display.show(sample)
+
+    submit = await display.page.wait_for_selector("#multi-submit")
+    await submit.click()
+
+    await display.page.wait_for_selector("#form-data-result")
+    assert captured == {"color": ["red", "blue"]}
+
+
+async def test_form_class_name(display: DisplayFixture):
+    @component
+    def sample():
+        return browser_router(
+            route(
+                "/",
+                form(
+                    {"action": "/a", "className": "my-form-class", "id": "my-form"},
+                    html.button({"type": "submit", "id": "submit-btn"}, "Submit"),
+                ),
+            ),
+            route("/a", html.h1({"id": "a"}, "A")),
+        )
+
+    await display.show(sample)
+
+    form_el = await display.page.wait_for_selector("#my-form")
+    class_attr = await form_el.get_attribute("class")
+    assert class_attr is not None
+    assert "my-form-class" in class_attr
+
+    submit = await display.page.wait_for_selector("#submit-btn")
+    await submit.click()
+    await display.page.wait_for_selector("#a")
 
 
 async def test_navigate_component_go_forward(display: DisplayFixture):

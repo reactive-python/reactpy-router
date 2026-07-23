@@ -1,1 +1,1 @@
-export { bind, History, Link, Navigate } from "./components";
+export { bind, History, Link, Navigate, Form } from "./components";
