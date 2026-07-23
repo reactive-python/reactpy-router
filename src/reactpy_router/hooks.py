@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 from urllib.parse import parse_qs
 
@@ -8,10 +9,29 @@ from reactpy import create_context, use_context, use_location
 from reactpy_router.types import RouteState  # noqa: TC001
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from reactpy.types import Context
 
 
 _route_state_context: Context[RouteState | None] = create_context(None)
+
+
+@dataclass
+class FormDataState:
+    """
+    Holds form data state for the current route.
+
+    Attributes:
+        form_data: A dictionary of form field names to lists of values.
+        set_form_data: A callable to update the form data.
+    """
+
+    form_data: dict[str, list[str]]
+    set_form_data: Callable[[dict[str, list[str]]], None]
+
+
+_form_data_state_context: Context[FormDataState | None] = create_context(None)
 
 
 def _use_route_state() -> RouteState:
@@ -24,6 +44,18 @@ def _use_route_state() -> RouteState:
         raise RuntimeError(msg)
 
     return route_state
+
+
+def _use_form_data_state() -> FormDataState:
+    form_data_state = use_context(_form_data_state_context)
+    if form_data_state is None:  # pragma: no cover
+        msg = (
+            "ReactPy-Router was unable to find a form data context. Are you "
+            "sure this hook/component is being called within a router?"
+        )
+        raise RuntimeError(msg)
+
+    return form_data_state
 
 
 def use_params() -> dict[str, Any]:
@@ -39,6 +71,19 @@ def use_params() -> dict[str, Any]:
     """
 
     return _use_route_state().params
+
+
+def use_form_data() -> dict[str, list[str]]:
+    """
+    This hook returns the form data from the most recent `Form` component
+    submission. The returned value is a dictionary of field names to lists of values.
+
+    If no form has been submitted yet, an empty dictionary is returned.
+
+    Returns:
+        A dictionary of form field names to lists of values.
+    """
+    return _use_form_data_state().form_data
 
 
 def use_search_params(

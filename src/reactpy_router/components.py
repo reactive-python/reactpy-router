@@ -8,7 +8,7 @@ from reactpy import component, html, use_connection, use_ref
 from reactpy.reactjs import component_from_file
 from reactpy.types import Location
 
-from reactpy_router.hooks import _use_route_state
+from reactpy_router.hooks import _use_form_data_state, _use_route_state
 from reactpy_router.types import Route
 
 if TYPE_CHECKING:
@@ -26,6 +26,9 @@ Navigate = component_from_file(
     Path(__file__).parent / "static" / "bundle.js", import_names="Navigate", name="reactpy-router"
 )
 """Client-side portion of the navigate component"""
+
+FormJs = component_from_file(Path(__file__).parent / "static" / "bundle.js", import_names="Form", name="reactpy-router")
+"""Client-side portion of form handling"""
 
 
 def link(attributes: dict[str, Any], *children: Any, key: Key | None = None) -> Component:
@@ -66,6 +69,46 @@ def _link(attributes: dict[str, Any], *children: Any) -> VdomDict:
         set_location(Location(**_event))
 
     return html(Link({"onClickCallback": on_click_callback, "linkClass": class_name}), html.a(attrs, *children))
+
+
+def form(attributes: dict[str, Any], *children: Any, key: Key | None = None) -> Component:
+    """
+    Create a form element that intercepts submissions and navigates to the
+    action URL with form data serialized as query parameters.
+
+    Args:
+        attributes: A dictionary of attributes for the form element.
+        *children: Child elements to be included within the form.
+
+    Returns:
+        A form component with the specified attributes and children.
+    """
+    return _form(attributes, *children, key=key)
+
+
+@component
+def _form(attributes: dict[str, Any], *children: Any) -> VdomDict:
+    attributes = attributes.copy()
+    class_name = use_ref(f"form-{uuid4().hex}").current
+    route_state = _use_route_state()
+    form_data_state = _use_form_data_state()
+    if "className" in attributes:
+        class_name = " ".join([attributes.pop("className"), class_name])
+
+    attrs = {
+        **attributes,
+        "className": class_name,
+    }
+
+    def on_submit_callback(event: dict[str, Any]) -> None:
+        form_data_state.set_form_data(event.get("form_data", {}))
+        location_data = event.get("location", {})
+        route_state.set_location(Location(**location_data))
+
+    return html(
+        FormJs({"onSubmitCallback": on_submit_callback, "formClass": class_name}),
+        html.form(attrs, *children),
+    )
 
 
 def route(path: str, element: Any | None, *routes: Route) -> Route:
