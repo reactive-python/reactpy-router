@@ -1,6 +1,11 @@
 import { React } from "@reactpy/client";
 import { createLocationObject, pushState, replaceState } from "./utils";
-import { HistoryProps, LinkProps, NavigateProps } from "./types";
+import {
+  HistoryProps,
+  LinkProps,
+  NavigateProps,
+  ScrollRestorationProps,
+} from "./types";
 
 /**
  * Interface used to bind a ReactPy node to React.
@@ -115,6 +120,88 @@ export function Navigate({
     }
     return () => {};
   }, []);
+
+  return null;
+}
+
+// Module-level scroll positions keyed by pathname. Shared across all
+// ScrollRestoration component instances so saved positions survive
+// unmount/remount during route transitions.
+const _scrollPositions: Record<string, { x: number; y: number }> = {};
+
+/**
+ * ScrollRestoration component that saves and restores scroll positions across
+ * client-side navigation.
+ *
+ * The one-time mount effect patches pushState/replaceState to save scroll
+ * before navigation and registers a popstate listener. The post-render effect
+ * (no deps) restores scroll for the current pathname whenever a saved position
+ * exists — the position is kept alive in the module store so it remains
+ * available across Preact's render commit cycle.
+ */
+export function ScrollRestoration({}: ScrollRestorationProps): null {
+  const lastPathRef = React.useRef(window.location.pathname);
+
+  // One-time setup: patch history methods and register popstate listener.
+  React.useEffect(() => {
+    window.history.scrollRestoration = "manual";
+
+    const originalPushState = window.history.pushState.bind(window.history);
+    window.history.pushState = (data, unused, url) => {
+      const key = window.location.pathname;
+      _scrollPositions[key] = { x: window.scrollX, y: window.scrollY };
+      originalPushState(data, unused, url);
+      lastPathRef.current = window.location.pathname;
+    };
+
+    const originalReplaceState = window.history.replaceState.bind(
+      window.history,
+    );
+    window.history.replaceState = (data, unused, url) => {
+      const key = window.location.pathname;
+      _scrollPositions[key] = { x: window.scrollX, y: window.scrollY };
+      originalReplaceState(data, unused, url);
+      lastPathRef.current = window.location.pathname;
+    };
+
+    const handlePopState = () => {
+      const leavingPath = lastPathRef.current;
+      _scrollPositions[leavingPath] = { x: window.scrollX, y: window.scrollY };
+      lastPathRef.current = window.location.pathname;
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
+    };
+  }, []);
+
+  // After every render, restore scroll if a saved position exists for
+  // the current pathname. The position is NOT deleted — it's kept alive
+  // so Preact's render commits during navigation don't lose it.
+  // It will be overwritten naturally when the user navigates away.
+  React.useEffect(() => {
+    const key = window.location.pathname;
+    const pos = _scrollPositions[key];
+    if (pos) {
+      // Retry across animation frames — Preact may perform multiple
+      // render commits that reset scroll.
+      let remaining = 10;
+      const tryRestore = () => {
+        window.scrollTo(pos.x, pos.y);
+        if (
+          (window.scrollY !== pos.y || window.scrollX !== pos.x) &&
+          --remaining > 0
+        ) {
+          requestAnimationFrame(tryRestore);
+        }
+      };
+      requestAnimationFrame(tryRestore);
+    }
+  });
 
   return null;
 }

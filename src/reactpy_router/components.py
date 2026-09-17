@@ -27,6 +27,11 @@ Navigate = component_from_file(
 )
 """Client-side portion of the navigate component"""
 
+ScrollRestoration = component_from_file(
+    Path(__file__).parent / "static" / "bundle.js", import_names="ScrollRestoration", name="reactpy-router"
+)
+"""Client-side portion of scroll restoration"""
+
 
 def link(attributes: dict[str, Any], *children: Any, key: Key | None = None) -> Component:
     """
@@ -121,3 +126,34 @@ def _navigate(to: str | int, replace: bool = False) -> VdomDict | None:
             return Navigate({"onNavigateCallback": on_navigate_callback, "to": to, "replace": replace})
 
     return None
+
+
+def scroll_restoration(*children: Any, key: Key | None = None) -> Component:
+    """
+    A component that saves and restores scroll positions across client-side navigation.
+
+    This component is analogous to React Router's ``ScrollRestoration`` component.
+    It renders a hidden JavaScript component that manages scroll positions by keying
+    them to the current URL pathname. Scroll positions are automatically saved when
+    navigating away from a page and restored when returning via browser back/forward
+    or client-side navigation.
+
+    This component also accepts server-side children, which are rendered as the
+    content of a wrapper ``<div>``.
+
+    Args:
+        *children: Server-side child elements to render inside the scroll restoration wrapper.
+
+    Returns:
+        A component that renders children inside a scroll restoration wrapper div.
+    """
+    return _scroll_restoration(*children, key=key)
+
+
+@component
+def _scroll_restoration(*children: Any) -> VdomDict:
+    return html.div(
+        {"style": {"min-height": "100vh"}},
+        ScrollRestoration({}),
+        *children,
+    )
