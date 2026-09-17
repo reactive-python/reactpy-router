@@ -18,16 +18,16 @@
 <span class=kn>from</span><span class=w> </span><span class=nn>reactpy_router.resolvers</span><span class=w> </span><span class=kn>import</span> <span class=n>ConversionInfo</span><span class=p>,</span> <span class=n>ReactPyResolver</span>
 
 
-<span class=c1># Create a custom resolver that uses the following pattern: &quot;{name:type}&quot;</span>
+<span class=c1># Create a custom resolver that uses the following pattern: "{name:type}"</span>
 <span class=k>class</span><span class=w> </span><span class=nc>CustomResolver</span><span class=p>(</span><span class=n>ReactPyResolver</span><span class=p>):</span>
-    <span class=c1># Match parameters that use the &quot;&lt;name:type&gt;&quot; format</span>
-    <span class=n>param_pattern</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=sa>r</span><span class=s2>&quot;&lt;(?P&lt;name&gt;\w+)(?P&lt;type&gt;:\w+)?&gt;&quot;</span>
+    <span class=c1># Match parameters that use the "&lt;name:type&gt;" format</span>
+    <span class=n>param_pattern</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=sa>r</span><span class=s2>"&lt;(?P&lt;name&gt;\w+)(?P&lt;type&gt;:\w+)?&gt;"</span>
 
     <span class=c1># Enable matching for the following types: int, str, any</span>
     <span class=n>converters</span><span class=p>:</span> <span class=n>ClassVar</span><span class=p>[</span><span class=nb>dict</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=n>ConversionInfo</span><span class=p>]]</span> <span class=o>=</span> <span class=p>{</span>
-        <span class=s2>&quot;int&quot;</span><span class=p>:</span> <span class=n>ConversionInfo</span><span class=p>(</span><span class=n>regex</span><span class=o>=</span><span class=sa>r</span><span class=s2>&quot;\d+&quot;</span><span class=p>,</span> <span class=n>func</span><span class=o>=</span><span class=nb>int</span><span class=p>),</span>
-        <span class=s2>&quot;str&quot;</span><span class=p>:</span> <span class=n>ConversionInfo</span><span class=p>(</span><span class=n>regex</span><span class=o>=</span><span class=sa>r</span><span class=s2>&quot;[^/]+&quot;</span><span class=p>,</span> <span class=n>func</span><span class=o>=</span><span class=nb>str</span><span class=p>),</span>
-        <span class=s2>&quot;any&quot;</span><span class=p>:</span> <span class=n>ConversionInfo</span><span class=p>(</span><span class=n>regex</span><span class=o>=</span><span class=sa>r</span><span class=s2>&quot;.*&quot;</span><span class=p>,</span> <span class=n>func</span><span class=o>=</span><span class=nb>str</span><span class=p>),</span>
+        <span class=s2>"int"</span><span class=p>:</span> <span class=n>ConversionInfo</span><span class=p>(</span><span class=n>regex</span><span class=o>=</span><span class=sa>r</span><span class=s2>"\d+"</span><span class=p>,</span> <span class=n>func</span><span class=o>=</span><span class=nb>int</span><span class=p>),</span>
+        <span class=s2>"str"</span><span class=p>:</span> <span class=n>ConversionInfo</span><span class=p>(</span><span class=n>regex</span><span class=o>=</span><span class=sa>r</span><span class=s2>"[^/]+"</span><span class=p>,</span> <span class=n>func</span><span class=o>=</span><span class=nb>str</span><span class=p>),</span>
+        <span class=s2>"any"</span><span class=p>:</span> <span class=n>ConversionInfo</span><span class=p>(</span><span class=n>regex</span><span class=o>=</span><span class=sa>r</span><span class=s2>".*"</span><span class=p>,</span> <span class=n>func</span><span class=o>=</span><span class=nb>str</span><span class=p>),</span>
     <span class=p>}</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <h2 id=step-2-creating-a-custom-router>Step 2: Creating a custom router<a class=headerlink href=#step-2-creating-a-custom-router title="Permanent link">&para;</a></h2> <p>Then, you can use this resolver to create your custom router...</p> <div class="tabbed-set tabbed-alternate" data-tabs=2:1><input checked=checked id=__tabbed_2_1 name=__tabbed_2 type=radio><div class=tabbed-labels><label for=__tabbed_2_1>resolver.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>

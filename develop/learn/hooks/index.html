@@ -31,20 +31,20 @@
 <span class=nd>@component</span>
 <span class=k>def</span><span class=w> </span><span class=nf>search</span><span class=p>():</span>
     <span class=n>search_params</span> <span class=o>=</span> <span class=n>use_search_params</span><span class=p>()</span>
-    <span class=k>return</span> <span class=n>html</span><span class=p>(</span><span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Search Results for </span><span class=si>{</span><span class=n>search_params</span><span class=p>[</span><span class=s1>&#39;query&#39;</span><span class=p>][</span><span class=mi>0</span><span class=p>]</span><span class=si>}</span><span class=s2> 🔍&quot;</span><span class=p>),</span> <span class=n>html</span><span class=o>.</span><span class=n>p</span><span class=p>(</span><span class=s2>&quot;Nothing (yet).&quot;</span><span class=p>))</span>
+    <span class=k>return</span> <span class=n>html</span><span class=p>(</span><span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=sa>f</span><span class=s2>"Search Results for </span><span class=si>{</span><span class=n>search_params</span><span class=p>[</span><span class=s1>'query'</span><span class=p>][</span><span class=mi>0</span><span class=p>]</span><span class=si>}</span><span class=s2> 🔍"</span><span class=p>),</span> <span class=n>html</span><span class=o>.</span><span class=n>p</span><span class=p>(</span><span class=s2>"Nothing (yet)."</span><span class=p>))</span>
 
 
 <span class=nd>@component</span>
 <span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>browser_router</span><span class=p>(</span>
         <span class=n>route</span><span class=p>(</span>
-            <span class=s2>&quot;/&quot;</span><span class=p>,</span>
+            <span class=s2>"/"</span><span class=p>,</span>
             <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span>
-                <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Home Page 🏠&quot;</span><span class=p>),</span>
-                <span class=n>link</span><span class=p>({</span><span class=s2>&quot;to&quot;</span><span class=p>:</span> <span class=s2>&quot;/search?query=reactpy&quot;</span><span class=p>},</span> <span class=s2>&quot;Search&quot;</span><span class=p>),</span>
+                <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>"Home Page 🏠"</span><span class=p>),</span>
+                <span class=n>link</span><span class=p>({</span><span class=s2>"to"</span><span class=p>:</span> <span class=s2>"/search?query=reactpy"</span><span class=p>},</span> <span class=s2>"Search"</span><span class=p>),</span>
             <span class=p>),</span>
         <span class=p>),</span>
-        <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/search&quot;</span><span class=p>,</span> <span class=n>search</span><span class=p>()),</span>
+        <span class=n>route</span><span class=p>(</span><span class=s2>"/search"</span><span class=p>,</span> <span class=n>search</span><span class=p>()),</span>
     <span class=p>)</span>
 
 
@@ -82,20 +82,20 @@
 <span class=nd>@component</span>
 <span class=k>def</span><span class=w> </span><span class=nf>user</span><span class=p>():</span>
     <span class=n>params</span> <span class=o>=</span> <span class=n>use_params</span><span class=p>()</span>
-    <span class=k>return</span> <span class=n>html</span><span class=p>(</span><span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;User </span><span class=si>{</span><span class=n>params</span><span class=p>[</span><span class=s1>&#39;id&#39;</span><span class=p>]</span><span class=si>}</span><span class=s2> 👤&quot;</span><span class=p>),</span> <span class=n>html</span><span class=o>.</span><span class=n>p</span><span class=p>(</span><span class=s2>&quot;Nothing (yet).&quot;</span><span class=p>))</span>
+    <span class=k>return</span> <span class=n>html</span><span class=p>(</span><span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=sa>f</span><span class=s2>"User </span><span class=si>{</span><span class=n>params</span><span class=p>[</span><span class=s1>'id'</span><span class=p>]</span><span class=si>}</span><span class=s2> 👤"</span><span class=p>),</span> <span class=n>html</span><span class=o>.</span><span class=n>p</span><span class=p>(</span><span class=s2>"Nothing (yet)."</span><span class=p>))</span>
 
 
 <span class=nd>@component</span>
 <span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>browser_router</span><span class=p>(</span>
         <span class=n>route</span><span class=p>(</span>
-            <span class=s2>&quot;/&quot;</span><span class=p>,</span>
+            <span class=s2>"/"</span><span class=p>,</span>
             <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span>
-                <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>&quot;Home Page 🏠&quot;</span><span class=p>),</span>
-                <span class=n>link</span><span class=p>({</span><span class=s2>&quot;to&quot;</span><span class=p>:</span> <span class=s2>&quot;/user/123&quot;</span><span class=p>},</span> <span class=s2>&quot;User 123&quot;</span><span class=p>),</span>
+                <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=s2>"Home Page 🏠"</span><span class=p>),</span>
+                <span class=n>link</span><span class=p>({</span><span class=s2>"to"</span><span class=p>:</span> <span class=s2>"/user/123"</span><span class=p>},</span> <span class=s2>"User 123"</span><span class=p>),</span>
             <span class=p>),</span>
         <span class=p>),</span>
-        <span class=n>route</span><span class=p>(</span><span class=s2>&quot;/user/{id:int}&quot;</span><span class=p>,</span> <span class=n>user</span><span class=p>()),</span>
+        <span class=n>route</span><span class=p>(</span><span class=s2>"/user/{id:int}"</span><span class=p>,</span> <span class=n>user</span><span class=p>()),</span>
     <span class=p>)</span>
 
 
