@@ -23,7 +23,7 @@ Here we'll note some special syntax in the route path for the second route. The 
 
 ### Browser Router
 
-The syntax for declaring routes with the [`browser_router`][reactpy_router.browser_router] is very similar to the syntax used by [`starlette`](https://www.starlette.io/routing/) (a popular Python web framework). As such route parameters are declared using the following syntax:
+The syntax for declaring routes with the [`browser_router`][reactpy_router.browser_router] is very similar to the syntax used by [`starlette`](https://starlette.dev/routing/) (a popular Python web framework). As such route parameters are declared using the following syntax:
 
 ```python linenums="0"
 /my/route/{param}
