@@ -129,6 +129,19 @@ export function Navigate({
 // unmount/remount during route transitions.
 const _scrollPositions: Record<string, { x: number; y: number }> = {};
 
+// How long (wall-clock) to keep re-asserting a restored scroll position while the
+// destination route's content is still streaming in from the server. A fixed
+// *frame* count is unreliable because frame cadence varies with CPU load: under a
+// loaded CI runner the document can still be short (content not yet rendered) when
+// a small frame budget expires, so `scrollTo` clamps against the not-yet-tall page
+// and the position is silently lost. A time window is robust to both fast and slow
+// frame cadences. The loop stops as soon as the target is reached, so a generous
+// window only buys time for slow content — it never fights the user's own scroll.
+const _scrollRestoreWindowMs = 1000;
+
+// Sub-pixel tolerance for considering a scroll position "reached".
+const _scrollTolerancePx = 2;
+
 /**
  * ScrollRestoration component that saves and restores scroll positions across
  * client-side navigation.
@@ -186,21 +199,34 @@ export function ScrollRestoration({}: ScrollRestorationProps): null {
   React.useEffect(() => {
     const key = window.location.pathname;
     const pos = _scrollPositions[key];
-    if (pos) {
-      // Retry across animation frames — Preact may perform multiple
-      // render commits that reset scroll.
-      let remaining = 10;
-      const tryRestore = () => {
-        window.scrollTo(pos.x, pos.y);
-        if (
-          (window.scrollY !== pos.y || window.scrollX !== pos.x) &&
-          --remaining > 0
-        ) {
-          requestAnimationFrame(tryRestore);
-        }
-      };
-      requestAnimationFrame(tryRestore);
+    if (!pos) {
+      return;
     }
+
+    const reached = () =>
+      Math.abs(window.scrollY - pos.y) <= _scrollTolerancePx &&
+      Math.abs(window.scrollX - pos.x) <= _scrollTolerancePx;
+
+    // Retry across animation frames until the target is reached, bounded by a
+    // wall-clock window instead of a frame count. After a client-side navigation
+    // the destination content is streamed in by the server, so the document can
+    // still be too short to reach `pos` and scrollTo clamps against it; a small
+    // frame budget can also expire far too early when frame cadence drops under
+    // CPU load. Both cases would otherwise silently drop the restored position.
+    const deadline = performance.now() + _scrollRestoreWindowMs;
+    let frame = requestAnimationFrame(function tryRestore() {
+      // Stop the moment the target is in place so we never fight scrolling the
+      // user performs after the position has been restored.
+      if (reached() || performance.now() >= deadline) {
+        return;
+      }
+      window.scrollTo(pos.x, pos.y);
+      frame = requestAnimationFrame(tryRestore);
+    });
+
+    // Effect cleanup runs before the next render's effect, so a re-render (or
+    // unmount) cancels this attempt and no competing loops are left running.
+    return () => cancelAnimationFrame(frame);
   });
 
   return null;
