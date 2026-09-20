@@ -18,4 +18,14 @@ export interface NavigateProps {
   replace?: boolean;
 }
 
+export interface FormSubmitData {
+  form_data: Record<string, string[]>;
+  location: ReactPyLocation;
+}
+
+export interface FormProps {
+  onSubmitCallback: (data: FormSubmitData) => void;
+  formClass: string;
+}
+
 export interface ScrollRestorationProps {}

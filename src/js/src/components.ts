@@ -1,6 +1,7 @@
 import { React } from "@reactpy/client";
 import { createLocationObject, pushState, replaceState } from "./utils";
 import {
+  FormProps,
   HistoryProps,
   LinkProps,
   NavigateProps,
@@ -121,6 +122,67 @@ export function Navigate({
     return () => {};
   }, []);
 
+  return null;
+}
+
+/**
+ * Form component that intercepts form submissions and notifies the server
+ * instead of performing a full page reload.
+ *
+ * This component is not the actual `<form>` element. It is just an event
+ * listener for ReactPy-Router's server-side form component.
+ */
+export function Form({ onSubmitCallback, formClass }: FormProps): null {
+  React.useEffect(() => {
+    const handleSubmit = (event: Event) => {
+      event.preventDefault();
+      const form = event.currentTarget as HTMLFormElement;
+      const formData = new FormData(form);
+
+      // Serialize FormData to a Record<string, string[]>
+      const serialized: Record<string, string[]> = {};
+      for (const [key, value] of formData.entries()) {
+        if (!serialized[key]) {
+          serialized[key] = [];
+        }
+        serialized[key].push(value.toString());
+      }
+
+      // Build the action URL with form data as query params (GET-style)
+      let action = form.getAttribute("action") || window.location.pathname;
+      const params = new URLSearchParams();
+      for (const [key, values] of Object.entries(serialized)) {
+        for (const value of values) {
+          params.append(key, value);
+        }
+      }
+      const queryString = params.toString();
+      if (queryString) {
+        action += (action.includes("?") ? "&" : "?") + queryString;
+      }
+
+      pushState(action);
+      onSubmitCallback({
+        form_data: serialized,
+        location: createLocationObject(),
+      });
+    };
+
+    const forms = document.querySelectorAll(`form.${formClass}`);
+    if (forms.length === 0) {
+      console.warn(`Form component with class name ${formClass} not found.`);
+    } else {
+      forms.forEach((form) => {
+        form.addEventListener("submit", handleSubmit);
+      });
+    }
+
+    return () => {
+      forms.forEach((form) => {
+        form.removeEventListener("submit", handleSubmit);
+      });
+    };
+  });
   return null;
 }
 
