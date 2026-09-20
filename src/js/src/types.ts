@@ -27,3 +27,5 @@ export interface FormProps {
   onSubmitCallback: (data: FormSubmitData) => void;
   formClass: string;
 }
+
+export interface ScrollRestorationProps {}
