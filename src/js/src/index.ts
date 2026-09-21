@@ -1,1 +1,8 @@
-export { bind, History, Link, Navigate, ScrollRestoration } from "./components";
+export {
+  bind,
+  Form,
+  History,
+  Link,
+  Navigate,
+  ScrollRestoration,
+} from "./components";

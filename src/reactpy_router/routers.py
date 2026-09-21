@@ -11,7 +11,7 @@ from reactpy.core.hooks import ConnectionContext
 from reactpy.types import Component, Connection, Location, VdomDict
 
 from reactpy_router.components import History
-from reactpy_router.hooks import RouteState, _route_state_context
+from reactpy_router.hooks import FormDataState, RouteState, _form_data_state_context, _route_state_context
 from reactpy_router.resolvers import ReactPyResolver
 
 if TYPE_CHECKING:
@@ -61,6 +61,7 @@ def router(
 
     initial = use_connection()
     location, set_location = use_state(initial.location)
+    form_data, set_form_data = use_state({})
     resolvers = use_memo(
         lambda: tuple(map(resolver, _iter_routes(routes))),
         dependencies=(resolver, hash(routes)),
@@ -84,7 +85,13 @@ def router(
 
         return ConnectionContext(
             History({"onHistoryPreviousCallback": on_history_previous}),  # type: ignore[return-value]
-            _route_state_context(match.element, value=RouteState(set_location, match.params)),
+            _route_state_context(
+                _form_data_state_context(
+                    match.element,
+                    value=FormDataState(form_data, set_form_data),
+                ),
+                value=RouteState(set_location, match.params),
+            ),
             value=Connection(initial.scope, location or initial.location, initial.carrier),
         )
 
