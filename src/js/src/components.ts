@@ -133,7 +133,13 @@ export function Navigate({
  * listener for ReactPy-Router's server-side form component.
  */
 export function Form({ onSubmitCallback, formClass }: FormProps): null {
-  React.useEffect(() => {
+  // Attach the submit listener in a layout effect (before paint) rather than a
+  // passive effect (after paint). A passive effect leaves a window after the form
+  // is rendered but before the listener is wired, during which a submit would
+  // fall through to the browser's native GET submission (a full page reload).
+  // `useLayoutEffect` runs synchronously before paint, so the listener is always
+  // in place by the time the form is visible and interactive.
+  React.useLayoutEffect(() => {
     const handleSubmit = (event: Event) => {
       event.preventDefault();
       const form = event.currentTarget as HTMLFormElement;
