@@ -684,23 +684,27 @@ async def test_scroll_restoration_basic_rendering(display: DisplayFixture):
 
 
 async def test_scroll_restoration_preserves_scroll(display: DisplayFixture):
-    """Verify scroll position is preserved when navigating back."""
+    """Verify the exact scroll position is restored when navigating back."""
 
     @component
     def scroll_page():
-        tall_content = [html.div({"style": {"height": "1500px"}}, f"Section {i}") for i in range(10)]
-        link_list = link({"to": "/other", "id": "to-other"}, "Go to other", key="to-other")
+        tall_content = [html.div({"style": {"height": "1500px"}}, f"Section {i}") for i in range(8)]
         return scroll_restoration(
             html.h1({"id": "scroll-page"}, "Scroll Page"),
+            # A short spacer places the forward link roughly 550px down, so it is
+            # inside the viewport when the page is scrolled to ``target_y``. That
+            # keeps the navigation click from scrolling the page and changing the
+            # position captured at navigation time.
+            html.div({"style": {"height": "550px"}}, "Spacer"),
+            link({"to": "/other", "id": "to-other"}, "Go to other", key="to-other"),
             *tall_content,
-            link_list,
         )
 
     @component
     def other_page():
         return scroll_restoration(
             html.h1({"id": "other-page"}, "Other Page"),
-            link({"to": "/", "id": "back-to-scroll"}, "Back to scroll page", key="back-to-scroll"),
+            html.div({"style": {"height": "2000px"}}, "Other content"),
         )
 
     @component
@@ -712,26 +716,37 @@ async def test_scroll_restoration_preserves_scroll(display: DisplayFixture):
 
     await display.show(sample)
 
-    # Wait for the scroll page to render
+    # Wait for the scroll page and its tall content to be laid out so the target
+    # scroll position is actually reachable.
     await display.page.wait_for_selector("#scroll-page")
+    await display.page.wait_for_function("document.documentElement.scrollHeight > 10000", timeout=10000)
 
-    # Scroll down 500px
-    await display.page.evaluate("window.scrollTo(0, 500)")
-    scroll_y = await display.page.evaluate("window.scrollY")
-    assert scroll_y >= 500, f"Expected scrollY >= 500, got {scroll_y}"
+    # Scroll to a known position that is neither the top nor the bottom, so a
+    # wrong-but-plausible outcome (staying at 0, or clamping to the page bottom)
+    # cannot pass for the wrong reason.
+    target_y = 500
+    await display.page.evaluate(f"window.scrollTo(0, {target_y})")
+    await display.page.wait_for_function(f"Math.abs(window.scrollY - {target_y}) <= 1", timeout=5000)
 
-    # Navigate to /other via link
+    # The forward link sits within the viewport at ``target_y`` (see the spacer in
+    # ``scroll_page``), so Playwright's scroll-into-view before the click is a
+    # no-op and the position we scrolled to is exactly what gets saved. We use a
+    # native ``page.click`` (not a synthetic ``element.click()``) because it waits
+    # for the element to be actionable, which gives ReactPy's ``preventDefault``
+    # handler time to attach -- a synthetic click can beat the handler and trigger a
+    # real anchor navigation (a full reload), wiping the client-side scroll store.
     await display.page.click("#to-other")
     await display.page.wait_for_selector("#other-page")
 
-    # Navigate back to / via link
-    await display.page.click("#back-to-scroll")
+    # Return via the browser's own back action (a genuine ``popstate``). This
+    # exercises the real restore path without a second click that could race the
+    # router's event wiring.
+    await display.page.go_back()
     await display.page.wait_for_selector("#scroll-page")
 
-    # Poll for scroll restoration to apply (it runs in useLayoutEffect which
-    # fires synchronously after DOM commit, but the browser needs at least one
-    # frame to paint when scrollTo is called during the same commit).
-    await display.page.wait_for_function(
-        "window.scrollY >= 450",
-        timeout=5000,
-    )
+    # The restore loop keeps re-asserting the saved position until the destination
+    # content is tall enough to reach it (bounded by a time window), so we expect
+    # a near-exact match rather than the previous loose lower bound.
+    await display.page.wait_for_function(f"Math.abs(window.scrollY - {target_y}) <= 5", timeout=5000)
+    final_y = await display.page.evaluate("window.scrollY")
+    assert abs(final_y - target_y) <= 5, f"Expected scrollY ~{target_y}, got {final_y}"
