@@ -1,3 +1,6 @@
+# --- LLM Artifacts ---
+memories/*
+
 # --- DOCS ---
 
 docs/site
