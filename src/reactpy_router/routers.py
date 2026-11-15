@@ -11,8 +11,9 @@ from reactpy.core.hooks import ConnectionContext
 from reactpy.types import Component, Connection, Location, VdomDict
 
 from reactpy_router.components import History
-from reactpy_router.hooks import FormDataState, RouteState, _form_data_state_context, _route_state_context
+from reactpy_router.hooks import FormDataState, _form_data_state_context, _route_state_context
 from reactpy_router.resolvers import ReactPyResolver
+from reactpy_router.types import RouteState
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence

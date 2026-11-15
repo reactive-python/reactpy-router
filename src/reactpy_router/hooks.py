@@ -6,12 +6,12 @@ from urllib.parse import parse_qs
 
 from reactpy import create_context, use_context, use_location
 
-from reactpy_router.types import RouteState
-
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from reactpy.types import Context
+
+    from reactpy_router.types import RouteState
 
 
 _route_state_context: Context[RouteState | None] = create_context(None)
